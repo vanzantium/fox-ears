@@ -1,0 +1,160 @@
+{
+  "title": "Fox at the Gate \u2014 variant 1 (requested 108 BPM) score",
+  "dated": "2026-11-14",
+  "analyzed_at_america_dawson_creek": "2026-11-14 3:59 PM America/Dawson_Creek",
+  "drive_copy": "https://drive.google.com/file/d/1mS0DQqBcHnIa0D0J7upeixkzfHDK6vte/view",
+  "file": {
+    "m4a_sha256": "a3079cf897284e1054c1d7c39ab1bafe2adf86cd7d86b9f92687c31d9b23fbf5",
+    "wav_sha256": "0475b5b5e555ded81040772a4701123899a9329ef472e474d61b8ee1b57d22c1",
+    "m4a_bytes": 1768523,
+    "container": "MPEG-4 (isom/iso2/mp41)",
+    "audio_codec": "Opus, 127 kb/s",
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "m4a_duration_s": 108.68,
+    "wav_duration_s": 108.6935,
+    "suno_id": "62d38eef-d384-4285-9a97-714f0cfe084d",
+    "suno_created_america_dawson_creek": "2026-11-14 3:54 PM America/Dawson_Creek"
+  },
+  "ground_truth": {
+    "tempo_bpm": 96.564,
+    "tempo_confidence": "high",
+    "key": "G major",
+    "key_confidence": "high",
+    "key_intro": "D major (dominant vamp, same as the master)",
+    "sections": 6,
+    "form_matches_master_wallclock": true,
+    "lyric_boundaries_s": [
+      9.903,
+      29.317,
+      54.77,
+      74.339,
+      99.835
+    ],
+    "musical_bar_boundaries_s": [
+      10.058,
+      29.941,
+      54.795,
+      74.678,
+      99.532
+    ],
+    "vocal_present": true,
+    "stem_vocal_on_fraction": 0.584,
+    "loudness": {
+      "integrated_lufs": -15.8,
+      "lra_lu": 3.2,
+      "true_peak_dbfs": -2.0,
+      "rms_overall_dbfs": -17.91,
+      "side_to_mid": 0.0282
+    }
+  },
+  "vs_master": {
+    "master_tempo_bpm": 96.006,
+    "measured_ratio": 1.0058,
+    "expected_ratio_if_108": 1.1249,
+    "tempo_change_present": false,
+    "key_unchanged": true,
+    "duration_s": {
+      "master": 108.4,
+      "variant": 108.68,
+      "delta": 0.28,
+      "expected_if_only_tempo_changed": 96.411
+    },
+    "unintended_differences": [
+      "Suno did not change the tempo: measured 96.564 BPM, not 108. Autocorrelation is +0.41 at 96 BPM and -0.13 at 108 BPM. 39 of 40 local 8-beat windows sit near 96; none sit near 108. Even a 108 BPM beat-tracker prior still returns 95.703.",
+      "Duration stayed 108.680 s (master 108.400 s, +0.280 s) instead of shrinking to about 96.4 s.",
+      "Lyric and section times are essentially the same as the master (start deltas under 0.11 s), not scaled by 96/108.",
+      "Beat grid is less stable: IBI CV 4.72% (medium) vs 1.54% (high) on the master. First tracked beat is at 0.116 s vs 1.045 s.",
+      "Loudness: integrated -15.8 vs -15.3 LUFS; LRA 3.2 vs 4.8 LU; true peak -2.0 vs -3.1 dBFS; side/mid energy 0.028 vs 0.087 (narrower stereo).",
+      "Structural novelty is busier and does not land cleanly on the lyric boundaries, unlike the master's peaks at 9.752 s and 30.070 s."
+    ]
+  },
+  "fox_ears": {
+    "scoring_rule": "Tempo is a hit within \u00b14% (octave and 3:2 forgiven); key must match exactly. Score against the measured 96.564 BPM / G major truth, not the 108 BPM prompt.",
+    "before_default": {
+      "tempo_bpm": 90,
+      "tempo_confidence": 0.11,
+      "tempo_note": "unresolved metrical level \u2014 pulse candidates 180/90 BPM; autocorrelation suggests 120 BPM",
+      "tempo_verdict": "miss vs 96.564 (6.80% low). Same miss, and almost the same number, as on the master (90 BPM).",
+      "subgrid_proposal_bpm": 98,
+      "subgrid_proposal_confidence": 0.46,
+      "subgrid_proposal_verdict": "hit under \u00b14% (1.49% high vs 96.564). Master proposal was 94 BPM.",
+      "key": "D major (0.87)",
+      "key_verdict": "miss (same intro-dominant trap as the master, which was D major 0.88)",
+      "sections": 2,
+      "sections_verdict": "miss (same as the master)",
+      "vocal_gate": "2.7%",
+      "vocal_notes": 0,
+      "vocal_verdict": "miss (same as the master: 4.1% gate, 0 vocal notes)"
+    },
+    "after_pass1": {
+      "tempo_bpm": 96,
+      "tempo_confidence": 0.66,
+      "tempo_note": "sub-grid onsets (345); comb x prior picked 96 BPM; nearest rival level 192 BPM at 42%",
+      "tempo_error_vs_truth_pct": -0.58,
+      "tempo_verdict": "hit. Reports 96, not 108. Ratio to its own master reading (96/96) is 1.00, not 1.125. That is the correct answer, because the audio did not change tempo.",
+      "key": "D major (0.84)",
+      "key_note": "tonic-vs-dominant: D vs G unresolved; kept the profile winner",
+      "key_verdict": "miss. On the master, pass 1 correctly said G major (0.86) with 'G over D confirmed'. This is a false difference: both renders are G major.",
+      "sections": 10,
+      "section_list": [
+        "0.0-9.7s verse A",
+        "9.7-19.7s chorus B",
+        "19.7-29.7s verse C",
+        "29.7-43.5s chorus D",
+        "43.5-54.7s verse E",
+        "54.7-64.7s verse F",
+        "64.7-74.7s chorus G",
+        "74.7-88.5s chorus H",
+        "88.5-99.1s verse I",
+        "99.1-108.6s outro J"
+      ],
+      "section_cuts_s": [
+        9.727,
+        19.727,
+        29.727,
+        43.477,
+        54.727,
+        64.727,
+        74.727,
+        88.477,
+        99.102
+      ],
+      "nearest_cut_error_vs_bars_s": [
+        0.33,
+        0.21,
+        0.07,
+        0.05,
+        0.43
+      ],
+      "nearest_cut_error_vs_lyrics_s": [
+        0.18,
+        0.41,
+        0.04,
+        0.39,
+        0.73
+      ],
+      "sections_verdict": "partial. The five true boundaries are found (errors under 0.8 s), but three extra mid-section cuts appear (19.7 mid verse 1, 43.5 mid chorus 1, 88.5 mid chorus 2) on top of the mid-verse-2 cut already seen on the master (64.8). Count is 10 vs 7 on the master vs 6 in the truth. Role labels also start at 'verse' instead of 'intro'.",
+      "vocal_mask": "46.2%",
+      "vocal_regions": 33,
+      "vocal_notes": 3,
+      "vocal_P_vs_stem": 0.87,
+      "vocal_R_vs_stem": 0.7,
+      "vocal_P_vs_srt": 0.95,
+      "vocal_R_vs_srt": 0.52,
+      "vocal_verdict": "hit, close to the master (P 0.92 / R 0.72). The vocal is still heard; no false 'vocals vanished' report."
+    },
+    "caught_the_change_cleanly": false,
+    "reason": "There was no tempo change in the audio to catch. Pass 1 correctly kept tempo at 96 BPM and did not invent a 108 BPM reading. It did report two false differences vs its own master reading: key flipped from G major to D major, and the form split from 7 sections to 10.",
+    "false_differences_vs_its_master_reading": [
+      "Key: G major (0.86) on the master \u2192 D major (0.84) on this variant. Truth is G major both times. The tonic-vs-dominant check went from 'G over D confirmed' to 'D vs G unresolved; kept the profile winner'.",
+      "Sections: 7 \u2192 10, with new mid-verse-1, mid-chorus-1 and mid-chorus-2 cuts. Wall-clock form is the same as the master.",
+      "Intro is labelled 'verse A'."
+    ],
+    "new_tuning_issues": [
+      "Tonic-vs-dominant key check is unstable across two same-key, same-form Suno renders. A new take of the same G-major song with the same D-major intro vamp can flip the winner back to the dominant.",
+      "Section splitter over-segments more on this take (10 vs 7 vs 6 truth), inventing mid-phrase cuts in both verses and both choruses. Role labels are also wrong.",
+      "This file is not a valid 108 BPM test. A later render, or a controlled time-stretch of the master to 108 BPM, is needed before we can say whether Fox Ears tracks a real tempo change and only that change."
+    ]
+  }
+}
