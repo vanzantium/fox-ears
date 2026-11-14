@@ -42,6 +42,9 @@ fox_ears_v0_2_calibration_003_inspector.json
 cal003_selfcheck.py
 cal003-key/
 
+# Local calibration copies and scratch (harness/ holds the tracked sources)
+app/calibration/
+
 # Secrets and local env
 .env
 .env.*

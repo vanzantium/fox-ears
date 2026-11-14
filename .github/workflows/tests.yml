@@ -34,4 +34,6 @@ jobs:
           cache-dependency-path: app/package-lock.json
       - run: npm ci
       - run: npm run typecheck
+      - name: Listening lab tests (tempo + vocal)
+        run: node --test --experimental-strip-types scripts/tempo-lab.test.mjs scripts/vocal-lab.test.mjs
       - run: npm run build

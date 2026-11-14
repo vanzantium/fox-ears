@@ -31,6 +31,17 @@ export type HearingFrame = {
   vocal_likelihood: number;
   vocal_gate?: boolean;
   perc?: number;
+  /**
+   * Analyser ticks (~60 Hz) since the previous frame: file-clock ms and
+   * spectral flux. Lets the chart time onsets finer than the 80 ms frame grid
+   * (tuning pass 1, 2026-11-14). Absent on maps sealed before that.
+   */
+  ticks?: { t_ms: number[]; flux: number[] };
+  /**
+   * Vocal-band cues (see lib/audio/vocal.ts): side/mid ratio and mid energy in
+   * 300-3000 Hz (dB) and the count of spectral peaks there. Tuning pass 1.
+   */
+  vox?: { side_db: number; mid_db: number; peaks: number };
 };
 
 export type CueLedger = {
@@ -176,6 +187,8 @@ export type SongChart = {
   }>;
   chroma_reliable?: boolean;
   chroma_note?: string;
+  /** How the whole-song key was decided (tuning pass 1). */
+  key_note?: string;
   range: { low: string; high: string; median: string } | null;
   vocal_range?: { low: string; high: string; median: string } | null;
   notes: NoteEvent[];

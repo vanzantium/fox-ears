@@ -8,9 +8,13 @@ export class HearingSampler {
   private lastT = -Infinity;
   private origin = 0;
   private running = false;
+  private tickMs: number[] = [];
+  private tickFlux: number[] = [];
 
   start() {
     this.frames = [];
+    this.tickMs = [];
+    this.tickFlux = [];
     this.lastT = -Infinity;
     this.origin = performance.now();
     this.running = true;
@@ -22,6 +26,8 @@ export class HearingSampler {
 
   reset() {
     this.frames = [];
+    this.tickMs = [];
+    this.tickFlux = [];
     this.lastT = -Infinity;
     this.origin = performance.now();
   }
@@ -30,14 +36,35 @@ export class HearingSampler {
     return this.running;
   }
 
+  private clock(fileClockMs?: number) {
+    return fileClockMs !== undefined && fileClockMs >= 0
+      ? fileClockMs
+      : performance.now() - this.origin;
+  }
+
+  /**
+   * Record one analyser tick's spectral flux. push() calls this for every
+   * snapshot, so the app needs nothing extra; offline callers that skip the
+   * full snapshot on non-sample ticks call it directly.
+   */
+  tick(flux: number, fileClockMs?: number) {
+    if (!this.running) return;
+    const t = this.clock(fileClockMs);
+    const prev = this.tickMs[this.tickMs.length - 1];
+    if (prev !== undefined && t <= prev) return;
+    this.tickMs.push(Math.round(t * 10) / 10);
+    this.tickFlux.push(round4(flux));
+  }
+
   push(snap: EngineSnapshot, fileClockMs?: number) {
     if (!this.running) return;
-    const t =
-      fileClockMs !== undefined && fileClockMs >= 0
-        ? fileClockMs
-        : performance.now() - this.origin;
+    this.tick(snap.flux, fileClockMs);
+    const t = this.clock(fileClockMs);
     if (t - this.lastT < SAMPLE_INTERVAL_MS) return;
     this.lastT = t;
+    const ticks = { t_ms: this.tickMs, flux: this.tickFlux };
+    this.tickMs = [];
+    this.tickFlux = [];
     const onset = Math.max(0, Math.min(1, snap.onset * 1.8));
     this.frames.push({
       t_ms: Math.round(t),
@@ -67,8 +94,20 @@ export class HearingSampler {
       vocal_likelihood: round4(snap.vocal),
       vocal_gate: snap.vocalGate,
       perc: round4(snap.perc),
+      vox: snap.vocalFeat
+        ? {
+            side_db: round2(snap.vocalFeat.sideDb),
+            mid_db: round2(snap.vocalFeat.midDb),
+            peaks: snap.vocalFeat.peaks,
+          }
+        : undefined,
+      ticks,
     });
   }
+}
+
+function round2(n: number) {
+  return Math.round(n * 100) / 100;
 }
 
 function round4(n: number) {

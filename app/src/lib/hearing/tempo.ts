@@ -207,6 +207,222 @@ export function beatGridAligned(lastMs: number, bpm: number, onsetMs: number[]):
 }
 
 // ---------------------------------------------------------------------------
+// Sub-grid tempo (tuning pass 1, 2026-11-14).
+//
+// The 80 ms hearing frames quantise onsets so coarsely that a steady 96 BPM
+// song reads as 90 or 120. The engine now keeps every analyser tick's spectral
+// flux (~60 Hz, see HearingSampler.tick) and the chart peak-picks those ticks
+// here, so onset timing is good to ~17 ms instead of 80 ms.
+// ---------------------------------------------------------------------------
+
+export type WeightedOnset = { t_ms: number; w: number };
+
+/** Tuning constants for the sub-grid path. Exported so the tuning log and lab can cite them. */
+export const SUBGRID = {
+  /** Adaptive peak-pick: flux must exceed local mean + k·sd. */
+  pickK: 1.0,
+  /** Half-width of the local mean/sd window, ms. */
+  pickWinMs: 1000,
+  /** Refractory gap between picked onsets, ms. */
+  minGapMs: 90,
+  /** Onset-envelope resolution, ms. */
+  envMs: 10,
+  /** Search band for the beat level, BPM. */
+  minBpm: 50,
+  maxBpm: 220,
+  /** Log-normal tempo prior: centre BPM and spread in octaves (librosa-style). */
+  priorBpm: 110,
+  priorOctaves: 1.0,
+  /**
+   * Minimum comb periodicity (normalised autocorrelation) to report a tempo.
+   * Songs score 0.36-1.08; the beatless demo etude scores 0.03-0.04.
+   */
+  minComb: 0.15,
+} as const;
+
+/**
+ * Adaptive peak-picking on the per-tick flux stream. Tick times may be
+ * irregular (requestAnimationFrame), so windows are measured in ms.
+ */
+export function pickTickOnsets(
+  tickMs: number[],
+  flux: number[],
+  k: number = SUBGRID.pickK,
+  winMs: number = SUBGRID.pickWinMs,
+  minGapMs: number = SUBGRID.minGapMs,
+): WeightedOnset[] {
+  const n = Math.min(tickMs.length, flux.length);
+  const out: WeightedOnset[] = [];
+  if (n < 3) return out;
+  const ps = new Float64Array(n + 1);
+  const ps2 = new Float64Array(n + 1);
+  for (let i = 0; i < n; i++) {
+    const v = flux[i] ?? 0;
+    ps[i + 1] = (ps[i] ?? 0) + v;
+    ps2[i + 1] = (ps2[i] ?? 0) + v * v;
+  }
+  let lo = 0;
+  let hi = 0;
+  let lastMs = -Infinity;
+  for (let i = 1; i < n - 1; i++) {
+    const t = tickMs[i] ?? 0;
+    while (lo < i && (tickMs[lo] ?? 0) < t - winMs) lo++;
+    while (hi < n && (tickMs[hi] ?? 0) <= t + winMs) hi++;
+    const v = flux[i] ?? 0;
+    if (!(v > (flux[i - 1] ?? 0) && v >= (flux[i + 1] ?? 0))) continue;
+    const cnt = Math.max(1, hi - lo);
+    const m = ((ps[hi] ?? 0) - (ps[lo] ?? 0)) / cnt;
+    const sd = Math.sqrt(Math.max(0, ((ps2[hi] ?? 0) - (ps2[lo] ?? 0)) / cnt - m * m));
+    if (v > m + k * sd && t - lastMs > minGapMs) {
+      out.push({ t_ms: t, w: v - m });
+      lastMs = t;
+    }
+  }
+  return out;
+}
+
+function lagScore(ac: Float64Array, lag: number): number {
+  const i = Math.floor(lag);
+  const f = lag - i;
+  if (i + 1 >= ac.length) return 0;
+  return (ac[i] ?? 0) * (1 - f) + (ac[i + 1] ?? 0) * f;
+}
+
+/** Comb score of a beat period: rewards energy at 1, 2, 3 and 4 periods. */
+function combScore(ac: Float64Array, lagBins: number): number {
+  let s = 0;
+  const wts = [1, 0.5, 0.33, 0.25];
+  for (let h = 1; h <= 4; h++) s += (wts[h - 1] ?? 0) * lagScore(ac, lagBins * h);
+  return s;
+}
+
+function tempoPrior(bpm: number): number {
+  const z = Math.log2(bpm / SUBGRID.priorBpm) / SUBGRID.priorOctaves;
+  return Math.exp(-0.5 * z * z);
+}
+
+/** Phase-searched alignment of weighted onsets to a beat grid (sigma ms). */
+function gridFit(onsets: WeightedOnset[], bpm: number, sigma: number): { score: number; phase: number } {
+  const beat = 60000 / bpm;
+  let best = { score: -Infinity, phase: 0 };
+  const steps = 48;
+  for (let s = 0; s < steps; s++) {
+    const phase = (s / steps) * beat;
+    let score = 0;
+    for (const o of onsets) {
+      const rel = (((o.t_ms - phase) % beat) + beat) % beat;
+      const d = Math.min(rel, beat - rel);
+      score += o.w * Math.exp(-(d * d) / (2 * sigma * sigma));
+    }
+    if (score > best.score) best = { score, phase };
+  }
+  return best;
+}
+
+/**
+ * Tempo from sub-grid weighted onsets.
+ * 1. Weighted onset envelope at 10 ms, autocorrelated.
+ * 2. Comb score (1-4 periods) x log-normal prior picks the beat level; this is
+ *    the octave / half-time disambiguation (96 beats 48 and 192 because the
+ *    comb rewards a period whose multiples also line up, and the prior breaks
+ *    near-ties toward the usual 70-160 BPM beat range).
+ * 3. Parabolic refinement, then a fine grid-fit (+/-2.5%, 0.02 BPM steps).
+ * Confidence = comb salience of the winner over the runner-up metrical level.
+ */
+export function estimateTempoSubgrid(onsets: WeightedOnset[]): TempoEstimate {
+  if (onsets.length < 8) return null;
+  const first = onsets[0]?.t_ms ?? 0;
+  const last = onsets[onsets.length - 1]?.t_ms ?? 0;
+  const span = last - first;
+  if (span < 6000) return null;
+  const q = SUBGRID.envMs;
+  const n = Math.ceil(span / q) + 2;
+  const env = new Float64Array(n);
+  for (const o of onsets) {
+    const x = (o.t_ms - first) / q;
+    const i = Math.floor(x);
+    const f = x - i;
+    env[i] = (env[i] ?? 0) + o.w * (1 - f);
+    if (i + 1 < n) env[i + 1] = (env[i + 1] ?? 0) + o.w * f;
+  }
+  let mean = 0;
+  for (let i = 0; i < n; i++) mean += env[i] ?? 0;
+  mean /= n;
+  for (let i = 0; i < n; i++) env[i] = (env[i] ?? 0) - mean;
+  const maxLag = Math.min(n - 1, Math.ceil((4 * 60000) / SUBGRID.minBpm / q) + 2);
+  const ac = new Float64Array(maxLag + 2);
+  for (let lag = 0; lag <= maxLag; lag++) {
+    let c = 0;
+    for (let i = 0; i + lag < n; i++) c += (env[i] ?? 0) * (env[i + lag] ?? 0);
+    ac[lag] = c / (n - lag);
+  }
+  const ac0 = ac[0] ?? 0;
+  if (ac0 <= 0) return null;
+  for (let lag = 0; lag <= maxLag; lag++) ac[lag] = Math.max(0, (ac[lag] ?? 0) / ac0);
+
+  // Score every candidate beat level at 0.25 BPM.
+  type Cand = { bpm: number; comb: number; score: number };
+  const cands: Cand[] = [];
+  for (let bpm = SUBGRID.minBpm; bpm <= SUBGRID.maxBpm; bpm += 0.25) {
+    const comb = combScore(ac, 60000 / bpm / q);
+    cands.push({ bpm, comb, score: comb * tempoPrior(bpm) });
+  }
+  let bi = 0;
+  for (let i = 1; i < cands.length; i++) if ((cands[i]?.score ?? 0) > (cands[bi]?.score ?? 0)) bi = i;
+  const top = cands[bi];
+  if (!top || top.comb < SUBGRID.minComb) return null;
+
+  // Parabolic refinement on the score curve.
+  const y0 = cands[bi - 1]?.score ?? top.score;
+  const y2 = cands[bi + 1]?.score ?? top.score;
+  const den = y0 - 2 * top.score + y2;
+  const shift = den === 0 ? 0 : Math.max(-1, Math.min(1, (0.5 * (y0 - y2)) / den));
+  const coarse = top.bpm + shift * 0.25;
+
+  // Fine grid fit around the winner.
+  let bpm = coarse;
+  let bestFit = gridFit(onsets, coarse, 30);
+  for (let b = coarse * 0.975; b <= coarse * 1.025; b += 0.02) {
+    const fit = gridFit(onsets, b, 30);
+    if (fit.score > bestFit.score) {
+      bestFit = fit;
+      bpm = b;
+    }
+  }
+
+  // Related metrical levels, for honesty in the note and the confidence.
+  const levelOf = (b: number): Cand | undefined => {
+    if (b < SUBGRID.minBpm || b > SUBGRID.maxBpm) return undefined;
+    return cands[Math.round((b - SUBGRID.minBpm) / 0.25)];
+  };
+  const related = [0.5, 2, 2 / 3, 1.5]
+    .map((k) => ({ k, c: levelOf(top.bpm * k) }))
+    .filter((x): x is { k: number; c: Cand } => Boolean(x.c));
+  const rival = related.reduce((m, x) => Math.max(m, x.c.score), 0);
+  const salience = top.score > 0 ? 1 - rival / top.score : 0;
+  const confidence = round2(Math.max(0.05, Math.min(0.9, 0.3 + 0.9 * salience * Math.min(1, top.comb))));
+  const bpmOut = Math.round(bpm * 10) / 10;
+  const candidates: TempoCandidate[] = [
+    { bpm: bpmOut, votes: Math.round(top.comb * 100), role: "beat" },
+    ...related.map((x) => ({
+      bpm: Math.round(x.c.bpm * 10) / 10,
+      votes: Math.round(x.c.comb * 100),
+      role: (x.k > 1 ? "subdivision" : "pulse") as TempoRole,
+    })),
+  ];
+  return {
+    bpm: bpmOut,
+    confidence,
+    candidates,
+    note:
+      `sub-grid onsets (${onsets.length}); comb x prior picked ${bpmOut} BPM` +
+      (rival > 0
+        ? `; nearest rival level ${related.find((x) => x.c.score === rival)?.c.bpm ?? "?"} BPM at ${Math.round((rival / top.score) * 100)}%`
+        : ""),
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Deterministic lab — synthetic onset grids, no audio needed.
 // Mirrors runChromaLab(): { name, expected, got, pass } rows.
 // ---------------------------------------------------------------------------
@@ -325,6 +541,46 @@ export function runTempoLab(): LabRow[] {
       `${first}`,
       beats.length > 0 && Math.abs(first - 250) <= 40,
     );
+  }
+
+  // 10. Sub-grid: 96.006 BPM quarters + weaker off-beat 8ths (the test song's
+  // feel) must land on 96, not 192 or 48, within 0.5 BPM.
+  {
+    const step = 60000 / 96.006;
+    const on: WeightedOnset[] = [];
+    for (let i = 0; i < 160; i++) {
+      on.push({ t_ms: i * step, w: i % 2 === 0 ? 1 : 0.8 });
+      on.push({ t_ms: i * step + step / 2, w: 0.35 });
+    }
+    const est = estimateTempoSubgrid(on);
+    check("sub-grid 96 with 8ths", "96±0.5", est ? `${est.bpm}` : "null", Math.abs((est?.bpm ?? 0) - 96) <= 0.5);
+  }
+
+  // 11. Sub-grid: kick on 1 and 3 only (half-time trap) at 120 BPM with hats on
+  // every beat must stay at the beat level (120), not 60.
+  {
+    const step = 500;
+    const on: WeightedOnset[] = [];
+    for (let i = 0; i < 120; i++) on.push({ t_ms: i * step, w: i % 2 === 0 ? 1 : 0.45 });
+    const est = estimateTempoSubgrid(on);
+    check("sub-grid half-time trap", "120±1", est ? `${est.bpm}` : "null", Math.abs((est?.bpm ?? 0) - 120) <= 1);
+  }
+
+  // 12. Sub-grid: aperiodic onsets must not report a tempo.
+  {
+    let seed = 777;
+    const rand = (): number => {
+      seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+      return seed / 0x7fffffff;
+    };
+    const on: WeightedOnset[] = [];
+    let t = 0;
+    for (let i = 0; i < 80; i++) {
+      t += 150 + rand() * 1400;
+      on.push({ t_ms: Math.round(t), w: 0.2 + rand() });
+    }
+    const est = estimateTempoSubgrid(on);
+    check("sub-grid aperiodic", "null", est ? `${est.bpm} conf ${est.confidence}` : "null", est === null);
   }
 
   return rows;
