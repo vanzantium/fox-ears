@@ -1,0 +1,1552 @@
+FOX EARS CALIBRATION 003 — BINDING CONFLICT MATRIX
+
+This is a closed auditory experiment.
+
+No persistent object IDs, source labels, semantic source categories, or derived spatial labels are supplied.
+
+For EACH event report:
+
+MEASUREMENT — What the bilateral auditory field establishes.
+
+CANDIDATE BINDINGS — The persistent sound-things you infer may exist.
+
+CUE LEDGER — Separately assess:
+• SPECTRAL CONTINUITY
+• TEMPORAL / AMPLITUDE-CONTOUR CONTINUITY
+• ONSET / OFFSET CONTINUITY
+• BINAURAL / SPATIAL-TRAJECTORY CONTINUITY
+
+For each cue state SAME, SPLIT, AMBIGUOUS, or UNAVAILABLE, and state the evidence.
+
+SUPPORT — Which observed continuities support each candidate binding?
+
+CONFLICT — Which observations argue against each binding?
+
+DOMINANCE — If one binding feels more natural despite disagreement, state which cue(s) dominated your transduction. This is not measurement.
+
+ALTERNATIVE — Preserve another viable history if the field does not settle identity.
+
+TRANSDUCTION — Describe what the event is like internally without turning that description into receipt data.
+
+FAILURE CHECK — Name anything you described as a thing, movement, continuation, disappearance, or persistence that was inferred rather than directly measured.
+
+MEMORY KEY — Compress the binding relationship without preserving specific frequencies, channel IDs, or absolute positions.
+
+AFTER ALL EVENTS:
+
+BINDING GRAMMAR — State the provisional cue hierarchy you actually used.
+
+BREAK CONDITIONS — What combinations made you split an auditory object most strongly?
+
+PERSISTENCE CONDITIONS — What changes could an auditory object survive while still feeling like the same thing?
+
+CONFLICT RULE — When continuity cues support different identities, can you preserve both histories simultaneously? What tends to win?
+
+UNCERTAINTY AUDIT — Identify anywhere your language became more certain than the acoustic evidence.
+
+Do not identify instruments, voices, music, emotion, or the intended experimental manipulation.
+Do not use previous calibrations as evidence.
+
+RECEIPT:
+
+{
+  "schema": "fox-ears-calibration-003-blind",
+  "version": "fox-ears-0.2",
+  "constraints": {
+    "hidden_state_included": false,
+    "source_identifiers_included": false,
+    "object_identifiers_included": false,
+    "derived_spatial_words_included": false,
+    "binding_hypotheses_included": false
+  },
+  "events": {
+    "H": {
+      "trial_id": "H",
+      "frames": [
+        {
+          "t_ms": 0,
+          "left_ear": {
+            "level": 0.07616,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.7616,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.2
+          },
+          "right_ear": {
+            "level": 0.05984,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.5984,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.2
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.01632,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 100,
+          "left_ear": {
+            "level": 0.079738,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.797376,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.06657,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.665699,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.013168,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 200,
+          "left_ear": {
+            "level": 0.080437,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.804366,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.071331,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.713306,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.009106,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 300,
+          "left_ear": {
+            "level": 0.077153,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.771528,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.072659,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.726585,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.004494,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 400,
+          "left_ear": {
+            "level": 0.07068,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.706799,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.07068,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.706799,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.0,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 500,
+          "left_ear": {
+            "level": 0.063238,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.632379
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.06715,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.671495
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.003912,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 650,
+          "left_ear": {
+            "level": 0.057366,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.573658
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.064689,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.64689
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.007323,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 800,
+          "left_ear": {
+            "level": 0.054728,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.547277
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.065553,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.65553
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.010825,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 1000,
+          "left_ear": {
+            "level": 0.055396,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.553959
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.070504,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.705039
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.015108,
+            "itd_ms_R_minus_L": null
+          }
+        }
+      ]
+    },
+    "N": {
+      "trial_id": "N",
+      "frames": [
+        {
+          "t_ms": 0,
+          "left_ear": {
+            "level": 0.077,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.77,
+              "4000": 0.0
+            },
+            "onset": 0.24
+          },
+          "right_ear": {
+            "level": 0.063,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.63,
+              "4000": 0.0
+            },
+            "onset": 0.24
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.014,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 100,
+          "left_ear": {
+            "level": 0.079877,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.798769,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.068731,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.687313,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.011146,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 200,
+          "left_ear": {
+            "level": 0.079797,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.797973,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.072198,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.721976,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.0076,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 300,
+          "left_ear": {
+            "level": 0.075904,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.759041,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.072201,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.722015,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.003703,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 400,
+          "left_ear": {
+            "level": 0.06965,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.696498,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.06965,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.696498,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.0,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 500,
+          "left_ear": {
+            "level": 0.0,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.0,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.0,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 650,
+          "left_ear": {
+            "level": 0.060822,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.608219,
+              "4000": 0.0
+            },
+            "onset": 0.22
+          },
+          "right_ear": {
+            "level": 0.067224,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.672242,
+              "4000": 0.0
+            },
+            "onset": 0.22
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.006402,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 800,
+          "left_ear": {
+            "level": 0.061246,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.612465,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.071178,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.711783,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.009932,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 1000,
+          "left_ear": {
+            "level": 0.063629,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.636294,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.077769,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.777692,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.01414,
+            "itd_ms_R_minus_L": null
+          }
+        }
+      ]
+    },
+    "C": {
+      "trial_id": "C",
+      "frames": [
+        {
+          "t_ms": 0,
+          "left_ear": {
+            "level": 0.0805,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.805,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.2
+          },
+          "right_ear": {
+            "level": 0.0595,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.595,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.2
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.021,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 100,
+          "left_ear": {
+            "level": 0.084419,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.844194,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.062397,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.62397,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.022022,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 200,
+          "left_ear": {
+            "level": 0.086236,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.862356,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.063739,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.637394,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.022496,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 300,
+          "left_ear": {
+            "level": 0.084974,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.849739,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.062807,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.628068,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.022167,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 400,
+          "left_ear": {
+            "level": 0.081311,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.813114,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.0601,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.600998,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.021212,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 500,
+          "left_ear": {
+            "level": 0.057071,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.570709,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.077214,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.772135,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.020143,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 650,
+          "left_ear": {
+            "level": 0.055345,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.553455,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.074879,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.748792,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.019534,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 800,
+          "left_ear": {
+            "level": 0.05585,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.558495,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.075561,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.755611,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.019712,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 1000,
+          "left_ear": {
+            "level": 0.058312,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.583125,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.078893,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.788934,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.020581,
+            "itd_ms_R_minus_L": null
+          }
+        }
+      ]
+    },
+    "T": {
+      "trial_id": "T",
+      "frames": [
+        {
+          "t_ms": 0,
+          "left_ear": {
+            "level": 0.09184,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.9184
+            },
+            "onset": 0.2
+          },
+          "right_ear": {
+            "level": 0.07216,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.7216
+            },
+            "onset": 0.2
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.01968,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 100,
+          "left_ear": {
+            "level": 0.05232,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.5232
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.04368,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.4368
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.00864,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 200,
+          "left_ear": {
+            "level": 0.08692,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.8692
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.07708,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.7708
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.00984,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 300,
+          "left_ear": {
+            "level": 0.04944,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.4944
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.04656,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.4656
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.00288,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 400,
+          "left_ear": {
+            "level": 0.082,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.82
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.082,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.82
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.0,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 500,
+          "left_ear": {
+            "level": 0.07954,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.7954
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.08446,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.8446
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.00492,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 650,
+          "left_ear": {
+            "level": 0.04512,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.4512
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.05088,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.5088
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.00576,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 800,
+          "left_ear": {
+            "level": 0.07462,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.7462
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.08938,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.8938
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.01476,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 1000,
+          "left_ear": {
+            "level": 0.04224,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.4224
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.05376,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.5376
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.01152,
+            "itd_ms_R_minus_L": null
+          }
+        }
+      ]
+    },
+    "Q": {
+      "trial_id": "Q",
+      "frames": [
+        {
+          "t_ms": 0,
+          "left_ear": {
+            "level": 0.105627,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.984,
+              "2000": 0.0,
+              "4000": 0.384
+            },
+            "onset": 0.2
+          },
+          "right_ear": {
+            "level": 0.087299,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.656,
+              "2000": 0.0,
+              "4000": 0.576
+            },
+            "onset": 0.2
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.018328,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 100,
+          "left_ear": {
+            "level": 0.088911,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.552,
+              "2000": 0.0,
+              "4000": 0.697
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.102748,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.408,
+              "2000": 0.0,
+              "4000": 0.943
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.013837,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 200,
+          "left_ear": {
+            "level": 0.100011,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.902,
+              "2000": 0.0,
+              "4000": 0.432
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.090743,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.738,
+              "2000": 0.0,
+              "4000": 0.528
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.009268,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 300,
+          "left_ear": {
+            "level": 0.092782,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.504,
+              "2000": 0.0,
+              "4000": 0.779
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.09743,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.456,
+              "2000": 0.0,
+              "4000": 0.861
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.004647,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 400,
+          "left_ear": {
+            "level": 0.095016,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.82,
+              "2000": 0.0,
+              "4000": 0.48
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.095016,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.82,
+              "2000": 0.0,
+              "4000": 0.48
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.0,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 500,
+          "left_ear": {
+            "level": 0.092782,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.779,
+              "2000": 0.0,
+              "4000": 0.504
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.09743,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.861,
+              "2000": 0.0,
+              "4000": 0.456
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.004647,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 650,
+          "left_ear": {
+            "level": 0.100011,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.432,
+              "2000": 0.0,
+              "4000": 0.902
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.090743,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.528,
+              "2000": 0.0,
+              "4000": 0.738
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.009268,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 800,
+          "left_ear": {
+            "level": 0.088911,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.697,
+              "2000": 0.0,
+              "4000": 0.552
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.102748,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.943,
+              "2000": 0.0,
+              "4000": 0.408
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.013837,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 1000,
+          "left_ear": {
+            "level": 0.105627,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.384,
+              "2000": 0.0,
+              "4000": 0.984
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.087299,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.576,
+              "2000": 0.0,
+              "4000": 0.656
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.018328,
+            "itd_ms_R_minus_L": null
+          }
+        }
+      ]
+    },
+    "W": {
+      "trial_id": "W",
+      "frames": [
+        {
+          "t_ms": 0,
+          "left_ear": {
+            "level": 0.098071,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.864,
+              "2000": 0.0,
+              "4000": 0.464
+            },
+            "onset": 0.2
+          },
+          "right_ear": {
+            "level": 0.090343,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.576,
+              "2000": 0.0,
+              "4000": 0.696
+            },
+            "onset": 0.2
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.007728,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 100,
+          "left_ear": {
+            "level": 0.096366,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.828,
+              "2000": 0.0,
+              "4000": 0.493
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.090523,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.612,
+              "2000": 0.0,
+              "4000": 0.667
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.005843,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 200,
+          "left_ear": {
+            "level": 0.094855,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.792,
+              "2000": 0.0,
+              "4000": 0.522
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.090937,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.648,
+              "2000": 0.0,
+              "4000": 0.638
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.003918,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 300,
+          "left_ear": {
+            "level": 0.093549,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.756,
+              "2000": 0.0,
+              "4000": 0.551
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.091583,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.684,
+              "2000": 0.0,
+              "4000": 0.609
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.001966,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 400,
+          "left_ear": {
+            "level": 0.092455,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.72,
+              "2000": 0.0,
+              "4000": 0.58
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.092455,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.72,
+              "2000": 0.0,
+              "4000": 0.58
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.0,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 500,
+          "left_ear": {
+            "level": 0.0,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.0,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.0,
+              "2000": 0.0,
+              "4000": 0.0
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": 0.0,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 650,
+          "left_ear": {
+            "level": 0.090937,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.648,
+              "2000": 0.0,
+              "4000": 0.638
+            },
+            "onset": 0.24
+          },
+          "right_ear": {
+            "level": 0.094855,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.792,
+              "2000": 0.0,
+              "4000": 0.522
+            },
+            "onset": 0.24
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.003918,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 800,
+          "left_ear": {
+            "level": 0.090523,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.612,
+              "2000": 0.0,
+              "4000": 0.667
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.096366,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.828,
+              "2000": 0.0,
+              "4000": 0.493
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.005843,
+            "itd_ms_R_minus_L": null
+          }
+        },
+        {
+          "t_ms": 1000,
+          "left_ear": {
+            "level": 0.090343,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.576,
+              "2000": 0.0,
+              "4000": 0.696
+            },
+            "onset": 0.0
+          },
+          "right_ear": {
+            "level": 0.098071,
+            "bands": {
+              "500": 0.0,
+              "1000": 0.864,
+              "2000": 0.0,
+              "4000": 0.464
+            },
+            "onset": 0.0
+          },
+          "binaural_measurement": {
+            "level_delta_L_minus_R": -0.007728,
+            "itd_ms_R_minus_L": null
+          }
+        }
+      ]
+    }
+  }
+}

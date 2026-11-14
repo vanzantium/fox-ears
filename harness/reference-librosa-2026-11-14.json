@@ -1,0 +1,86 @@
+[
+  {
+    "file": "10-turn_the_screw.mp3",
+    "librosa_bpm": 99.4,
+    "ks_key": "D# minor",
+    "ks_r": 0.81
+  },
+  {
+    "file": "4-spiral_system.mp3",
+    "librosa_bpm": 123.0,
+    "ks_key": "F# minor",
+    "ks_r": 0.63
+  },
+  {
+    "file": "5-spiralling.mp3",
+    "librosa_bpm": 123.0,
+    "ks_key": "A minor",
+    "ks_r": 0.74
+  },
+  {
+    "file": "6-pressure_makes.mp3",
+    "librosa_bpm": 129.2,
+    "ks_key": "E major",
+    "ks_r": 0.53
+  },
+  {
+    "file": "7-involuntary_spiral.mp3",
+    "librosa_bpm": 99.4,
+    "ks_key": "C major",
+    "ks_r": 0.57
+  },
+  {
+    "file": "8-racer.mp3",
+    "librosa_bpm": 143.6,
+    "ks_key": "C minor",
+    "ks_r": 0.69
+  },
+  {
+    "file": "9-step_up.mp3",
+    "librosa_bpm": 95.7,
+    "ks_key": "A minor",
+    "ks_r": 0.69
+  },
+  {
+    "file": "music_midnight_funky.ogg",
+    "librosa_bpm": 136.0,
+    "ks_key": "D major",
+    "ks_r": 0.89
+  },
+  {
+    "file": "music_midnight_slow.ogg",
+    "librosa_bpm": 136.0,
+    "ks_key": "D major",
+    "ks_r": 0.73
+  },
+  {
+    "file": "music_track_a.ogg",
+    "librosa_bpm": 129.2,
+    "ks_key": "F minor",
+    "ks_r": 0.76
+  },
+  {
+    "file": "music_track_b.ogg",
+    "librosa_bpm": 107.7,
+    "ks_key": "G minor",
+    "ks_r": 0.82
+  },
+  {
+    "file": "my-little-monkey.mp3",
+    "librosa_bpm": 152.0,
+    "ks_key": "D major",
+    "ks_r": 0.8
+  },
+  {
+    "file": "neon-whiskers.mp3",
+    "librosa_bpm": 129.2,
+    "ks_key": "D# major",
+    "ks_r": 0.69
+  },
+  {
+    "file": "stinky-skunk-shuffle.mp3",
+    "librosa_bpm": 99.4,
+    "ks_key": "C major",
+    "ks_r": 0.85
+  }
+]

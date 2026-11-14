@@ -1,0 +1,53 @@
+# Node
+node_modules/
+dist/
+build/
+.output/
+.nitro/
+.vinxi/
+.vercel/
+.turbo/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+.env/
+.mypy_cache/
+
+# Audio — Taylor's songs stay in Drive, never in this repo
+*.mp3
+*.wav
+*.wave
+*.ogg
+*.flac
+*.m4a
+*.aac
+*.aiff
+*.aif
+*.wma
+*.opus
+
+# Calibration 003 key material (held back so the calibration stays blind)
+*LOCKED_KEY*
+fox_ears_v0_2_calibration_003_inspector.json
+cal003_selfcheck.py
+cal003-key/
+
+# Secrets and local env
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+*.swp
+*~
