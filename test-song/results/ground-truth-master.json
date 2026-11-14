@@ -1,0 +1,2158 @@
+{
+  "title": "Fox at the Gate \u2014 master v1",
+  "analyzed_at_america_dawson_creek": "2026-11-14 2:34 PM America/Dawson_Creek",
+  "file": {
+    "source_attachment": "chat attachment (sha256 matches the working copy)",
+    "working_copy_m4a": "test-song/master/fox-at-the-gate-master.m4a (local working copy; audio is not in the repo)",
+    "working_copy_wav": "test-song/master/fox-at-the-gate-master.wav (local working copy; audio is not in the repo)",
+    "m4a_sha256": "b1eb4a8532574afcdfee1c70ea6a7ef608fc1f8c0b3be82db23e3b9a18ecdeed",
+    "wav_sha256": "19671e056afbc0e0322220ca38965ee1d50c0cd0e8aa43c0e134d71adcd34e8f",
+    "m4a_bytes": 1859770,
+    "wav_bytes": 20815564,
+    "container": "MPEG-4 (isom/iso2/mp41)",
+    "audio_codec": "Opus, 134 kb/s",
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "channel_layout": "stereo",
+    "m4a_duration_s": 108.4,
+    "wav_duration_s": 108.4135,
+    "wav_note": "Decoded with ffmpeg pcm_s16le, native 48 kHz stereo. WAV is 13.5 ms longer than the m4a duration tag (decoder padding).",
+    "encoder": "Lavf60.16.100",
+    "suno_comment": "made with suno; created=2026-11-14T21:30:22Z; id=8a932f9b-f9ba-4254-98ad-9683cdce680b",
+    "suno_id": "8a932f9b-f9ba-4254-98ad-9683cdce680b",
+    "suno_created_utc": "2026-11-14T21:30:22Z",
+    "suno_created_america_dawson_creek": "2026-11-14 2:30 PM America/Dawson_Creek",
+    "embedded_lyrics": true,
+    "timed_subtitle_stream": true
+  },
+  "requested": {
+    "style": "indie folk pop",
+    "bpm": 96,
+    "key": "G major",
+    "meter": "4/4",
+    "arrangement": "acoustic guitar, light kick and snare, warm bass, clear solo male vocal",
+    "structure": "4-bar intro, verse 1, chorus, verse 2, chorus, outro (guitar, 4 bars)"
+  },
+  "tempo": {
+    "requested_bpm": 96,
+    "methods": {
+      "librosa_feature_tempo": 95.703,
+      "beat_track_default": 95.703,
+      "beat_track_prior_96": 95.703,
+      "tempogram_peak": 95.703,
+      "tempogram_top": [
+        {
+          "bpm": 95.7,
+          "score": 0.7673
+        },
+        {
+          "bpm": 47.85,
+          "score": 0.6524
+        },
+        {
+          "bpm": 198.77,
+          "score": 0.6313
+        },
+        {
+          "bpm": 184.57,
+          "score": 0.5991
+        },
+        {
+          "bpm": 64.6,
+          "score": 0.5635
+        },
+        {
+          "bpm": 99.38,
+          "score": 0.5111
+        },
+        {
+          "bpm": 63.02,
+          "score": 0.5087
+        },
+        {
+          "bpm": 129.2,
+          "score": 0.484
+        }
+      ]
+    },
+    "beat_grid_default": {
+      "label": "beat_track_default",
+      "n_beats": 166,
+      "first_beat_s": 1.0449,
+      "last_beat_s": 104.1879,
+      "tracker_bpm": 95.703,
+      "median_ibi_bpm": 95.703,
+      "mean_ibi_bpm": 96.006,
+      "std_ibi_bpm": 1.483,
+      "cv_ibi": 0.0154,
+      "min_ibi_bpm": 92.285,
+      "max_ibi_bpm": 99.384,
+      "local_tempo_8beat": [
+        95.74,
+        95.7,
+        95.74,
+        96.2,
+        96.16,
+        96.2,
+        96.2,
+        95.7,
+        96.2,
+        96.2,
+        95.7,
+        95.7,
+        96.2,
+        96.2,
+        95.7,
+        96.16,
+        96.16,
+        95.7,
+        96.16,
+        96.16,
+        95.28,
+        96.2,
+        96.62,
+        95.7,
+        95.74,
+        96.2,
+        96.16,
+        96.16,
+        96.16,
+        95.7,
+        96.2,
+        96.2,
+        95.7,
+        96.16,
+        96.16,
+        95.7,
+        96.16,
+        96.16,
+        96.16,
+        96.16
+      ],
+      "local_tempo_range_bpm": [
+        95.28,
+        96.62
+      ],
+      "stability": "high"
+    },
+    "beat_grid_prior_96": {
+      "label": "beat_track_prior_96",
+      "n_beats": 166,
+      "first_beat_s": 1.0449,
+      "last_beat_s": 104.1879,
+      "tracker_bpm": 95.703,
+      "median_ibi_bpm": 95.703,
+      "mean_ibi_bpm": 96.006,
+      "std_ibi_bpm": 1.483,
+      "cv_ibi": 0.0154,
+      "min_ibi_bpm": 92.285,
+      "max_ibi_bpm": 99.384,
+      "local_tempo_8beat": [
+        95.74,
+        95.7,
+        95.74,
+        96.2,
+        96.16,
+        96.2,
+        96.2,
+        95.7,
+        96.2,
+        96.2,
+        95.7,
+        95.7,
+        96.2,
+        96.2,
+        95.7,
+        96.16,
+        96.16,
+        95.7,
+        96.16,
+        96.16,
+        95.28,
+        96.2,
+        96.62,
+        95.7,
+        95.74,
+        96.2,
+        96.16,
+        96.16,
+        96.16,
+        95.7,
+        96.2,
+        96.2,
+        95.7,
+        96.16,
+        96.16,
+        95.7,
+        96.16,
+        96.16,
+        96.16,
+        96.16
+      ],
+      "local_tempo_range_bpm": [
+        95.28,
+        96.62
+      ],
+      "stability": "high"
+    },
+    "consensus_bpm": 96.006,
+    "drift_from_requested_bpm": 0.006,
+    "drift_percent": 0.01,
+    "bar_duration_s": 2.4998,
+    "four_bar_intro_expected_s": 9.9994,
+    "confidence": "high",
+    "first_tracked_beat_s": 1.0449,
+    "estimated_first_downbeat_s": -0.205,
+    "downbeat_note": "The beat tracker\u2019s first beat is at 1.0449s. Counting two beat-periods back puts the first downbeat 0.205s before the file start, and then every later section downbeat lines up with the lyric cues (chorus lines begin as a 1-beat pickup)."
+  },
+  "key": {
+    "requested_key": "G major",
+    "methods": {
+      "kk_chroma_cqt": {
+        "key": "G major",
+        "r": 0.8759,
+        "runner_up": "D major",
+        "runner_up_r": 0.7804,
+        "gap": 0.0955,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.8759
+          },
+          {
+            "key": "D major",
+            "r": 0.7804
+          },
+          {
+            "key": "G minor",
+            "r": 0.5517
+          },
+          {
+            "key": "B minor",
+            "r": 0.455
+          },
+          {
+            "key": "C major",
+            "r": 0.399
+          }
+        ]
+      },
+      "kk_chroma_stft": {
+        "key": "G major",
+        "r": 0.7727,
+        "runner_up": "D major",
+        "runner_up_r": 0.6565,
+        "gap": 0.1163,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.7727
+          },
+          {
+            "key": "D major",
+            "r": 0.6565
+          },
+          {
+            "key": "B minor",
+            "r": 0.6454
+          },
+          {
+            "key": "G minor",
+            "r": 0.4542
+          },
+          {
+            "key": "E minor",
+            "r": 0.2097
+          }
+        ]
+      },
+      "kk_chroma_cens": {
+        "key": "G major",
+        "r": 0.8311,
+        "runner_up": "D major",
+        "runner_up_r": 0.7735,
+        "gap": 0.0576,
+        "confidence": "medium",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.8311
+          },
+          {
+            "key": "D major",
+            "r": 0.7735
+          },
+          {
+            "key": "G minor",
+            "r": 0.5957
+          },
+          {
+            "key": "B minor",
+            "r": 0.4285
+          },
+          {
+            "key": "D minor",
+            "r": 0.3791
+          }
+        ]
+      },
+      "kk_harmonic_cqt": {
+        "key": "G major",
+        "r": 0.9273,
+        "runner_up": "D major",
+        "runner_up_r": 0.7814,
+        "gap": 0.1459,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.9273
+          },
+          {
+            "key": "D major",
+            "r": 0.7814
+          },
+          {
+            "key": "B minor",
+            "r": 0.5763
+          },
+          {
+            "key": "G minor",
+            "r": 0.5063
+          },
+          {
+            "key": "E minor",
+            "r": 0.4461
+          }
+        ]
+      },
+      "temperley_chroma_cqt": {
+        "key": "G major",
+        "r": 0.8081,
+        "runner_up": "G minor",
+        "runner_up_r": 0.6362,
+        "gap": 0.1719,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.8081
+          },
+          {
+            "key": "G minor",
+            "r": 0.6362
+          },
+          {
+            "key": "D major",
+            "r": 0.6239
+          },
+          {
+            "key": "C major",
+            "r": 0.3966
+          },
+          {
+            "key": "D minor",
+            "r": 0.3377
+          }
+        ]
+      },
+      "temperley_harmonic_cqt": {
+        "key": "G major",
+        "r": 0.8803,
+        "runner_up": "D major",
+        "runner_up_r": 0.6186,
+        "gap": 0.2617,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.8803
+          },
+          {
+            "key": "D major",
+            "r": 0.6186
+          },
+          {
+            "key": "G minor",
+            "r": 0.6113
+          },
+          {
+            "key": "C major",
+            "r": 0.4646
+          },
+          {
+            "key": "B minor",
+            "r": 0.3493
+          }
+        ]
+      },
+      "kk_cqt_first_20s": {
+        "key": "D major",
+        "r": 0.8213,
+        "runner_up": "G major",
+        "runner_up_r": 0.6236,
+        "gap": 0.1977,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "D major",
+            "r": 0.8213
+          },
+          {
+            "key": "G major",
+            "r": 0.6236
+          },
+          {
+            "key": "G minor",
+            "r": 0.4083
+          },
+          {
+            "key": "D minor",
+            "r": 0.3863
+          },
+          {
+            "key": "A minor",
+            "r": 0.376
+          }
+        ]
+      },
+      "kk_cqt_after_intro_to_end": {
+        "key": "G major",
+        "r": 0.9122,
+        "runner_up": "D major",
+        "runner_up_r": 0.7452,
+        "gap": 0.1669,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.9122
+          },
+          {
+            "key": "D major",
+            "r": 0.7452
+          },
+          {
+            "key": "G minor",
+            "r": 0.5663
+          },
+          {
+            "key": "B minor",
+            "r": 0.4595
+          },
+          {
+            "key": "C major",
+            "r": 0.4342
+          }
+        ]
+      }
+    },
+    "consensus_key": "G major",
+    "method_agreement": "7/8",
+    "votes": [
+      [
+        "G major",
+        7
+      ],
+      [
+        "D major",
+        1
+      ]
+    ],
+    "matches_requested": true,
+    "confidence": "high",
+    "mean_chroma_cqt_pc": {
+      "C": 0.289,
+      "C#": 0.2444,
+      "D": 0.3781,
+      "D#": 0.2314,
+      "E": 0.2597,
+      "F": 0.2158,
+      "F#": 0.2805,
+      "G": 0.389,
+      "G#": 0.2702,
+      "A": 0.3265,
+      "A#": 0.2439,
+      "B": 0.2781
+    },
+    "per_section": {
+      "intro": {
+        "key": "D major",
+        "r": 0.8196,
+        "runner_up": "G major",
+        "runner_up_r": 0.5058,
+        "gap": 0.3138,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "D major",
+            "r": 0.8196
+          },
+          {
+            "key": "G major",
+            "r": 0.5058
+          },
+          {
+            "key": "F# minor",
+            "r": 0.4346
+          },
+          {
+            "key": "D minor",
+            "r": 0.4306
+          },
+          {
+            "key": "G minor",
+            "r": 0.36
+          }
+        ]
+      },
+      "verse_1": {
+        "key": "G major",
+        "r": 0.7147,
+        "runner_up": "D major",
+        "runner_up_r": 0.6706,
+        "gap": 0.0441,
+        "confidence": "medium",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.7147
+          },
+          {
+            "key": "D major",
+            "r": 0.6706
+          },
+          {
+            "key": "E minor",
+            "r": 0.4558
+          },
+          {
+            "key": "G minor",
+            "r": 0.4426
+          },
+          {
+            "key": "B minor",
+            "r": 0.4116
+          }
+        ]
+      },
+      "chorus_1": {
+        "key": "G major",
+        "r": 0.8848,
+        "runner_up": "D major",
+        "runner_up_r": 0.7195,
+        "gap": 0.1653,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.8848
+          },
+          {
+            "key": "D major",
+            "r": 0.7195
+          },
+          {
+            "key": "G minor",
+            "r": 0.4788
+          },
+          {
+            "key": "B minor",
+            "r": 0.4705
+          },
+          {
+            "key": "C major",
+            "r": 0.4297
+          }
+        ]
+      },
+      "verse_2": {
+        "key": "G major",
+        "r": 0.9076,
+        "runner_up": "D major",
+        "runner_up_r": 0.7129,
+        "gap": 0.1948,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.9076
+          },
+          {
+            "key": "D major",
+            "r": 0.7129
+          },
+          {
+            "key": "G minor",
+            "r": 0.5499
+          },
+          {
+            "key": "C major",
+            "r": 0.4393
+          },
+          {
+            "key": "B minor",
+            "r": 0.4213
+          }
+        ]
+      },
+      "chorus_2": {
+        "key": "G major",
+        "r": 0.8981,
+        "runner_up": "D major",
+        "runner_up_r": 0.743,
+        "gap": 0.1552,
+        "confidence": "high",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.8981
+          },
+          {
+            "key": "D major",
+            "r": 0.743
+          },
+          {
+            "key": "G minor",
+            "r": 0.5089
+          },
+          {
+            "key": "B minor",
+            "r": 0.4612
+          },
+          {
+            "key": "C major",
+            "r": 0.4544
+          }
+        ]
+      },
+      "outro": {
+        "key": "G major",
+        "r": 0.8129,
+        "runner_up": "G minor",
+        "runner_up_r": 0.7364,
+        "gap": 0.0766,
+        "confidence": "medium",
+        "top5": [
+          {
+            "key": "G major",
+            "r": 0.8129
+          },
+          {
+            "key": "G minor",
+            "r": 0.7364
+          },
+          {
+            "key": "D major",
+            "r": 0.5377
+          },
+          {
+            "key": "C major",
+            "r": 0.3295
+          },
+          {
+            "key": "E minor",
+            "r": 0.2994
+          }
+        ]
+      }
+    }
+  },
+  "sections": {
+    "source_of_boundaries": "Primary: timed lyric/subtitle track muxed in the Suno m4a (extracted to SRT). Independent check: structural novelty on chroma-cens recurrence, bar-length arithmetic at the consensus tempo, and RMS. Section labels in the SRT are zero-duration and stamped at the first lyric of the following section, so Intro is inferred as 0\u2013first-lyric.",
+    "requested_structure": "4-bar intro, verse 1, chorus, verse 2, chorus, outro (4-bar guitar end)",
+    "sections": [
+      {
+        "name": "intro",
+        "start_s": 0.0,
+        "end_s": 9.879,
+        "basis": "time 0 to first Verse 1 lyric; [Intro] tag in the m4a is stamped at 9.879s (same instant as Verse 1), so the intro itself is the preceding guitar",
+        "start_fmt": "0:00.000",
+        "end_fmt": "0:09.879",
+        "duration_s": 9.879,
+        "duration_beats": 15.81,
+        "duration_bars_4_4": 3.95,
+        "novelty_peak_near_start": [],
+        "key_in_section": {
+          "key": "D major",
+          "r": 0.8196,
+          "runner_up": "G major",
+          "runner_up_r": 0.5058,
+          "gap": 0.3138,
+          "confidence": "high",
+          "top5": [
+            {
+              "key": "D major",
+              "r": 0.8196
+            },
+            {
+              "key": "G major",
+              "r": 0.5058
+            },
+            {
+              "key": "F# minor",
+              "r": 0.4346
+            },
+            {
+              "key": "D minor",
+              "r": 0.4306
+            },
+            {
+              "key": "G minor",
+              "r": 0.36
+            }
+          ]
+        },
+        "near_integer_bars": true,
+        "confidence": "high",
+        "requested_bars": 4,
+        "measured_bars": 3.95,
+        "heuristic_vocal_fraction": 0.395
+      },
+      {
+        "name": "verse_1",
+        "start_s": 9.879,
+        "end_s": 29.425,
+        "basis": "timed lyrics: four verse lines, then [Chorus]",
+        "start_fmt": "0:09.879",
+        "end_fmt": "0:29.425",
+        "duration_s": 19.546,
+        "duration_beats": 31.28,
+        "duration_bars_4_4": 7.82,
+        "novelty_peak_near_start": [
+          9.752
+        ],
+        "key_in_section": {
+          "key": "G major",
+          "r": 0.7147,
+          "runner_up": "D major",
+          "runner_up_r": 0.6706,
+          "gap": 0.0441,
+          "confidence": "medium",
+          "top5": [
+            {
+              "key": "G major",
+              "r": 0.7147
+            },
+            {
+              "key": "D major",
+              "r": 0.6706
+            },
+            {
+              "key": "E minor",
+              "r": 0.4558
+            },
+            {
+              "key": "G minor",
+              "r": 0.4426
+            },
+            {
+              "key": "B minor",
+              "r": 0.4116
+            }
+          ]
+        },
+        "near_integer_bars": true,
+        "confidence": "high",
+        "heuristic_vocal_fraction": 0.613
+      },
+      {
+        "name": "chorus_1",
+        "start_s": 29.425,
+        "end_s": 54.873,
+        "basis": "timed lyrics: full chorus through 'Hearing everything'",
+        "start_fmt": "0:29.425",
+        "end_fmt": "0:54.873",
+        "duration_s": 25.448,
+        "duration_beats": 40.72,
+        "duration_bars_4_4": 10.18,
+        "novelty_peak_near_start": [
+          30.07
+        ],
+        "key_in_section": {
+          "key": "G major",
+          "r": 0.8848,
+          "runner_up": "D major",
+          "runner_up_r": 0.7195,
+          "gap": 0.1653,
+          "confidence": "high",
+          "top5": [
+            {
+              "key": "G major",
+              "r": 0.8848
+            },
+            {
+              "key": "D major",
+              "r": 0.7195
+            },
+            {
+              "key": "G minor",
+              "r": 0.4788
+            },
+            {
+              "key": "B minor",
+              "r": 0.4705
+            },
+            {
+              "key": "C major",
+              "r": 0.4297
+            }
+          ]
+        },
+        "near_integer_bars": true,
+        "confidence": "high",
+        "heuristic_vocal_fraction": 0.228
+      },
+      {
+        "name": "verse_2",
+        "start_s": 54.873,
+        "end_s": 74.392,
+        "basis": "timed lyrics: four verse-2 lines, then second [Chorus]",
+        "start_fmt": "0:54.873",
+        "end_fmt": "1:14.392",
+        "duration_s": 19.519,
+        "duration_beats": 31.23,
+        "duration_bars_4_4": 7.81,
+        "novelty_peak_near_start": [],
+        "key_in_section": {
+          "key": "G major",
+          "r": 0.9076,
+          "runner_up": "D major",
+          "runner_up_r": 0.7129,
+          "gap": 0.1948,
+          "confidence": "high",
+          "top5": [
+            {
+              "key": "G major",
+              "r": 0.9076
+            },
+            {
+              "key": "D major",
+              "r": 0.7129
+            },
+            {
+              "key": "G minor",
+              "r": 0.5499
+            },
+            {
+              "key": "C major",
+              "r": 0.4393
+            },
+            {
+              "key": "B minor",
+              "r": 0.4213
+            }
+          ]
+        },
+        "near_integer_bars": true,
+        "confidence": "high",
+        "heuristic_vocal_fraction": 0.284
+      },
+      {
+        "name": "chorus_2",
+        "start_s": 74.392,
+        "end_s": 99.878,
+        "basis": "timed lyrics: second chorus through 'Hearing everything'",
+        "start_fmt": "1:14.392",
+        "end_fmt": "1:39.878",
+        "duration_s": 25.486,
+        "duration_beats": 40.78,
+        "duration_bars_4_4": 10.2,
+        "novelty_peak_near_start": [],
+        "key_in_section": {
+          "key": "G major",
+          "r": 0.8981,
+          "runner_up": "D major",
+          "runner_up_r": 0.743,
+          "gap": 0.1552,
+          "confidence": "high",
+          "top5": [
+            {
+              "key": "G major",
+              "r": 0.8981
+            },
+            {
+              "key": "D major",
+              "r": 0.743
+            },
+            {
+              "key": "G minor",
+              "r": 0.5089
+            },
+            {
+              "key": "B minor",
+              "r": 0.4612
+            },
+            {
+              "key": "C major",
+              "r": 0.4544
+            }
+          ]
+        },
+        "near_integer_bars": true,
+        "confidence": "high",
+        "heuristic_vocal_fraction": 0.242
+      },
+      {
+        "name": "outro",
+        "start_s": 99.878,
+        "end_s": 108.413,
+        "basis": "timed lyrics: last 'Fox at the gate' + guitar, then file tail",
+        "start_fmt": "1:39.878",
+        "end_fmt": "1:48.413",
+        "duration_s": 8.535,
+        "duration_beats": 13.66,
+        "duration_bars_4_4": 3.42,
+        "novelty_peak_near_start": [],
+        "key_in_section": {
+          "key": "G major",
+          "r": 0.8129,
+          "runner_up": "G minor",
+          "runner_up_r": 0.7364,
+          "gap": 0.0766,
+          "confidence": "medium",
+          "top5": [
+            {
+              "key": "G major",
+              "r": 0.8129
+            },
+            {
+              "key": "G minor",
+              "r": 0.7364
+            },
+            {
+              "key": "D major",
+              "r": 0.5377
+            },
+            {
+              "key": "C major",
+              "r": 0.3295
+            },
+            {
+              "key": "E minor",
+              "r": 0.2994
+            }
+          ]
+        },
+        "near_integer_bars": false,
+        "confidence": "medium",
+        "heuristic_vocal_fraction": 0.078
+      }
+    ],
+    "outro_guitar_only": {
+      "name": "outro_guitar_only",
+      "start_s": 101.196,
+      "end_s": 106.636,
+      "duration_s": 5.44,
+      "duration_beats": 8.7,
+      "duration_bars_4_4": 2.18
+    },
+    "structural_novelty_peaks_s": [
+      9.752,
+      14.791,
+      24.729,
+      30.07,
+      32.206,
+      35.016,
+      38.22,
+      44.443,
+      46.997,
+      49.25,
+      53.383,
+      58.189,
+      62.81,
+      65.225,
+      69.521,
+      72.818,
+      80.039,
+      85.24,
+      88.213,
+      93.275,
+      97.779,
+      104.188
+    ],
+    "lyric_cues": [
+      {
+        "t_s": 9.879,
+        "cue": "[Intro] label (zero-duration, coincident with Verse 1)"
+      },
+      {
+        "t_s": 9.879,
+        "cue": "Verse 1 first line: Wind in the wire\u2026"
+      },
+      {
+        "t_s": 29.425,
+        "cue": "[Chorus] + first chorus line"
+      },
+      {
+        "t_s": 54.873,
+        "cue": "[Verse 2] + first verse-2 line"
+      },
+      {
+        "t_s": 74.392,
+        "cue": "[Chorus] + second chorus first line"
+      },
+      {
+        "t_s": 99.878,
+        "cue": "[Outro] + 'Fox at the gate'"
+      },
+      {
+        "t_s": 101.196,
+        "cue": "Outro guitar (lyric: guitar, 4 bars, end)"
+      },
+      {
+        "t_s": 106.636,
+        "cue": "Last lyric cue ends"
+      }
+    ],
+    "confidence": "high",
+    "musical_hypermeter": {
+      "confidence": "high",
+      "note": "Bar grid from consensus 96.006 BPM and the estimated first downbeat at -0.205s. Lyric [Chorus] tags start ~0.37s earlier (a pickup on 'Hold still'). Chorus length is 10 bars: an 8-bar chorus plus a 2-bar tag on the long 'Hearing everything'. The outro does not complete 4 clean bars.",
+      "sections": [
+        {
+          "name": "intro",
+          "start_bar": 1,
+          "end_bar_exclusive": 5,
+          "start_s": 0,
+          "end_s": 9.794,
+          "bars": 4
+        },
+        {
+          "name": "verse_1",
+          "start_bar": 5,
+          "end_bar_exclusive": 13,
+          "start_s": 9.794,
+          "end_s": 29.793,
+          "bars": 8
+        },
+        {
+          "name": "chorus_1",
+          "start_bar": 13,
+          "end_bar_exclusive": 23,
+          "start_s": 29.793,
+          "end_s": 54.792,
+          "bars": 10
+        },
+        {
+          "name": "verse_2",
+          "start_bar": 23,
+          "end_bar_exclusive": 31,
+          "start_s": 54.792,
+          "end_s": 74.79,
+          "bars": 8
+        },
+        {
+          "name": "chorus_2",
+          "start_bar": 31,
+          "end_bar_exclusive": 41,
+          "start_s": 74.79,
+          "end_s": 99.789,
+          "bars": 10
+        },
+        {
+          "name": "outro",
+          "start_bar": 41,
+          "end_bar_exclusive": null,
+          "start_s": 99.789,
+          "end_s": 108.413,
+          "bars": 3.45
+        }
+      ]
+    }
+  },
+  "vocals": {
+    "method": "heuristic: mid-band energy * harmonic ratio * (1-flatness), median-smoothed",
+    "confidence": "medium",
+    "note": "Heuristic only \u2014 aligned afterwards against Suno timed lyrics. Not a trained VAD.",
+    "vocal_on_regions_s": [
+      {
+        "start": 0.697,
+        "end": 1.672,
+        "dur": 0.975
+      },
+      {
+        "start": 3.135,
+        "end": 4.156,
+        "dur": 1.022
+      },
+      {
+        "start": 6.246,
+        "end": 6.664,
+        "dur": 0.418
+      },
+      {
+        "start": 7.175,
+        "end": 7.616,
+        "dur": 0.441
+      },
+      {
+        "start": 8.127,
+        "end": 9.172,
+        "dur": 1.045
+      },
+      {
+        "start": 9.961,
+        "end": 11.68,
+        "dur": 1.718
+      },
+      {
+        "start": 13.119,
+        "end": 14.791,
+        "dur": 1.672
+      },
+      {
+        "start": 15.279,
+        "end": 16.37,
+        "dur": 1.091
+      },
+      {
+        "start": 19.923,
+        "end": 24.799,
+        "dur": 4.876
+      },
+      {
+        "start": 25.287,
+        "end": 27.609,
+        "dur": 2.322
+      },
+      {
+        "start": 29.118,
+        "end": 29.884,
+        "dur": 0.766
+      },
+      {
+        "start": 30.813,
+        "end": 31.068,
+        "dur": 0.255
+      },
+      {
+        "start": 31.718,
+        "end": 31.974,
+        "dur": 0.255
+      },
+      {
+        "start": 34.969,
+        "end": 35.712,
+        "dur": 0.743
+      },
+      {
+        "start": 39.567,
+        "end": 39.822,
+        "dur": 0.255
+      },
+      {
+        "start": 40.426,
+        "end": 43.212,
+        "dur": 2.786
+      },
+      {
+        "start": 47.16,
+        "end": 48.205,
+        "dur": 1.045
+      },
+      {
+        "start": 55.194,
+        "end": 57.214,
+        "dur": 2.02
+      },
+      {
+        "start": 60.511,
+        "end": 61.045,
+        "dur": 0.534
+      },
+      {
+        "start": 65.271,
+        "end": 66.084,
+        "dur": 0.813
+      },
+      {
+        "start": 66.432,
+        "end": 67.593,
+        "dur": 1.161
+      },
+      {
+        "start": 69.962,
+        "end": 70.426,
+        "dur": 0.464
+      },
+      {
+        "start": 70.821,
+        "end": 71.355,
+        "dur": 0.534
+      },
+      {
+        "start": 74.374,
+        "end": 74.884,
+        "dur": 0.511
+      },
+      {
+        "start": 75.813,
+        "end": 76.092,
+        "dur": 0.279
+      },
+      {
+        "start": 76.649,
+        "end": 77.926,
+        "dur": 1.277
+      },
+      {
+        "start": 79.97,
+        "end": 80.689,
+        "dur": 0.72
+      },
+      {
+        "start": 85.821,
+        "end": 86.123,
+        "dur": 0.302
+      },
+      {
+        "start": 86.448,
+        "end": 88.213,
+        "dur": 1.765
+      },
+      {
+        "start": 92.114,
+        "end": 93.205,
+        "dur": 1.091
+      },
+      {
+        "start": 99.637,
+        "end": 100.101,
+        "dur": 0.464
+      },
+      {
+        "start": 104.652,
+        "end": 105.094,
+        "dur": 0.441
+      }
+    ],
+    "vocal_on_strict_s": [
+      {
+        "start": 0.766,
+        "end": 1.022,
+        "dur": 0.255
+      },
+      {
+        "start": 1.37,
+        "end": 1.672,
+        "dur": 0.302
+      },
+      {
+        "start": 3.158,
+        "end": 3.39,
+        "dur": 0.232
+      },
+      {
+        "start": 6.269,
+        "end": 6.664,
+        "dur": 0.395
+      },
+      {
+        "start": 8.197,
+        "end": 9.149,
+        "dur": 0.952
+      },
+      {
+        "start": 10.008,
+        "end": 11.122,
+        "dur": 1.115
+      },
+      {
+        "start": 11.378,
+        "end": 11.68,
+        "dur": 0.302
+      },
+      {
+        "start": 13.119,
+        "end": 13.514,
+        "dur": 0.395
+      },
+      {
+        "start": 13.886,
+        "end": 14.141,
+        "dur": 0.255
+      },
+      {
+        "start": 14.396,
+        "end": 14.791,
+        "dur": 0.395
+      },
+      {
+        "start": 15.302,
+        "end": 16.37,
+        "dur": 1.068
+      },
+      {
+        "start": 19.946,
+        "end": 22.848,
+        "dur": 2.902
+      },
+      {
+        "start": 23.104,
+        "end": 24.776,
+        "dur": 1.672
+      },
+      {
+        "start": 25.287,
+        "end": 27.609,
+        "dur": 2.322
+      },
+      {
+        "start": 29.118,
+        "end": 29.884,
+        "dur": 0.766
+      },
+      {
+        "start": 30.511,
+        "end": 31.068,
+        "dur": 0.557
+      },
+      {
+        "start": 31.742,
+        "end": 31.974,
+        "dur": 0.232
+      },
+      {
+        "start": 32.67,
+        "end": 33.228,
+        "dur": 0.557
+      },
+      {
+        "start": 34.969,
+        "end": 35.689,
+        "dur": 0.72
+      },
+      {
+        "start": 39.265,
+        "end": 39.799,
+        "dur": 0.534
+      },
+      {
+        "start": 40.496,
+        "end": 41.146,
+        "dur": 0.65
+      },
+      {
+        "start": 41.587,
+        "end": 43.212,
+        "dur": 1.625
+      },
+      {
+        "start": 45.511,
+        "end": 45.72,
+        "dur": 0.209
+      },
+      {
+        "start": 47.369,
+        "end": 48.205,
+        "dur": 0.836
+      },
+      {
+        "start": 52.361,
+        "end": 52.593,
+        "dur": 0.232
+      },
+      {
+        "start": 55.263,
+        "end": 55.519,
+        "dur": 0.255
+      },
+      {
+        "start": 56.355,
+        "end": 57.191,
+        "dur": 0.836
+      },
+      {
+        "start": 59.884,
+        "end": 60.093,
+        "dur": 0.209
+      },
+      {
+        "start": 60.511,
+        "end": 61.347,
+        "dur": 0.836
+      },
+      {
+        "start": 65.271,
+        "end": 66.061,
+        "dur": 0.789
+      },
+      {
+        "start": 66.432,
+        "end": 66.966,
+        "dur": 0.534
+      },
+      {
+        "start": 67.384,
+        "end": 67.593,
+        "dur": 0.209
+      },
+      {
+        "start": 70.821,
+        "end": 71.355,
+        "dur": 0.534
+      },
+      {
+        "start": 74.374,
+        "end": 74.884,
+        "dur": 0.511
+      },
+      {
+        "start": 76.696,
+        "end": 76.951,
+        "dur": 0.255
+      },
+      {
+        "start": 77.369,
+        "end": 77.903,
+        "dur": 0.534
+      },
+      {
+        "start": 79.552,
+        "end": 79.784,
+        "dur": 0.232
+      },
+      {
+        "start": 80.179,
+        "end": 80.411,
+        "dur": 0.232
+      },
+      {
+        "start": 84.614,
+        "end": 84.822,
+        "dur": 0.209
+      },
+      {
+        "start": 85.844,
+        "end": 86.076,
+        "dur": 0.232
+      },
+      {
+        "start": 86.727,
+        "end": 88.213,
+        "dur": 1.486
+      },
+      {
+        "start": 88.631,
+        "end": 88.84,
+        "dur": 0.209
+      },
+      {
+        "start": 92.346,
+        "end": 93.205,
+        "dur": 0.859
+      },
+      {
+        "start": 99.66,
+        "end": 100.101,
+        "dur": 0.441
+      },
+      {
+        "start": 104.652,
+        "end": 104.954,
+        "dur": 0.302
+      }
+    ],
+    "low_energy_gaps_s": [
+      {
+        "start": 107.55,
+        "end": 108.4,
+        "dur": 0.85
+      }
+    ]
+  },
+  "loudness": {
+    "ffmpeg_ebur128": {
+      "integrated_lufs": -15.3,
+      "threshold_lufs": -25.4,
+      "lra_lu": 4.8,
+      "lra_low_lufs": -18.6,
+      "lra_high_lufs": -13.8,
+      "note": "ITU-R BS.1770 via ffmpeg ebur128=peak=true on the 48 kHz WAV.",
+      "true_peak_dbfs": -3.1
+    },
+    "sample_peak_dbfs": -3.1,
+    "sample_peak_linear": 0.69989,
+    "rms_overall_dbfs": -17.32,
+    "stereo_side_to_mid_energy": 0.0871,
+    "rms_1s": [
+      {
+        "t_s": 0,
+        "t_end_s": 1,
+        "rms": 0.065966,
+        "dbfs": -23.61
+      },
+      {
+        "t_s": 1,
+        "t_end_s": 2,
+        "rms": 0.080042,
+        "dbfs": -21.93
+      },
+      {
+        "t_s": 2,
+        "t_end_s": 3,
+        "rms": 0.093758,
+        "dbfs": -20.56
+      },
+      {
+        "t_s": 3,
+        "t_end_s": 4,
+        "rms": 0.056587,
+        "dbfs": -24.95
+      },
+      {
+        "t_s": 4,
+        "t_end_s": 5,
+        "rms": 0.073105,
+        "dbfs": -22.72
+      },
+      {
+        "t_s": 5,
+        "t_end_s": 6,
+        "rms": 0.068055,
+        "dbfs": -23.34
+      },
+      {
+        "t_s": 6,
+        "t_end_s": 7,
+        "rms": 0.085268,
+        "dbfs": -21.38
+      },
+      {
+        "t_s": 7,
+        "t_end_s": 8,
+        "rms": 0.073563,
+        "dbfs": -22.67
+      },
+      {
+        "t_s": 8,
+        "t_end_s": 9,
+        "rms": 0.053309,
+        "dbfs": -25.46
+      },
+      {
+        "t_s": 9,
+        "t_end_s": 10,
+        "rms": 0.065361,
+        "dbfs": -23.69
+      },
+      {
+        "t_s": 10,
+        "t_end_s": 11,
+        "rms": 0.155292,
+        "dbfs": -16.18
+      },
+      {
+        "t_s": 11,
+        "t_end_s": 12,
+        "rms": 0.098101,
+        "dbfs": -20.17
+      },
+      {
+        "t_s": 12,
+        "t_end_s": 13,
+        "rms": 0.098173,
+        "dbfs": -20.16
+      },
+      {
+        "t_s": 13,
+        "t_end_s": 14,
+        "rms": 0.06104,
+        "dbfs": -24.29
+      },
+      {
+        "t_s": 14,
+        "t_end_s": 15,
+        "rms": 0.076951,
+        "dbfs": -22.28
+      },
+      {
+        "t_s": 15,
+        "t_end_s": 16,
+        "rms": 0.116159,
+        "dbfs": -18.7
+      },
+      {
+        "t_s": 16,
+        "t_end_s": 17,
+        "rms": 0.09636,
+        "dbfs": -20.32
+      },
+      {
+        "t_s": 17,
+        "t_end_s": 18,
+        "rms": 0.086677,
+        "dbfs": -21.24
+      },
+      {
+        "t_s": 18,
+        "t_end_s": 19,
+        "rms": 0.047415,
+        "dbfs": -26.48
+      },
+      {
+        "t_s": 19,
+        "t_end_s": 20,
+        "rms": 0.064244,
+        "dbfs": -23.84
+      },
+      {
+        "t_s": 20,
+        "t_end_s": 21,
+        "rms": 0.127771,
+        "dbfs": -17.87
+      },
+      {
+        "t_s": 21,
+        "t_end_s": 22,
+        "rms": 0.107818,
+        "dbfs": -19.35
+      },
+      {
+        "t_s": 22,
+        "t_end_s": 23,
+        "rms": 0.121993,
+        "dbfs": -18.27
+      },
+      {
+        "t_s": 23,
+        "t_end_s": 24,
+        "rms": 0.054345,
+        "dbfs": -25.3
+      },
+      {
+        "t_s": 24,
+        "t_end_s": 25,
+        "rms": 0.077263,
+        "dbfs": -22.24
+      },
+      {
+        "t_s": 25,
+        "t_end_s": 26,
+        "rms": 0.121737,
+        "dbfs": -18.29
+      },
+      {
+        "t_s": 26,
+        "t_end_s": 27,
+        "rms": 0.123285,
+        "dbfs": -18.18
+      },
+      {
+        "t_s": 27,
+        "t_end_s": 28,
+        "rms": 0.090177,
+        "dbfs": -20.9
+      },
+      {
+        "t_s": 28,
+        "t_end_s": 29,
+        "rms": 0.070543,
+        "dbfs": -23.03
+      },
+      {
+        "t_s": 29,
+        "t_end_s": 30,
+        "rms": 0.105588,
+        "dbfs": -19.53
+      },
+      {
+        "t_s": 30,
+        "t_end_s": 31,
+        "rms": 0.154627,
+        "dbfs": -16.21
+      },
+      {
+        "t_s": 31,
+        "t_end_s": 32,
+        "rms": 0.15409,
+        "dbfs": -16.24
+      },
+      {
+        "t_s": 32,
+        "t_end_s": 33,
+        "rms": 0.164044,
+        "dbfs": -15.7
+      },
+      {
+        "t_s": 33,
+        "t_end_s": 34,
+        "rms": 0.146075,
+        "dbfs": -16.71
+      },
+      {
+        "t_s": 34,
+        "t_end_s": 35,
+        "rms": 0.13395,
+        "dbfs": -17.46
+      },
+      {
+        "t_s": 35,
+        "t_end_s": 36,
+        "rms": 0.166578,
+        "dbfs": -15.57
+      },
+      {
+        "t_s": 36,
+        "t_end_s": 37,
+        "rms": 0.155749,
+        "dbfs": -16.15
+      },
+      {
+        "t_s": 37,
+        "t_end_s": 38,
+        "rms": 0.152858,
+        "dbfs": -16.31
+      },
+      {
+        "t_s": 38,
+        "t_end_s": 39,
+        "rms": 0.143177,
+        "dbfs": -16.88
+      },
+      {
+        "t_s": 39,
+        "t_end_s": 40,
+        "rms": 0.133358,
+        "dbfs": -17.5
+      },
+      {
+        "t_s": 40,
+        "t_end_s": 41,
+        "rms": 0.15888,
+        "dbfs": -15.98
+      },
+      {
+        "t_s": 41,
+        "t_end_s": 42,
+        "rms": 0.149913,
+        "dbfs": -16.48
+      },
+      {
+        "t_s": 42,
+        "t_end_s": 43,
+        "rms": 0.175507,
+        "dbfs": -15.11
+      },
+      {
+        "t_s": 43,
+        "t_end_s": 44,
+        "rms": 0.141523,
+        "dbfs": -16.98
+      },
+      {
+        "t_s": 44,
+        "t_end_s": 45,
+        "rms": 0.127303,
+        "dbfs": -17.9
+      },
+      {
+        "t_s": 45,
+        "t_end_s": 46,
+        "rms": 0.15311,
+        "dbfs": -16.3
+      },
+      {
+        "t_s": 46,
+        "t_end_s": 47,
+        "rms": 0.13155,
+        "dbfs": -17.62
+      },
+      {
+        "t_s": 47,
+        "t_end_s": 48,
+        "rms": 0.173579,
+        "dbfs": -15.21
+      },
+      {
+        "t_s": 48,
+        "t_end_s": 49,
+        "rms": 0.146991,
+        "dbfs": -16.65
+      },
+      {
+        "t_s": 49,
+        "t_end_s": 50,
+        "rms": 0.123789,
+        "dbfs": -18.15
+      },
+      {
+        "t_s": 50,
+        "t_end_s": 51,
+        "rms": 0.132557,
+        "dbfs": -17.55
+      },
+      {
+        "t_s": 51,
+        "t_end_s": 52,
+        "rms": 0.137176,
+        "dbfs": -17.25
+      },
+      {
+        "t_s": 52,
+        "t_end_s": 53,
+        "rms": 0.150246,
+        "dbfs": -16.46
+      },
+      {
+        "t_s": 53,
+        "t_end_s": 54,
+        "rms": 0.139259,
+        "dbfs": -17.12
+      },
+      {
+        "t_s": 54,
+        "t_end_s": 55,
+        "rms": 0.122895,
+        "dbfs": -18.21
+      },
+      {
+        "t_s": 55,
+        "t_end_s": 56,
+        "rms": 0.143211,
+        "dbfs": -16.88
+      },
+      {
+        "t_s": 56,
+        "t_end_s": 57,
+        "rms": 0.100661,
+        "dbfs": -19.94
+      },
+      {
+        "t_s": 57,
+        "t_end_s": 58,
+        "rms": 0.129092,
+        "dbfs": -17.78
+      },
+      {
+        "t_s": 58,
+        "t_end_s": 59,
+        "rms": 0.141156,
+        "dbfs": -17.01
+      },
+      {
+        "t_s": 59,
+        "t_end_s": 60,
+        "rms": 0.120425,
+        "dbfs": -18.39
+      },
+      {
+        "t_s": 60,
+        "t_end_s": 61,
+        "rms": 0.159612,
+        "dbfs": -15.94
+      },
+      {
+        "t_s": 61,
+        "t_end_s": 62,
+        "rms": 0.140364,
+        "dbfs": -17.05
+      },
+      {
+        "t_s": 62,
+        "t_end_s": 63,
+        "rms": 0.145166,
+        "dbfs": -16.76
+      },
+      {
+        "t_s": 63,
+        "t_end_s": 64,
+        "rms": 0.138379,
+        "dbfs": -17.18
+      },
+      {
+        "t_s": 64,
+        "t_end_s": 65,
+        "rms": 0.128785,
+        "dbfs": -17.8
+      },
+      {
+        "t_s": 65,
+        "t_end_s": 66,
+        "rms": 0.183158,
+        "dbfs": -14.74
+      },
+      {
+        "t_s": 66,
+        "t_end_s": 67,
+        "rms": 0.165999,
+        "dbfs": -15.6
+      },
+      {
+        "t_s": 67,
+        "t_end_s": 68,
+        "rms": 0.154648,
+        "dbfs": -16.21
+      },
+      {
+        "t_s": 68,
+        "t_end_s": 69,
+        "rms": 0.144851,
+        "dbfs": -16.78
+      },
+      {
+        "t_s": 69,
+        "t_end_s": 70,
+        "rms": 0.141738,
+        "dbfs": -16.97
+      },
+      {
+        "t_s": 70,
+        "t_end_s": 71,
+        "rms": 0.170645,
+        "dbfs": -15.36
+      },
+      {
+        "t_s": 71,
+        "t_end_s": 72,
+        "rms": 0.156025,
+        "dbfs": -16.14
+      },
+      {
+        "t_s": 72,
+        "t_end_s": 73,
+        "rms": 0.150209,
+        "dbfs": -16.47
+      },
+      {
+        "t_s": 73,
+        "t_end_s": 74,
+        "rms": 0.14605,
+        "dbfs": -16.71
+      },
+      {
+        "t_s": 74,
+        "t_end_s": 75,
+        "rms": 0.113775,
+        "dbfs": -18.88
+      },
+      {
+        "t_s": 75,
+        "t_end_s": 76,
+        "rms": 0.172802,
+        "dbfs": -15.25
+      },
+      {
+        "t_s": 76,
+        "t_end_s": 77,
+        "rms": 0.150596,
+        "dbfs": -16.44
+      },
+      {
+        "t_s": 77,
+        "t_end_s": 78,
+        "rms": 0.173736,
+        "dbfs": -15.2
+      },
+      {
+        "t_s": 78,
+        "t_end_s": 79,
+        "rms": 0.160726,
+        "dbfs": -15.88
+      },
+      {
+        "t_s": 79,
+        "t_end_s": 80,
+        "rms": 0.139778,
+        "dbfs": -17.09
+      },
+      {
+        "t_s": 80,
+        "t_end_s": 81,
+        "rms": 0.178167,
+        "dbfs": -14.98
+      },
+      {
+        "t_s": 81,
+        "t_end_s": 82,
+        "rms": 0.163597,
+        "dbfs": -15.72
+      },
+      {
+        "t_s": 82,
+        "t_end_s": 83,
+        "rms": 0.17055,
+        "dbfs": -15.36
+      },
+      {
+        "t_s": 83,
+        "t_end_s": 84,
+        "rms": 0.156868,
+        "dbfs": -16.09
+      },
+      {
+        "t_s": 84,
+        "t_end_s": 85,
+        "rms": 0.140574,
+        "dbfs": -17.04
+      },
+      {
+        "t_s": 85,
+        "t_end_s": 86,
+        "rms": 0.169631,
+        "dbfs": -15.41
+      },
+      {
+        "t_s": 86,
+        "t_end_s": 87,
+        "rms": 0.15748,
+        "dbfs": -16.06
+      },
+      {
+        "t_s": 87,
+        "t_end_s": 88,
+        "rms": 0.172124,
+        "dbfs": -15.28
+      },
+      {
+        "t_s": 88,
+        "t_end_s": 89,
+        "rms": 0.155331,
+        "dbfs": -16.17
+      },
+      {
+        "t_s": 89,
+        "t_end_s": 90,
+        "rms": 0.14211,
+        "dbfs": -16.95
+      },
+      {
+        "t_s": 90,
+        "t_end_s": 91,
+        "rms": 0.17195,
+        "dbfs": -15.29
+      },
+      {
+        "t_s": 91,
+        "t_end_s": 92,
+        "rms": 0.148782,
+        "dbfs": -16.55
+      },
+      {
+        "t_s": 92,
+        "t_end_s": 93,
+        "rms": 0.188145,
+        "dbfs": -14.51
+      },
+      {
+        "t_s": 93,
+        "t_end_s": 94,
+        "rms": 0.165825,
+        "dbfs": -15.61
+      },
+      {
+        "t_s": 94,
+        "t_end_s": 95,
+        "rms": 0.146498,
+        "dbfs": -16.68
+      },
+      {
+        "t_s": 95,
+        "t_end_s": 96,
+        "rms": 0.169896,
+        "dbfs": -15.4
+      },
+      {
+        "t_s": 96,
+        "t_end_s": 97,
+        "rms": 0.154331,
+        "dbfs": -16.23
+      },
+      {
+        "t_s": 97,
+        "t_end_s": 98,
+        "rms": 0.159438,
+        "dbfs": -15.95
+      },
+      {
+        "t_s": 98,
+        "t_end_s": 99,
+        "rms": 0.161243,
+        "dbfs": -15.85
+      },
+      {
+        "t_s": 99,
+        "t_end_s": 100,
+        "rms": 0.154701,
+        "dbfs": -16.21
+      },
+      {
+        "t_s": 100,
+        "t_end_s": 101,
+        "rms": 0.178723,
+        "dbfs": -14.96
+      },
+      {
+        "t_s": 101,
+        "t_end_s": 102,
+        "rms": 0.160596,
+        "dbfs": -15.89
+      },
+      {
+        "t_s": 102,
+        "t_end_s": 103,
+        "rms": 0.158971,
+        "dbfs": -15.97
+      },
+      {
+        "t_s": 103,
+        "t_end_s": 104,
+        "rms": 0.161597,
+        "dbfs": -15.83
+      },
+      {
+        "t_s": 104,
+        "t_end_s": 105,
+        "rms": 0.146916,
+        "dbfs": -16.66
+      },
+      {
+        "t_s": 105,
+        "t_end_s": 106,
+        "rms": 0.115198,
+        "dbfs": -18.77
+      },
+      {
+        "t_s": 106,
+        "t_end_s": 107,
+        "rms": 0.044321,
+        "dbfs": -27.07
+      },
+      {
+        "t_s": 107,
+        "t_end_s": 108,
+        "rms": 0.0112,
+        "dbfs": -39.02
+      },
+      {
+        "t_s": 108,
+        "t_end_s": 108.4135,
+        "rms": 0.000187,
+        "dbfs": -74.58
+      }
+    ],
+    "quietest_1s": {
+      "t_s": 108,
+      "t_end_s": 108.4135,
+      "rms": 0.000187,
+      "dbfs": -74.58
+    },
+    "loudest_1s": {
+      "t_s": 92,
+      "t_end_s": 93,
+      "rms": 0.188145,
+      "dbfs": -14.51
+    },
+    "seconds_below_-40_dbfs": [
+      108
+    ],
+    "seconds_below_-50_dbfs": [
+      108
+    ],
+    "lra_character": "tight / relatively even",
+    "confidence": "high"
+  }
+}
