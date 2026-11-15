@@ -240,6 +240,10 @@ export function FoxEarsApp({ initialMap }: { initialMap?: HearingMap }) {
       paintingPng: paintingPng(),
       pass: plan.options,
     });
+    if (import.meta.env.DEV) {
+      // Dev-only hook for scripts/browser-pass.mjs (P0 browser check); not in production builds.
+      (window as unknown as { __foxEarsLastMap?: unknown }).__foxEarsLastMap = next;
+    }
     const song = fileEncounter(next, plan.kind, plan.focus);
     const following = plannedPass(song.title, song.duration_ms);
     next.listen = {
