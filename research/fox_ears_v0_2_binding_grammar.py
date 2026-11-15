@@ -587,6 +587,30 @@ RECEIPT:
 # Tests
 # ---------------------------------------------------------------------
 
+# sha256 of research/out/ Cal 003 challenge-fixture files, pinned 2026-11-15
+# before the P0 changes. The cue extractor may change; the pack must not.
+CAL003_BLIND_SHA256 = "903af08ef6dbd3e0cb6549696194aa976805b0ef6a527466852513f3c1be67fd"
+CAL003_PROMPT_SHA256 = "d45e5d4eb2cfa786ec5011297a3663064ffc051db4246a41b5be5e7e926bb340"
+
+
+def control_frames(noisy_frame_ms: Optional[int] = None) -> List[EarFrame]:
+    """
+    No-change control for behavioral tests (not part of Calibration 003):
+    one steady 1 kHz tone, slow smooth pan, small level drift. With
+    noisy_frame_ms set, that single frame carries a one-frame spectral blip
+    (energy leaks into 2 kHz) and the next frame returns to normal.
+    """
+    frames = []
+    times = Calibration003Generator.TIMES
+    for i, t in enumerate(times):
+        x = -.3 + .6*i/(len(times)-1); amp = .70 + .03*math.sin(i*.6)
+        L, R = Calibration003Generator._lr(amp, x)
+        streams = [{"band": 1000, "L": L, "R": R, "onset": .2 if i == 0 else 0}]
+        if noisy_frame_ms is not None and t == noisy_frame_ms:
+            streams.append({"band": 2000, "L": .9*L, "R": .9*R})
+        frames.append(Calibration003Generator._mk_frame(t, streams))
+    return frames
+
 class Tests(unittest.TestCase):
     def test_blind_receipt_has_no_world_truth(self):
         blind, inspector, locked = Calibration003Generator().pack()
@@ -636,6 +660,98 @@ class Tests(unittest.TestCase):
 
     def test_prompt_requires_relational_memory(self):
         self.assertIn("without preserving specific frequencies", PROMPT)
+
+    # -----------------------------------------------------------------
+    # P0 behavioral tests (2026-11-15, Arch review section 5 / Swordthumb 2-4).
+    # Each was written first and shown failing on the pass-1 runtime.
+    # -----------------------------------------------------------------
+
+    @staticmethod
+    def _split_conf(analysis):
+        return [h for h in analysis["binding_hypotheses"] if h["hypothesis_id"].endswith(":H_SPLIT")][0]["confidence"]
+
+    @staticmethod
+    def _statuses(analysis):
+        return {h["hypothesis_id"].split(":")[-1]: h["status"] for h in analysis["binding_hypotheses"]}
+
+    def test_split_confidence_not_constant(self):
+        events,_=Calibration003Generator().build()
+        rt=FoxEarsBindingGrammar()
+        confs={k: round(self._split_conf(rt.analyze(k,f)),3) for k,f in events.items()}
+        confs["control"]=round(self._split_conf(rt.analyze("control",control_frames())),3)
+        self.assertGreaterEqual(len(set(confs.values())),3,f"H_SPLIT confidences barely vary: {confs}")
+
+    def test_H_differs_from_no_change_control(self):
+        events,_=Calibration003Generator().build()
+        rt=FoxEarsBindingGrammar()
+        h=rt.analyze("H",events["H"]); c=rt.analyze("control",control_frames())
+        self.assertEqual(self._statuses(c)["H_SAME"],"preferred")
+        self.assertGreaterEqual(self._split_conf(h)-self._split_conf(c),0.15,
+            f"H split {self._split_conf(h)} vs control {self._split_conf(c)}")
+        self.assertNotEqual(self._statuses(h),self._statuses(c))
+
+    def test_single_noisy_frame_does_not_dictate(self):
+        events,_=Calibration003Generator().build()
+        rt=FoxEarsBindingGrammar()
+        noisy=rt.analyze("noisy",control_frames(noisy_frame_ms=500))
+        h=rt.analyze("H",events["H"])
+        self.assertEqual(self._statuses(noisy)["H_SAME"],"preferred")
+        self.assertLess(self._split_conf(noisy),self._split_conf(h))
+        blips=[e for e in noisy["break_events"] if e["verdict"]=="BLIP"]
+        self.assertTrue(blips,"the one-frame blip should be logged as a BLIP break event")
+
+    def test_crossings_preserve_competing_histories(self):
+        events,_=Calibration003Generator().build()
+        rt=FoxEarsBindingGrammar()
+        for k in ("Q","W"):
+            a=rt.analyze(k,events[k])
+            self.assertEqual(a["resolution"]["state"],"UNRESOLVED",f"{k}: {a['resolution']}")
+            self.assertEqual(set(self._statuses(a).values()),{"unresolved"})
+            contested=[e for e in a["break_events"] if e["supporting_cues"] or e["conflicting_cues"]]
+            self.assertTrue(any(e["conflicting_cues"] for e in contested),f"{k}: no per-interval conflict kept")
+
+    def test_silence_makes_spectral_unavailable(self):
+        events,_=Calibration003Generator().build()
+        ledgers=FoxEarsBindingGrammar().extractor.series(events["N"])
+        gap=[l for l in ledgers if 500 in (l.interval_a_ms,l.interval_b_ms)]
+        self.assertEqual(len(gap),2)
+        for l in gap:
+            spectral=[c for c in l.cues if c.cue_type=="spectral"][0]
+            self.assertEqual(spectral.availability,"UNAVAILABLE")
+            self.assertNotIn("spectral",[p for pair in l.contradiction_pairs for p in pair])
+        a=FoxEarsBindingGrammar().analyze("N",events["N"])
+        split=[h for h in a["binding_hypotheses"] if h["hypothesis_id"].endswith(":H_SPLIT")][0]
+        self.assertNotIn("spectral",split["supporting_cues"],"silence must not count as a spectral break")
+
+    def test_spatial_teleport_logs_break(self):
+        events,_=Calibration003Generator().build()
+        rt=FoxEarsBindingGrammar()
+        ledgers=rt.extractor.series(events["C"])
+        jump=[l for l in ledgers if l.interval_a_ms==400 and l.interval_b_ms==500][0]
+        spatial=[c for c in jump.cues if c.cue_type=="binaural_trajectory"][0]
+        self.assertLessEqual(spatial.continuity,.35,f"spatial continuity {spatial.continuity}")
+        self.assertTrue(any("binaural_trajectory" in pair for pair in jump.contradiction_pairs))
+        a=rt.analyze("C",events["C"])
+        self.assertTrue(any(e["cue"]=="binaural_trajectory" and e["persistence"]>=.5 for e in a["break_events"]))
+
+    def test_itd_is_a_separate_spatial_measure(self):
+        base=control_frames()
+        frames=[EarFrame(f.t_ms,f.left_level,f.right_level,f.left_bands,f.right_bands,f.left_onset,f.right_onset,
+                         -0.4 if f.t_ms<500 else 0.4) for f in base]
+        ledgers=CueExtractor().series(frames)
+        jump=[l for l in ledgers if l.interval_a_ms==400][0]
+        spatial=[c for c in jump.cues if c.cue_type=="binaural_trajectory"][0]
+        self.assertIn("itd_continuity",spatial.evidence)
+        self.assertIn("ild_continuity",spatial.evidence)
+        self.assertLessEqual(spatial.evidence["itd_continuity"],.35)
+
+    def test_cal003_pack_byte_identical(self):
+        import hashlib
+        blind,_,_=Calibration003Generator().pack()
+        raw=json.dumps(blind,indent=2).encode("utf-8")
+        self.assertEqual(hashlib.sha256(raw).hexdigest(),CAL003_BLIND_SHA256)
+        prompt=(PROMPT+json.dumps(blind,indent=2)).encode("utf-8")
+        self.assertEqual(hashlib.sha256(prompt).hexdigest(),CAL003_PROMPT_SHA256)
 
 
 def main():
