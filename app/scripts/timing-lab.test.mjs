@@ -106,3 +106,31 @@ test("resampleTicks: fixed 10 ms grid, no data invented across a gap, post-gap t
   assert.ok(!g.t_ms.some((t) => t > 70 && t < 1070), "no grid points inside the gap");
   assert.ok(Math.max(...g.flux) < 5, "the tick that spans the gap must not become an onset");
 });
+
+// Found in the first headless Chrome pass (2026-11-15): AudioContext.currentTime
+// advances once per audio callback (~10.7 ms), so 60/120 Hz reads share
+// timestamps. The sampler must merge, not drop, the flux of a read whose clock
+// did not move, and tempo must survive the quantised clock.
+test("quantised audio clock (10.7 ms callbacks): sampler conserves flux, tempo holds at 60 and 120 Hz", async () => {
+  const { HearingSampler } = await import("../src/lib/hearing/sampler.ts");
+  const bpm = 96;
+  const song = makeSong(bpm, SECONDS, 3);
+  for (const hz of [60, 120]) {
+    const obs = observe(song, SECONDS, hz, { jitterMs: 2, seed: 5 });
+    const quantum = 512 / 48; // ms
+    const s = new HearingSampler();
+    s.start();
+    for (let i = 0; i < obs.tickMs.length; i++) {
+      s.tick(obs.flux[i], Math.floor(obs.tickMs[i] / quantum) * quantum);
+    }
+    // tick() keeps ticks in its buffer until push(); read them via a frame-less flush
+    const ticks = { t: s["tickMs"], f: s["tickFlux"] };
+    const total = obs.flux.reduce((a, b) => a + b, 0);
+    const kept = ticks.f.reduce((a, b) => a + b, 0);
+    assert.ok(Math.abs(kept - total) / total < 0.01, `${hz} Hz: flux kept ${kept.toFixed(2)} of ${total.toFixed(2)}`);
+    for (let i = 1; i < ticks.t.length; i++) assert.ok(ticks.t[i] > ticks.t[i - 1], "timestamps strictly increase");
+    const { tempo } = tempoFromTicks(ticks.t, ticks.f);
+    console.log(`  quantised clock @ ${hz} Hz: ${obs.tickMs.length} reads -> ${ticks.t.length} ticks -> ${tempo?.bpm} BPM`);
+    assert.ok(tempo && Math.abs(tempo.bpm - bpm) / bpm <= TOL_REL, `${hz} Hz: ${tempo?.bpm}`);
+  }
+});
