@@ -2,6 +2,11 @@
  * Fox Ears calibration harness.
  *   node calibration/run.mjs <audio files...> [--sens 0.58] [--json out.json] [--demo]
  *   [--truth test-song/results/scoring-truth-master.json fox-at-the-gate-master.wav]
+ *   [--tick-hz 60|90|120] [--jitter-ms 3] [--gap 15000:18000]   (display-rate simulation, P0)
+ *   [--compare previous.json]   (report key-mode flips = appraisal-input flips, P0)
+ * Tempo vs FOX_REF is reported STRICT (displayed BPM within ±4%) and FORGIVEN
+ * (half/double/2:3/3:2 also accepted) separately. All numbers are SOFT until
+ * Taylor's own BPM/key answer key replaces the librosa stand-in.
  * Decodes each file with ffmpeg (44.1 kHz stereo f32), runs the offline engine
  * replica -> HearingSampler -> assembleMap (the same seal path as the app), and
  * prints the key calibration metrics plus an onset-gate sweep for tempo.
@@ -12,7 +17,7 @@ import { basename } from "node:path";
 import { hearPcm, tickOnsetsMs } from "./offline-engine";
 import { assembleMap } from "@/lib/hearing/bind";
 import * as score from "@/lib/hearing/score";
-import { estimateTempo } from "@/lib/hearing/tempo";
+import { estimateTempo, tempoForgiven, tempoStrict } from "@/lib/hearing/tempo";
 import { renderDemoWav } from "@/lib/audio/demo";
 import type { HearingFrame } from "@/lib/hearing/types";
 
@@ -138,11 +143,16 @@ function scoreTruth(m: ReturnType<typeof metrics>): string {
 async function main() {
   const args = process.argv.slice(2);
   let sens = 0.58; let jsonOut: string | null = null; const files: string[] = []; let demo = false;
+  let tickHz = 60; let jitterMs = 0; let gapMs: [number, number] | undefined; let comparePath = "";
   for (let i = 0; i < args.length; i++) {
     const a = args[i]!;
     if (a === "--sens") sens = Number(args[++i]);
     else if (a === "--json") jsonOut = args[++i]!;
     else if (a === "--demo") demo = true;
+    else if (a === "--tick-hz") tickHz = Number(args[++i]);
+    else if (a === "--jitter-ms") jitterMs = Number(args[++i]);
+    else if (a === "--gap") { const [g0, g1] = args[++i]!.split(":").map(Number); gapMs = [g0!, g1!]; }
+    else if (a === "--compare") comparePath = args[++i]!;
     else if (a === "--truth") { const tp = args[++i]!; truth = JSON.parse(readFileSync(tp, "utf8")); truthFor = args[++i]!; }
     else files.push(a);
   }
@@ -155,10 +165,10 @@ async function main() {
     const t0 = Date.now();
     const { L, R } = await load();
     const tickFlux: number[] = [];
-    const frames = hearPcm(L, R, SR, { sensitivity: sens, tickFlux });
+    const frames = hearPcm(L, R, SR, { sensitivity: sens, tickFlux, tickHz, jitterMs, gapMs });
     const m = metrics(name, frames, sens, tickFlux);
     results.push(m);
-    console.log(`\n=== ${name}  (${((Date.now() - t0) / 1000).toFixed(1)} s compute)`);
+    console.log(`\n=== ${name}  (${((Date.now() - t0) / 1000).toFixed(1)} s compute; ticks ${tickHz} Hz${jitterMs ? ` ±${jitterMs} ms` : ""}${gapMs ? ` gap ${gapMs[0]}-${gapMs[1]} ms` : ""})`);
     console.log(`  duration ${m.duration_s}s · frames ${m.frames} · level mean ${m.level.mean} max ${m.level.max} · silent ${m.level.silent_frames}`);
     console.log(`  tempo ${m.tempo.bpm} BPM conf ${m.tempo.confidence} — ${m.tempo.note}`);
     console.log(`  onset-gate sweep: ` + m.onset_sweep.map((s) => `${s.gate}:${s.onsets}on→${s.bpm ?? "—"}bpm@${r2(s.conf)}`).join("  "));
@@ -176,17 +186,47 @@ async function main() {
   const refPath = process.env.FOX_REF ?? "";
   if (refPath && existsSync(refPath)) {
     const ref: Array<{ file: string; librosa_bpm: number; ks_key: string }> = JSON.parse(readFileSync(refPath, "utf8"));
-    const near = (a: number | null, b: number) => a != null && [0.5, 1, 2, 2 / 3, 1.5].some((k) => Math.abs(a - b * k) / (b * k) <= 0.04);
-    let tA = 0, tB = 0, kA = 0, n = 0;
-    console.log("\n--- vs independent reference (librosa; octave/3:2 errors forgiven, ±4%) ---");
+    let tS = 0, tF = 0, tB = 0, kA = 0, n = 0;
+    console.log("\n--- vs librosa stand-in reference (SOFT; Taylor's answer key pending) ---");
+    console.log("    STRICT = displayed BPM within ±4% · FORGIVEN = also half/double/2:3/3:2 within ±4%");
     for (const r of results as Array<any>) {
       const x = ref.find((q) => q.file === r.name); if (!x) continue; n++;
-      const a = near(r.tempo.bpm, x.librosa_bpm), b = near(r.tick_onset_tempo.bpm, x.librosa_bpm), k = String(r.key).startsWith(x.ks_key);
-      tA += +a; tB += +b; kA += +k;
-      console.log(`  ${r.name.padEnd(28)} ref ${String(x.librosa_bpm).padStart(6)} BPM ${x.ks_key.padEnd(9)} | app ${String(r.tempo.bpm).padStart(5)} ${a ? "✓" : "✗"} | old 60Hz proposal ${String(r.tick_onset_tempo.bpm ?? "—").padStart(4)} ${b ? "✓" : "✗"} | key ${r.key} ${k ? "✓" : "✗"}`);
+      const s = tempoStrict(r.tempo.bpm, x.librosa_bpm), f = tempoForgiven(r.tempo.bpm, x.librosa_bpm);
+      const b = tempoForgiven(r.tick_onset_tempo.bpm, x.librosa_bpm), k = String(r.key).startsWith(x.ks_key);
+      tS += +s; tF += +f; tB += +b; kA += +k;
+      r.tempo_strict = s; r.tempo_forgiven = f;
+      console.log(`  ${r.name.padEnd(28)} ref ${String(x.librosa_bpm).padStart(6)} BPM ${x.ks_key.padEnd(9)} | app ${String(r.tempo.bpm).padStart(5)} strict ${s ? "✓" : "✗"} forgiven ${f ? "✓" : "✗"} | old 60Hz proposal ${String(r.tick_onset_tempo.bpm ?? "—").padStart(4)} ${b ? "✓" : "✗"} | key ${r.key} ${k ? "✓" : "✗"}`);
     }
-    console.log(`  SCORE tempo(app) ${tA}/${n} · tempo(old 60Hz proposal) ${tB}/${n} · key exact ${kA}/${n}`);
+    console.log(`  SCORE tempo STRICT ${tS}/${n} · tempo FORGIVEN ${tF}/${n} · old 60Hz proposal (forgiven) ${tB}/${n} · key exact ${kA}/${n}`);
   }
+  if (comparePath && existsSync(comparePath)) reportAppraisalFlips(JSON.parse(readFileSync(comparePath, "utf8")), results as Array<any>);
   if (jsonOut) { writeFileSync(jsonOut, JSON.stringify(results, null, 2)); console.log(`\nwrote ${jsonOut}`); }
 }
+/**
+ * Feeling flag (P0, Arch review 10 / Swordthumb 7). The first-listen appraisal in
+ * songModel.ts picks its valence from key mode alone (minor -> "inward", major ->
+ * "release"). A detector change that flips the mode silently changes what the
+ * resident "felt", so the harness reports every mode flip against a previous run.
+ * Appraisal itself stays in the engine for now (Ear Organ track).
+ */
+function reportAppraisalFlips(prev: Array<any>, cur: Array<any>) {
+  const mode = (k: string) => (/\bminor\b/.test(k) ? "minor" : /\bmajor\b/.test(k) ? "major" : "unknown");
+  const valence = (m: string) => (m === "minor" ? "inward" : m === "major" ? "release" : "—");
+  const tonic = (k: string) => String(k).split(" ")[0];
+  let flips = 0, n = 0;
+  console.log("\n--- appraisal-input flips (key mode drives first-listen valence) ---");
+  for (const r of cur) {
+    const p = prev.find((q) => q.name === r.name); if (!p) continue; n++;
+    const a = mode(String(p.key)), b = mode(String(r.key));
+    const tonicMoved = tonic(p.key) !== tonic(r.key);
+    if (a !== b) {
+      flips++;
+      console.log(`  FLIP ${r.name}: ${p.key} -> ${r.key} · first-listen valence ${valence(a)} -> ${valence(b)}`);
+    } else if (tonicMoved) {
+      console.log(`  key moved (mode kept, valence unchanged) ${r.name}: ${p.key} -> ${r.key}`);
+    }
+  }
+  console.log(`  ${flips}/${n} songs flip the appraisal input`);
+}
+
 main().catch((e) => { console.error(e); process.exit(1); });
