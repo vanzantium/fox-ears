@@ -82,6 +82,9 @@ export class AudioEngine {
   private mixBuf = new Float32Array(FFT_SIZE);
   private specHist: Uint8Array[] = [];
   private loud = new LoudFollower();
+  /** AudioContext time <-> media time anchor for the observation clock (P0). */
+  private clockAnchor: { ctx: number; media: number; rate: number } | null = null;
+  private micOriginCtx = 0;
   private lastVocal: VocalFeatures | null = null;
   private lastPitch: {
     hz: number;
@@ -169,6 +172,43 @@ export class AudioEngine {
     return this.element?.currentTime ?? 0;
   }
 
+  private reanchorClock() {
+    if (!this.ctx || !this.element) {
+      this.clockAnchor = null;
+      return;
+    }
+    this.clockAnchor = {
+      ctx: this.ctx.currentTime,
+      media: this.element.currentTime,
+      rate: this.element.playbackRate || 1,
+    };
+  }
+
+  /**
+   * Observation clock in ms (P0, 2026-11-15). Analyser reads happen on display
+   * frames (requestAnimationFrame: 60/90/120 Hz, paused in background tabs), so
+   * they are stamped with AudioContext.currentTime, the clock the analyser data
+   * actually comes from, mapped onto the file timeline via an anchor taken on
+   * play / seek / rate change. For the mic it is audio time since the mic began.
+   * Re-anchors if the media clock drifts more than 250 ms (stall, buffering).
+   */
+  clockMs(): number | null {
+    const ctx = this.ctx;
+    if (!ctx) return null;
+    if (this.sourceKind === "mic") return (ctx.currentTime - this.micOriginCtx) * 1000;
+    const el = this.element;
+    if (!el) return null;
+    if (!this.clockAnchor) this.reanchorClock();
+    const a = this.clockAnchor;
+    if (!a) return el.currentTime * 1000;
+    const t = a.media + (ctx.currentTime - a.ctx) * a.rate;
+    if (Math.abs(t - el.currentTime) > 0.25) {
+      this.reanchorClock();
+      return el.currentTime * 1000;
+    }
+    return Math.max(0, t) * 1000;
+  }
+
   duration() {
     if (this.sourceKind === "demo") return DEMO_DURATION_S;
     const d = this.element?.duration;
@@ -206,7 +246,13 @@ export class AudioEngine {
     el.crossOrigin = "anonymous";
     el.preload = "auto";
     el.addEventListener("ended", () => this.emit());
-    el.addEventListener("play", () => this.emit());
+    el.addEventListener("play", () => {
+      this.reanchorClock();
+      this.emit();
+    });
+    el.addEventListener("playing", () => this.reanchorClock());
+    el.addEventListener("seeked", () => this.reanchorClock());
+    el.addEventListener("ratechange", () => this.reanchorClock());
     el.addEventListener("pause", () => this.emit());
     el.addEventListener("timeupdate", () => this.emit());
     el.addEventListener("loadedmetadata", () => this.emit());
@@ -285,6 +331,7 @@ export class AudioEngine {
       });
       this.micStream = stream;
       this.micSource = ctx.createMediaStreamSource(stream);
+      this.micOriginCtx = ctx.currentTime;
       if (this.master) this.micSource.connect(this.master);
       this.sourceKind = "mic";
       this.fileName = "Microphone";

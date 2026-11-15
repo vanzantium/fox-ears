@@ -3,7 +3,7 @@ import { chromaReliability } from "@/lib/audio/chroma";
 import { vocalMask } from "@/lib/audio/vocal";
 import { inferChords } from "./chords";
 import { hierarchicalForm } from "./form";
-import { beatGridAligned, estimateTempo, estimateTempoSubgrid, pickTickOnsets } from "./tempo";
+import { beatGridAligned, estimateTempo, tempoFromTicks } from "./tempo";
 import { falsifyChromatic, type PassOptions } from "./songModel";
 import { buildAffect } from "./affect";
 import {
@@ -180,8 +180,9 @@ function segmentNotes(frames: HearingFrame[]): NoteEvent[] {
 const LEGACY_ONSET_GATE = 0.18;
 
 /**
- * Tempo for the chart. Maps sealed since tuning pass 1 carry per-tick flux, so
- * onsets are peak-picked at ~60 Hz and fed to the sub-grid estimator (comb +
+ * Tempo for the chart. Maps sealed since tuning pass 1 carry per-tick flux; the
+ * ticks are resampled onto a fixed 10 ms grid (P0), peak-picked, and fed to the
+ * sub-grid estimator (comb +
  * octave prior + fine grid fit). Older maps fall back to the 80 ms frame gate.
  */
 export function chartTempo(frames: HearingFrame[]): {
@@ -201,8 +202,10 @@ export function chartTempo(frames: HearingFrame[]): {
   if (tickMs.length >= frames.length * 2) {
     // With ticks present the sub-grid answer stands, including "no stable
     // pulse" (null): the coarse 80 ms gate is not a better second opinion.
-    const onsets = pickTickOnsets(tickMs, tickFlux);
-    return { tempo: estimateTempoSubgrid(onsets), onsetMs: onsets.map((o) => o.t_ms), path: "subgrid" };
+    // P0 2026-11-15: ticks carry audio-clock time and are resampled onto the
+    // fixed 10 ms grid first, so display refresh rate does not change the answer.
+    const { tempo, onsets } = tempoFromTicks(tickMs, tickFlux);
+    return { tempo, onsetMs: onsets.map((o) => o.t_ms), path: "subgrid" };
   }
   const onsetMs = frames
     .filter((f) => Math.max(f.left_ear.onset, f.right_ear.onset, f.flux) > LEGACY_ONSET_GATE)

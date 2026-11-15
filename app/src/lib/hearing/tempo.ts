@@ -211,8 +211,9 @@ export function beatGridAligned(lastMs: number, bpm: number, onsetMs: number[]):
 //
 // The 80 ms hearing frames quantise onsets so coarsely that a steady 96 BPM
 // song reads as 90 or 120. The engine now keeps every analyser tick's spectral
-// flux (~60 Hz, see HearingSampler.tick) and the chart peak-picks those ticks
-// here, so onset timing is good to ~17 ms instead of 80 ms.
+// flux (display rate, see HearingSampler.tick); since P0 (2026-11-15) the ticks
+// carry AudioContext time and are resampled onto a fixed 10 ms grid
+// (resampleTicks) before the chart peak-picks them here.
 // ---------------------------------------------------------------------------
 
 export type WeightedOnset = { t_ms: number; w: number };
@@ -241,8 +242,8 @@ export const SUBGRID = {
 } as const;
 
 /**
- * Adaptive peak-picking on the per-tick flux stream. Tick times may be
- * irregular (requestAnimationFrame), so windows are measured in ms.
+ * Adaptive peak-picking on a flux stream. The app feeds it the fixed 10 ms grid
+ * from resampleTicks; windows are measured in ms so irregular input still works.
  */
 export function pickTickOnsets(
   tickMs: number[],
@@ -420,6 +421,117 @@ export function estimateTempoSubgrid(onsets: WeightedOnset[]): TempoEstimate {
         ? `; nearest rival level ${related.find((x) => x.c.score === rival)?.c.bpm ?? "?"} BPM at ${Math.round((rival / top.score) * 100)}%`
         : ""),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Display-independent timing (P0, 2026-11-15).
+//
+// Analyser ticks arrive whenever requestAnimationFrame fires: 60, 90 or 120 Hz
+// depending on the display, irregular under load, and not at all while the tab
+// is in the background. The engine now timestamps each tick with
+// AudioContext.currentTime (mapped onto the file timeline), and the tempo path
+// resamples those ticks onto a fixed 10 ms analysis grid before onset picking.
+// The offline harness goes through the same function (score.ts chartTempo).
+// ---------------------------------------------------------------------------
+
+export const TIMING = {
+  /** Fixed analysis grid, ms. */
+  gridMs: 10,
+  /** A gap between ticks longer than this is missing data (backgrounded tab, stall), not a slow tick. */
+  maxGapMs: 120,
+} as const;
+
+export type GridSeries = {
+  t_ms: number[];
+  /** Flux per grid step (tick flux divided by its tick interval, times gridMs). */
+  flux: number[];
+  /** Missing-data spans [from, to] ms where ticks stopped. */
+  gaps: Array<[number, number]>;
+  ticks: number;
+  medianTickMs: number;
+};
+
+/**
+ * Resample irregular analyser ticks onto a fixed grid.
+ * - Each tick's flux is the spectral change since the previous tick, so it is
+ *   divided by that tick's interval (flux per ms) before interpolation; a 120 Hz
+ *   display then gives the same scale as a 60 Hz one.
+ * - Linear interpolation inside runs of ticks; nothing is invented across a gap
+ *   longer than maxGapMs, and the first tick after a gap is dropped, because its
+ *   flux spans the whole gap and would read as a fake onset.
+ */
+export function resampleTicks(
+  tickMs: number[],
+  flux: number[],
+  gridMs: number = TIMING.gridMs,
+  maxGapMs: number = TIMING.maxGapMs,
+): GridSeries {
+  const n = Math.min(tickMs.length, flux.length);
+  const out: GridSeries = { t_ms: [], flux: [], gaps: [], ticks: n, medianTickMs: 0 };
+  if (n < 2) return out;
+  const dts: number[] = [];
+  // Rate-normalised samples, split into runs at gaps.
+  const runs: Array<Array<{ t: number; v: number }>> = [];
+  let run: Array<{ t: number; v: number }> = [];
+  for (let i = 1; i < n; i++) {
+    const t = tickMs[i] ?? 0;
+    const dt = t - (tickMs[i - 1] ?? 0);
+    if (!(dt > 0)) continue;
+    if (dt > maxGapMs) {
+      out.gaps.push([tickMs[i - 1] ?? 0, t]);
+      if (run.length) runs.push(run);
+      run = [];
+      continue; // this tick's flux spans the gap
+    }
+    dts.push(dt);
+    run.push({ t, v: ((flux[i] ?? 0) / dt) * gridMs });
+  }
+  if (run.length) runs.push(run);
+  dts.sort((a, b) => a - b);
+  out.medianTickMs = dts.length ? (dts[dts.length >> 1] ?? 0) : 0;
+  for (const r of runs) {
+    if (r.length < 2) continue;
+    const t0 = r[0]?.t ?? 0;
+    const t1 = r[r.length - 1]?.t ?? 0;
+    let k = 0;
+    for (let g = Math.ceil(t0 / gridMs) * gridMs; g <= t1; g += gridMs) {
+      while (k + 1 < r.length && (r[k + 1]?.t ?? 0) < g) k++;
+      const a = r[k];
+      const b = r[k + 1] ?? a;
+      if (!a || !b) continue;
+      const span = b.t - a.t;
+      const f = span > 0 ? Math.max(0, Math.min(1, (g - a.t) / span)) : 0;
+      out.t_ms.push(g);
+      out.flux.push(a.v + (b.v - a.v) * f);
+    }
+  }
+  return out;
+}
+
+/** The app's tempo path from raw ticks: fixed grid -> adaptive onsets -> sub-grid tempo. */
+export function tempoFromTicks(
+  tickMs: number[],
+  flux: number[],
+): { tempo: TempoEstimate; onsets: WeightedOnset[]; grid: GridSeries } {
+  const grid = resampleTicks(tickMs, flux);
+  const onsets = pickTickOnsets(grid.t_ms, grid.flux);
+  return { tempo: estimateTempoSubgrid(onsets), onsets, grid };
+}
+
+/** Tempo scoring against a reference: STRICT (displayed BPM) vs FORGIVEN (metrical equivalents). */
+export const TEMPO_SCORING = {
+  /** Relative tolerance for both scores. */
+  tol: 0.04,
+  /** Metrical equivalents FORGIVEN accepts (half, double, 2:3, 3:2). */
+  ratios: [1, 0.5, 2, 2 / 3, 1.5],
+} as const;
+
+export function tempoStrict(bpm: number | null | undefined, ref: number): boolean {
+  return bpm != null && Math.abs(bpm - ref) / ref <= TEMPO_SCORING.tol;
+}
+
+export function tempoForgiven(bpm: number | null | undefined, ref: number): boolean {
+  return bpm != null && TEMPO_SCORING.ratios.some((k) => Math.abs(bpm - ref * k) / (ref * k) <= TEMPO_SCORING.tol);
 }
 
 // ---------------------------------------------------------------------------

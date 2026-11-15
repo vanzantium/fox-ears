@@ -32,9 +32,11 @@ export type HearingFrame = {
   vocal_gate?: boolean;
   perc?: number;
   /**
-   * Analyser ticks (~60 Hz) since the previous frame: file-clock ms and
-   * spectral flux. Lets the chart time onsets finer than the 80 ms frame grid
-   * (tuning pass 1, 2026-11-14). Absent on maps sealed before that.
+   * Analyser ticks (one per display frame: 60/90/120 Hz) since the previous
+   * frame: audio-clock ms on the file timeline (AudioContext time since P0,
+   * 2026-11-15) and spectral flux. The chart resamples them onto a fixed 10 ms
+   * grid before onset picking (tempo.ts resampleTicks). Tuning pass 1,
+   * 2026-11-14; absent on maps sealed before that.
    */
   ticks?: { t_ms: number[]; flux: number[] };
   /**

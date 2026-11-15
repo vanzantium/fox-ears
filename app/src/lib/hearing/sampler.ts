@@ -43,7 +43,10 @@ export class HearingSampler {
   }
 
   /**
-   * Record one analyser tick's spectral flux. push() calls this for every
+   * Record one analyser tick's spectral flux, stamped with the caller's clock
+   * (the app passes AudioContext time on the file timeline; see
+   * AudioEngine.clockMs). Ticks arrive at the display rate and are resampled
+   * onto a fixed 10 ms grid later (tempo.ts resampleTicks). push() calls this for every
    * snapshot, so the app needs nothing extra; offline callers that skip the
    * full snapshot on non-sample ticks call it directly.
    */
