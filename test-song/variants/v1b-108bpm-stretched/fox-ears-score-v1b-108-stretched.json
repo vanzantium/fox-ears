@@ -1,0 +1,146 @@
+{
+ "before_default": {
+  "name": "fox-at-the-gate-v1b-108bpm-stretched.wav",
+  "duration_s": 96.3,
+  "tempo_bpm": 120,
+  "tempo_confidence": 0.4,
+  "tempo_note": "two-method agreement (IOI histogram + onset autocorrelation) at 120 BPM",
+  "tempo_path": null,
+  "tempo_hit": false,
+  "tempo_relation": null,
+  "key": "D major (0.87)",
+  "key_name": "D major",
+  "key_note": null,
+  "key_hit": false,
+  "sections": 2,
+  "section_list": null,
+  "section_cuts_s": [],
+  "nearest_cut_error_vs_lyrics_s": [
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "nearest_cut_error_vs_bars_s": [
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "mean_nearest_cut_lyrics_s": null,
+  "vocal_mask": null,
+  "vocal_vs_scaled_stem": {
+   "precision": null,
+   "recall": null,
+   "note": "harness did not emit frame_times/vocal_mask_frames"
+  },
+  "vocal_vs_scaled_srt": {
+   "precision": null,
+   "recall": null,
+   "note": "harness did not emit frame_times/vocal_mask_frames"
+  },
+  "level": {
+   "mean": 0.13,
+   "max": 0.41,
+   "silent_frames": "0.9%"
+  },
+  "pitch": {
+   "voiced": "73.2%",
+   "vocal_gate": "4.0%"
+  },
+  "chords": 23,
+  "tick_onset_tempo": {
+   "onsets": 303,
+   "bpm": 110,
+   "conf": 0.44,
+   "note": "two-method agreement (IOI histogram + onset autocorrelation) at 110 BPM"
+  }
+ },
+ "after_pass1": {
+  "name": "fox-at-the-gate-v1b-108bpm-stretched.wav",
+  "duration_s": 96.3,
+  "tempo_bpm": 108,
+  "tempo_confidence": 0.51,
+  "tempo_note": "sub-grid onsets (303); comb x prior picked 108 BPM; nearest rival level 72 BPM at 72%",
+  "tempo_path": "subgrid",
+  "tempo_hit": true,
+  "tempo_relation": 1.0,
+  "key": "G major (0.87)",
+  "key_name": "G major",
+  "key_note": "tonic-vs-dominant: G over D confirmed by the scale-degree test",
+  "key_hit": true,
+  "sections": 8,
+  "section_list": [
+   "0.0-13.2s verse A",
+   "13.2-26.0s chorus B",
+   "26.0-43.7s chorus C",
+   "43.7-57.6s verse D",
+   "57.6-69.3s chorus E",
+   "69.3-78.7s chorus F",
+   "78.7-90.4s chorus G",
+   "90.4-96.3s outro H"
+  ],
+  "section_cuts_s": [
+   0.0,
+   13.2,
+   26.0,
+   43.7,
+   57.6,
+   69.3,
+   78.7,
+   90.4
+  ],
+  "nearest_cut_error_vs_lyrics_s": [
+   4.418,
+   0.157,
+   5.079,
+   3.17,
+   1.614
+  ],
+  "nearest_cut_error_vs_bars_s": [
+   4.494,
+   0.484,
+   5.007,
+   2.816,
+   1.693
+  ],
+  "mean_nearest_cut_lyrics_s": 2.888,
+  "vocal_mask": "46.3%",
+  "vocal_vs_scaled_stem": {
+   "precision": 0.908,
+   "recall": 0.723,
+   "pred_on_fraction": 0.463,
+   "truth_on_fraction": 0.581,
+   "n_pred": 535,
+   "n_truth": 672,
+   "tp": 486
+  },
+  "vocal_vs_scaled_srt": {
+   "precision": 0.978,
+   "recall": 0.537,
+   "pred_on_fraction": 0.463,
+   "truth_on_fraction": 0.843,
+   "n_pred": 535,
+   "n_truth": 974,
+   "tp": 523
+  },
+  "level": {
+   "mean": 0.13,
+   "max": 0.41,
+   "silent_frames": "0.9%"
+  },
+  "pitch": {
+   "voiced": "73.2%",
+   "vocal_gate": "39.7%"
+  },
+  "chords": 28,
+  "tick_onset_tempo": {
+   "onsets": 303,
+   "bpm": 110,
+   "conf": 0.44,
+   "note": "two-method agreement (IOI histogram + onset autocorrelation) at 110 BPM"
+  }
+ }
+}

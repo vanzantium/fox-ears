@@ -1,0 +1,370 @@
+{
+ "title": "Fox at the Gate \u2014 variant 1b (108 BPM time-stretch of master) librosa verification",
+ "dated": "2026-11-14",
+ "stretch": {
+  "engine": "ffmpeg 7.1.5 rubberband filter, librubberband 3.3.0 (CLI package not installed; not a librosa phase-vocoder fallback)",
+  "tempo_scale": 1.1249296918942566,
+  "time_scale": 0.8889444444444444,
+  "settings": "tempo=108/96.006 pitch=1 formant=preserved pitchq=quality transients=crisp detector=compound phase=laminar window=standard channels=together"
+ },
+ "file": {
+  "wav_sha256": "4b824fc63b4c3901f6f2dc7feeda9fe50c546479c2b8e478c5f279f6b2189cf5",
+  "m4a_sha256": "83ec65e7c21f90b96a0408546a6e681bf2d695bd4bc952a1a29e7ede0936344b",
+  "wav_bytes": 18503900,
+  "m4a_bytes": 2382826,
+  "sample_rate_hz": 48000,
+  "channels": 2,
+  "duration_s": 96.373583,
+  "expected_duration_s": 96.373579
+ },
+ "tempo": {
+  "librosa_feature_tempo": 107.666,
+  "beat_track_default": 107.666,
+  "beat_track_prior_96": 107.666,
+  "beat_track_prior_108": 107.666,
+  "tempogram_peak": 107.666,
+  "tempogram_top": [
+   {
+    "bpm": 107.666,
+    "mass": 0.7838
+   },
+   {
+    "bpm": 215.332,
+    "mass": 0.6989
+   },
+   {
+    "bpm": 53.833,
+    "mass": 0.6838
+   },
+   {
+    "bpm": 71.777,
+    "mass": 0.6159
+   },
+   {
+    "bpm": 43.066,
+    "mass": 0.524
+   }
+  ],
+  "mean_ibi_bpm_prior_108": 108.007,
+  "std_ibi_bpm_prior_108": 1.394,
+  "cv_prior_108": 0.0129,
+  "local_bpm_range_prior_108": [
+   103.359,
+   112.347
+  ],
+  "n_beats_prior_108": 168,
+  "first_beat_s": 0.3947,
+  "windows_near_96_pm4pct": 0,
+  "windows_near_108_pm4pct": 151,
+  "n_ibi": 167,
+  "onset_ac_at_96": 0.1611,
+  "onset_ac_at_108": 0.8166,
+  "consensus_bpm": 108.007,
+  "target_bpm": 108.0,
+  "ok_near_108": true,
+  "tempogram_note": "Dropped the 0-lag (inf BPM) artifact; first real peak is 107.666, same bin librosa used on the 96 BPM master (95.703)."
+ },
+ "key": {
+  "methods": {
+   "kk_chroma_cqt": {
+    "key": "G major",
+    "r": 0.8366,
+    "runner_up": "D major",
+    "runner_up_r": 0.7761,
+    "gap": 0.0605,
+    "confidence": "medium",
+    "top5": [
+     {
+      "key": "G major",
+      "r": 0.8366
+     },
+     {
+      "key": "D major",
+      "r": 0.7761
+     },
+     {
+      "key": "G minor",
+      "r": 0.5654
+     },
+     {
+      "key": "B minor",
+      "r": 0.4539
+     },
+     {
+      "key": "C major",
+      "r": 0.3231
+     }
+    ]
+   },
+   "kk_chroma_stft": {
+    "key": "G major",
+    "r": 0.7709,
+    "runner_up": "B minor",
+    "runner_up_r": 0.6546,
+    "gap": 0.1163,
+    "confidence": "high",
+    "top5": [
+     {
+      "key": "G major",
+      "r": 0.7709
+     },
+     {
+      "key": "B minor",
+      "r": 0.6546
+     },
+     {
+      "key": "D major",
+      "r": 0.6374
+     },
+     {
+      "key": "G minor",
+      "r": 0.4439
+     },
+     {
+      "key": "E minor",
+      "r": 0.2175
+     }
+    ]
+   },
+   "kk_chroma_cens": {
+    "key": "G major",
+    "r": 0.7904,
+    "runner_up": "D major",
+    "runner_up_r": 0.7368,
+    "gap": 0.0536,
+    "confidence": "medium",
+    "top5": [
+     {
+      "key": "G major",
+      "r": 0.7904
+     },
+     {
+      "key": "D major",
+      "r": 0.7368
+     },
+     {
+      "key": "G minor",
+      "r": 0.603
+     },
+     {
+      "key": "B minor",
+      "r": 0.4216
+     },
+     {
+      "key": "C major",
+      "r": 0.2756
+     }
+    ]
+   },
+   "kk_harmonic_cqt": {
+    "key": "G major",
+    "r": 0.9043,
+    "runner_up": "D major",
+    "runner_up_r": 0.7634,
+    "gap": 0.1408,
+    "confidence": "high",
+    "top5": [
+     {
+      "key": "G major",
+      "r": 0.9043
+     },
+     {
+      "key": "D major",
+      "r": 0.7634
+     },
+     {
+      "key": "B minor",
+      "r": 0.6101
+     },
+     {
+      "key": "G minor",
+      "r": 0.4844
+     },
+     {
+      "key": "E minor",
+      "r": 0.3951
+     }
+    ]
+   },
+   "temperley_chroma_cqt": {
+    "key": "G major",
+    "r": 0.7813,
+    "runner_up": "G minor",
+    "runner_up_r": 0.6727,
+    "gap": 0.1087,
+    "confidence": "high",
+    "top5": [
+     {
+      "key": "G major",
+      "r": 0.7813
+     },
+     {
+      "key": "G minor",
+      "r": 0.6727
+     },
+     {
+      "key": "D major",
+      "r": 0.6467
+     },
+     {
+      "key": "D minor",
+      "r": 0.3067
+     },
+     {
+      "key": "C major",
+      "r": 0.2984
+     }
+    ]
+   },
+   "temperley_harmonic_cqt": {
+    "key": "G major",
+    "r": 0.8734,
+    "runner_up": "D major",
+    "runner_up_r": 0.6369,
+    "gap": 0.2365,
+    "confidence": "high",
+    "top5": [
+     {
+      "key": "G major",
+      "r": 0.8734
+     },
+     {
+      "key": "D major",
+      "r": 0.6369
+     },
+     {
+      "key": "G minor",
+      "r": 0.6245
+     },
+     {
+      "key": "C major",
+      "r": 0.3817
+     },
+     {
+      "key": "B minor",
+      "r": 0.3724
+     }
+    ]
+   },
+   "kk_cqt_first_10s": {
+    "key": "D major",
+    "r": 0.7342,
+    "runner_up": "G major",
+    "runner_up_r": 0.4468,
+    "gap": 0.2874,
+    "confidence": "high",
+    "top5": [
+     {
+      "key": "D major",
+      "r": 0.7342
+     },
+     {
+      "key": "G major",
+      "r": 0.4468
+     },
+     {
+      "key": "G minor",
+      "r": 0.4105
+     },
+     {
+      "key": "F# minor",
+      "r": 0.3721
+     },
+     {
+      "key": "D minor",
+      "r": 0.3662
+     }
+    ]
+   },
+   "kk_cqt_first_20s": {
+    "key": "D major",
+    "r": 0.743,
+    "runner_up": "G major",
+    "runner_up_r": 0.5594,
+    "gap": 0.1836,
+    "confidence": "high",
+    "top5": [
+     {
+      "key": "D major",
+      "r": 0.743
+     },
+     {
+      "key": "G major",
+      "r": 0.5594
+     },
+     {
+      "key": "G minor",
+      "r": 0.4467
+     },
+     {
+      "key": "D minor",
+      "r": 0.3209
+     },
+     {
+      "key": "F# minor",
+      "r": 0.3157
+     }
+    ]
+   },
+   "kk_cqt_after_intro_to_end": {
+    "key": "G major",
+    "r": 0.8777,
+    "runner_up": "D major",
+    "runner_up_r": 0.7484,
+    "gap": 0.1293,
+    "confidence": "high",
+    "top5": [
+     {
+      "key": "G major",
+      "r": 0.8777
+     },
+     {
+      "key": "D major",
+      "r": 0.7484
+     },
+     {
+      "key": "G minor",
+      "r": 0.5709
+     },
+     {
+      "key": "B minor",
+      "r": 0.4712
+     },
+     {
+      "key": "C major",
+      "r": 0.3593
+     }
+    ]
+   }
+  },
+  "whole_song_votes": [
+   "G major",
+   "G major",
+   "G major",
+   "G major",
+   "G major",
+   "G major",
+   "G major"
+  ],
+  "intro_is_d_major": true,
+  "overall": "G major"
+ },
+ "loudness_rms": {
+  "overall_rms_dbfs": -18.3,
+  "sample_peak_dbfs": -3.1,
+  "side_mid": 0.0856,
+  "loudest_1s": {
+   "t": 82.0,
+   "rms_dbfs": -15.5
+  },
+  "quietest_1s": {
+   "t": 95.0,
+   "rms_dbfs": -38.1
+  }
+ },
+ "ebur128_from_ffmpeg": {
+  "integrated_lufs": -16.4,
+  "lra_lu": 4.6,
+  "true_peak_dbfs": -3.1
+ }
+}

@@ -1,0 +1,171 @@
+{
+ "title": "Fox at the Gate \u2014 variant 1b (108 BPM time-stretch of master): scoring truth",
+ "made_at_america_dawson_creek": "2026-11-14",
+ "source": "Scaled from test-song/results/scoring-truth-master.json. All times \u00d7 96.006/108. Tempo set to 108.0. Key, form and vocal presence unchanged.",
+ "stretch": {
+  "method": "ffmpeg rubberband filter (librubberband 3.3.0); rubberband CLI was not installed",
+  "settings": "tempo=108/96.006, pitch=1, formant=preserved, pitchq=quality, transients=crisp, detector=compound, phase=laminar, window=standard, channels=together",
+  "master_tempo_bpm": 96.006,
+  "target_tempo_bpm": 108.0,
+  "tempo_scale": 1.1249296918942566,
+  "time_scale": 0.8889444444444444
+ },
+ "vocal_stem": {
+  "method": "htdemucs (demucs 4) two-stem separation of the 48 kHz WAV; vocal stem RMS per 80 ms window; on when > -40 dBFS (the stem is bimodal: below -70 or above -30 dBFS). The stem audio is NOT committed. Regions here are the master stem regions scaled by 96.006/108; the stem was not re-separated.",
+  "frame_ms": 80,
+  "on_fraction": 0.581,
+  "regions_s": [
+   [
+    8.747213,
+    10.382871
+   ],
+   [
+    10.453987,
+    11.449604
+   ],
+   [
+    13.156378,
+    15.787653
+   ],
+   [
+    17.636658,
+    19.84124
+   ],
+   [
+    19.912356,
+    20.410164
+   ],
+   [
+    22.116938,
+    24.677098
+   ],
+   [
+    26.099409,
+    34.704391
+   ],
+   [
+    34.846622,
+    34.988853
+   ],
+   [
+    35.059969,
+    38.900209
+   ],
+   [
+    38.971324,
+    39.255787
+   ],
+   [
+    39.824711,
+    40.32252
+   ],
+   [
+    40.606982,
+    41.318138
+   ],
+   [
+    41.744831,
+    44.376107
+   ],
+   [
+    44.518338,
+    44.589453
+   ],
+   [
+    48.785271,
+    51.558778
+   ],
+   [
+    53.194436,
+    55.825711
+   ],
+   [
+    57.674716,
+    60.448222
+   ],
+   [
+    61.870533,
+    64.572924
+   ],
+   [
+    66.137467,
+    69.408782
+   ],
+   [
+    69.479898,
+    70.191053
+   ],
+   [
+    70.617747,
+    74.671333
+   ],
+   [
+    74.88468,
+    74.955796
+   ],
+   [
+    75.026911,
+    79.578307
+   ],
+   [
+    79.862769,
+    80.431693
+   ],
+   [
+    80.64504,
+    81.427311
+   ],
+   [
+    81.711773,
+    84.556396
+   ],
+   [
+    88.752213,
+    89.321138
+   ],
+   [
+    89.534484,
+    89.676716
+   ],
+   [
+    89.890062,
+    90.103409
+   ]
+  ],
+  "frame_ms_note": "Master stem used 80 ms windows. Regions are wall-clock-scaled; on_fraction is unchanged."
+ },
+ "srt_vocal_spans_s": [
+  [
+   8.781882,
+   48.779048
+  ],
+  [
+   48.779048,
+   88.785993
+  ],
+  [
+   88.785993,
+   89.957622
+  ]
+ ],
+ "boundaries_s": {
+  "lyric": [
+   8.781882,
+   26.15719,
+   48.779048,
+   66.130355,
+   88.785993
+  ],
+  "musical_bars": [
+   8.706322,
+   26.484322,
+   48.707044,
+   66.484155,
+   88.706877
+  ]
+ },
+ "tempo_bpm": 108.0,
+ "requested_tempo_bpm": 108.0,
+ "key": "G major",
+ "note": "This is a pitch-preserving time-stretch of the master, not a new Suno take. Score Fox Ears against 108.0 BPM and G major. Section and vocal times are the master times scaled by 96.006/108."
+}
