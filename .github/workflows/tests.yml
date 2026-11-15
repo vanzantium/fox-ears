@@ -20,7 +20,7 @@ jobs:
           python research/fox_ears_v0_1.py --test
 
   app:
-    name: app typecheck and build
+    name: app typecheck, tests and build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -34,6 +34,6 @@ jobs:
           cache-dependency-path: app/package-lock.json
       - run: npm ci
       - run: npm run typecheck
-      - name: Listening lab tests (tempo + vocal)
-        run: node --test --experimental-strip-types scripts/tempo-lab.test.mjs scripts/vocal-lab.test.mjs
+      - name: npm test (tempo, vocal and timing labs + app script tests; must be fully green)
+        run: npm test
       - run: npm run build
