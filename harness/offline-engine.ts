@@ -15,8 +15,11 @@ import { LoudFollower, vocalCuesPass, vocalFeatures, vocalScore } from "@/lib/au
 import type { EngineSnapshot } from "@/lib/audio/engine";
 import { HearingSampler, SAMPLE_INTERVAL_MS } from "@/lib/hearing/sampler";
 import type { HearingFrame } from "@/lib/hearing/types";
+import { SPECTRAL_GRID_MS, smoothPole } from "@/lib/hearing/spectralGrid";
 
+/** Legacy per-read pole; time-constant smoothing uses SPECTRAL_GRID_MS instead. */
 const SMOOTHING = 0.62;
+void SMOOTHING;
 const MAX_DB = -18;
 
 class Fft {
@@ -58,11 +61,14 @@ class Fft {
 class OfflineAnalyser {
   smooth = new Float64Array(FFT_SIZE / 2);
   constructor(private fft: Fft, public minDb: number) {}
-  tick(time: Float32Array, out: Uint8Array) {
+  /** dtMs is the audio-clock gap since the last tick; pole is time-constant, not per-read. */
+  tick(time: Float32Array, out: Uint8Array, dtMs = SPECTRAL_GRID_MS) {
     const m = this.fft.mag(time);
     const range = MAX_DB - this.minDb;
+    const a = smoothPole(dtMs);
+    const b = 1 - a;
     for (let k = 0; k < m.length; k++) {
-      const s = SMOOTHING * this.smooth[k]! + (1 - SMOOTHING) * m[k]!;
+      const s = a * this.smooth[k]! + b * m[k]!;
       this.smooth[k] = s;
       const db = s > 0 ? 20 * Math.log10(s) : -1000;
       out[k] = Math.max(0, Math.min(255, Math.floor((255 / range) * (db - this.minDb))));
@@ -88,11 +94,17 @@ export function hearPcm(
   const gain = 0.35 + sens * 1.45;
   const minDb = -92 + (1 - sens) * 38;
   const tickHz = opts.tickHz ?? 60;
-  const hop = Math.round(sr / tickHz);
+  // P1: spectra are always computed on the fixed 10 ms audio-clock grid.
+  // tickHz only describes a display rate for logging / optional tick labels;
+  // it must not change the analyser hop or the smoothing pole.
+  const hop = Math.max(1, Math.round(sr * (SPECTRAL_GRID_MS / 1000)));
   const jit = Math.round(((opts.jitterMs ?? 0) / 1000) * sr);
   let seed = 4242;
   const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 0x100000000; };
+  // Jitter/gaps still skip *reads* (a backgrounded tab), but when we do read,
+  // the hop stays on the 10 ms grid so key/sections do not drift with tickHz.
   const nextHop = () => Math.max(1, hop + (jit ? Math.round((rand() * 2 - 1) * jit) : 0));
+  void tickHz;
   const fft = new Fft(FFT_SIZE);
   const aL = new OfflineAnalyser(fft, minDb), aR = new OfflineAnalyser(fft, minDb), aM = new OfflineAnalyser(fft, minDb);
   const freqL = new Uint8Array(FFT_SIZE / 2), freqR = new Uint8Array(FFT_SIZE / 2), freqM = new Uint8Array(FFT_SIZE / 2);
@@ -104,6 +116,7 @@ export function hearPcm(
   const sampler = new HearingSampler();
   sampler.start();
   let lastSampleMs = -Infinity;
+  let lastClockMs: number | null = null;
   const loudF = new LoudFollower();
 
   for (let end = FFT_SIZE; end <= L.length; end += nextHop()) {
@@ -114,7 +127,10 @@ export function hearPcm(
       const l = (L[st + i] ?? 0) * gain, r = (R[st + i] ?? 0) * gain;
       timeL[i] = l; timeR[i] = r; timeM[i] = (l + r) * 0.5; // master analyser sees the down-mix
     }
-    aL.tick(timeL, freqL); aR.tick(timeR, freqR); aM.tick(timeM, freqM);
+    const clockMs = (end / sr) * 1000;
+    const dtMs = lastClockMs == null ? SPECTRAL_GRID_MS : Math.max(1, clockMs - lastClockMs);
+    lastClockMs = clockMs;
+    aL.tick(timeL, freqL, dtMs); aR.tick(timeR, freqR, dtMs); aM.tick(timeM, freqM, dtMs);
     const flux = prevFreq ? spectralFlux(prevFreq, freqM) : 0;
     if (!prevFreq) prevFreq = new Uint8Array(freqM.length);
     prevFreq.set(freqM);
@@ -125,7 +141,6 @@ export function hearPcm(
 
     // The app stamps ticks with AudioContext time on the file timeline (P0); offline
     // that is exactly the sample clock.
-    const clockMs = (end / sr) * 1000;
     if (clockMs - lastSampleMs < SAMPLE_INTERVAL_MS) {
       sampler.tick(flux, clockMs); // the app's push() records every tick too
       continue; // the sampler would drop the full snapshot anyway

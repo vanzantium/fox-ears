@@ -1,0 +1,339 @@
+{
+  "dated": "2026-11-16T23:19:57.330Z",
+  "results": {
+    "master": {
+      "60": {
+        "key": {
+          "tonic": "G",
+          "mode": "major",
+          "confidence": 0.87
+        },
+        "nSections": 10,
+        "sections": [
+          {
+            "t0": 0,
+            "t1": 9805,
+            "role": "verse"
+          },
+          {
+            "t0": 9805,
+            "t1": 19805,
+            "role": "chorus"
+          },
+          {
+            "t0": 19805,
+            "t1": 29805,
+            "role": "bridge"
+          },
+          {
+            "t0": 29805,
+            "t1": 43555,
+            "role": "chorus"
+          },
+          {
+            "t0": 43555,
+            "t1": 54805,
+            "role": "verse"
+          },
+          {
+            "t0": 54805,
+            "t1": 64805,
+            "role": "verse"
+          },
+          {
+            "t0": 64805,
+            "t1": 77930,
+            "role": "chorus"
+          },
+          {
+            "t0": 77930,
+            "t1": 88555,
+            "role": "chorus"
+          },
+          {
+            "t0": 88555,
+            "t1": 99805,
+            "role": "chorus"
+          },
+          {
+            "t0": 99805,
+            "t1": 108380,
+            "role": "outro"
+          }
+        ]
+      },
+      "120": {
+        "key": {
+          "tonic": "G",
+          "mode": "major",
+          "confidence": 0.87
+        },
+        "nSections": 10,
+        "sections": [
+          {
+            "t0": 0,
+            "t1": 9805,
+            "role": "verse"
+          },
+          {
+            "t0": 9805,
+            "t1": 19805,
+            "role": "chorus"
+          },
+          {
+            "t0": 19805,
+            "t1": 29805,
+            "role": "bridge"
+          },
+          {
+            "t0": 29805,
+            "t1": 43555,
+            "role": "chorus"
+          },
+          {
+            "t0": 43555,
+            "t1": 54805,
+            "role": "verse"
+          },
+          {
+            "t0": 54805,
+            "t1": 64805,
+            "role": "verse"
+          },
+          {
+            "t0": 64805,
+            "t1": 77930,
+            "role": "chorus"
+          },
+          {
+            "t0": 77930,
+            "t1": 88555,
+            "role": "chorus"
+          },
+          {
+            "t0": 88555,
+            "t1": 99805,
+            "role": "chorus"
+          },
+          {
+            "t0": 99805,
+            "t1": 108380,
+            "role": "outro"
+          }
+        ]
+      },
+      "144": {
+        "key": {
+          "tonic": "G",
+          "mode": "major",
+          "confidence": 0.87
+        },
+        "nSections": 10,
+        "sections": [
+          {
+            "t0": 0,
+            "t1": 9805,
+            "role": "verse"
+          },
+          {
+            "t0": 9805,
+            "t1": 19805,
+            "role": "chorus"
+          },
+          {
+            "t0": 19805,
+            "t1": 29805,
+            "role": "bridge"
+          },
+          {
+            "t0": 29805,
+            "t1": 43555,
+            "role": "chorus"
+          },
+          {
+            "t0": 43555,
+            "t1": 54805,
+            "role": "verse"
+          },
+          {
+            "t0": 54805,
+            "t1": 64805,
+            "role": "verse"
+          },
+          {
+            "t0": 64805,
+            "t1": 77930,
+            "role": "chorus"
+          },
+          {
+            "t0": 77930,
+            "t1": 88555,
+            "role": "chorus"
+          },
+          {
+            "t0": 88555,
+            "t1": 99805,
+            "role": "chorus"
+          },
+          {
+            "t0": 99805,
+            "t1": 108380,
+            "role": "outro"
+          }
+        ]
+      }
+    },
+    "stretch": {
+      "60": {
+        "key": {
+          "tonic": "D",
+          "mode": "major",
+          "confidence": 0.87
+        },
+        "nSections": 8,
+        "sections": [
+          {
+            "t0": 0,
+            "t1": 8732,
+            "role": "verse"
+          },
+          {
+            "t0": 8732,
+            "t1": 17621,
+            "role": "chorus"
+          },
+          {
+            "t0": 17621,
+            "t1": 26510,
+            "role": "verse"
+          },
+          {
+            "t0": 26510,
+            "t1": 43177,
+            "role": "chorus"
+          },
+          {
+            "t0": 43177,
+            "t1": 57621,
+            "role": "verse"
+          },
+          {
+            "t0": 57621,
+            "t1": 78732,
+            "role": "chorus"
+          },
+          {
+            "t0": 78732,
+            "t1": 88732,
+            "role": "chorus"
+          },
+          {
+            "t0": 88732,
+            "t1": 96290,
+            "role": "outro"
+          }
+        ]
+      },
+      "120": {
+        "key": {
+          "tonic": "D",
+          "mode": "major",
+          "confidence": 0.87
+        },
+        "nSections": 8,
+        "sections": [
+          {
+            "t0": 0,
+            "t1": 8732,
+            "role": "verse"
+          },
+          {
+            "t0": 8732,
+            "t1": 17621,
+            "role": "chorus"
+          },
+          {
+            "t0": 17621,
+            "t1": 26510,
+            "role": "verse"
+          },
+          {
+            "t0": 26510,
+            "t1": 43177,
+            "role": "chorus"
+          },
+          {
+            "t0": 43177,
+            "t1": 57621,
+            "role": "verse"
+          },
+          {
+            "t0": 57621,
+            "t1": 78732,
+            "role": "chorus"
+          },
+          {
+            "t0": 78732,
+            "t1": 88732,
+            "role": "chorus"
+          },
+          {
+            "t0": 88732,
+            "t1": 96290,
+            "role": "outro"
+          }
+        ]
+      },
+      "144": {
+        "key": {
+          "tonic": "D",
+          "mode": "major",
+          "confidence": 0.87
+        },
+        "nSections": 8,
+        "sections": [
+          {
+            "t0": 0,
+            "t1": 8732,
+            "role": "verse"
+          },
+          {
+            "t0": 8732,
+            "t1": 17621,
+            "role": "chorus"
+          },
+          {
+            "t0": 17621,
+            "t1": 26510,
+            "role": "verse"
+          },
+          {
+            "t0": 26510,
+            "t1": 43177,
+            "role": "chorus"
+          },
+          {
+            "t0": 43177,
+            "t1": 57621,
+            "role": "verse"
+          },
+          {
+            "t0": 57621,
+            "t1": 78732,
+            "role": "chorus"
+          },
+          {
+            "t0": 78732,
+            "t1": 88732,
+            "role": "chorus"
+          },
+          {
+            "t0": 88732,
+            "t1": 96290,
+            "role": "outro"
+          }
+        ]
+      }
+    }
+  }
+}

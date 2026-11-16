@@ -63,7 +63,7 @@ npm run build
 
 `npm test` covers the tempo, vocal and timing labs plus the app's script tests. The 9 leftover Grok "Wild Race" share-card template tests, which were red on every run, were removed on 2026-11-15. CI (`.github/workflows/tests.yml`) runs the research tests, typecheck, `npm test` and the build.
 
-**Timing (P0, 2026-11-15).** The app reads its analysers on every display frame (60, 90 or 120 Hz, irregular, paused in background tabs). Readings are now stamped with AudioContext time, interpolated between audio callbacks with `getOutputTimestamp()` and mapped onto the file timeline. The tempo path then resamples them onto a fixed 10 ms grid (`resampleTicks` in `app/src/lib/hearing/tempo.ts`). The offline harness goes through the same path. `scripts/timing-lab.test.mjs` checks 96/108/120 BPM at 60/90/120 Hz, with jitter and a 3 s background gap, to within ±1%.
+**Timing (P0, 2026-11-15).** The app reads its analysers on every display frame (60, 90 or 120 Hz, irregular, paused in background tabs). Readings are now stamped with AudioContext time, interpolated between audio callbacks with `getOutputTimestamp()` and mapped onto the file timeline. The tempo path then resamples them onto a fixed 10 ms grid (`resampleTicks` in `app/src/lib/hearing/tempo.ts`). The offline harness goes through the same path. `scripts/timing-lab.test.mjs` checks 96/108/120 BPM at 60/90/120 Hz, with jitter and a 3 s background gap, to within ±1%. **P0 made tempo display-rate robust; it did not make key or sections display-independent.** Analyser smoothing was still applied per read, so the same file could change key or section cuts with the refresh rate. P1 (2026-11-16) computes spectra on the same 10 ms audio-clock grid with a time-constant (not per-read) pole; see `docs/p1-log-2026-11-16.md`.
 
 **Browser and phone.** See [`docs/browser-phone-check.md`](docs/browser-phone-check.md). `node scripts/browser-pass.mjs <audio> --url <dev url>` runs the desktop pass headless.
 
@@ -94,7 +94,7 @@ Test song "Fox at the Gate" in the harness:
 - **Headless desktop Chrome:** 96 BPM, G major, but 9 sections on the master. See the P0 log.
 
 Known weak spots:
-- **Key and sections depend on the analyser read rate.** This is the analyser's per-read smoothing, not the clock: the stretch reads D major at 120 Hz in the harness. Not fixed in P0.
+- **Key and sections depended on the analyser read rate in P0** (per-read smoothing; the 108 stretch could read D major at 120 Hz). Addressed in P1 by computing spectra on the fixed 10 ms grid. Do not read the P0 log as claiming all hearing is display-independent.
 - **Sections over-split** off the master.
 - **Vocal false positives** on centred instruments.
 - **Research:** the four single-cue Cal 003 events all come out UNRESOLVED leaning SAME, at the same split confidence. Only multi-cue breaks reach a preferred SPLIT.
@@ -105,8 +105,8 @@ Full details: [`docs/p0-log-2026-11-15.md`](docs/p0-log-2026-11-15.md). Older wr
 
 1. **Taylor's BPM/key answer key** for the master and the 14 songs. Re-score, and relabel SOFT to SOLID where supported.
 2. **Phone pass** by Taylor ([`docs/browser-phone-check.md`](docs/browser-phone-check.md)), compared with the desktop pass.
-3. **Make the analyser read-rate-independent for key and sections** too, for example by computing spectra on the 10 ms grid or with an AudioWorklet.
-4. **On hold until 1–3:** tuning pass 2 (key stability, section over-splitting, vocal false positives), and the Ear Organ refactor (factory profile, candidates, appraisal out of the shared engine).
+3. **P1 (2026-11-16): work/version identity, multi-pulse tempo, mix-vs-stem receipts, and a read-rate-independent key/section path.** See `docs/p1-log-2026-11-16.md`.
+4. **On hold until measurement is stable:** further section promotion, and the Ear Organ refactor (factory profile, candidates, appraisal out of the shared engine). Do not tune Cal 003 thresholds to force a pass.
 
 ## Vela's START-HERE
 

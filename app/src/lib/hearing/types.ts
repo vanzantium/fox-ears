@@ -178,6 +178,9 @@ export type SongChart = {
   tempo_confidence: number;
   tempo_candidates?: Array<{ bpm: number; votes: number; role: "pulse" | "beat" | "subdivision" }>;
   tempo_note?: string;
+  /** P1: multiple real pulses, scored per role. */
+  tempo_hypotheses?: import("./tempoHypotheses").TempoHypothesis[];
+  preferred_for?: import("./tempoHypotheses").PreferredFor;
   key: { tonic: string; mode: "major" | "minor"; confidence: number } | null;
   key_hypotheses?: Array<{ tonic: string; mode: "major" | "minor"; corr: number }>;
   local_centers?: Array<{
@@ -198,6 +201,9 @@ export type SongChart = {
   chords: ChordEvent[];
   beats: number[];
   sections: SongSection[];
+  section_cues?: import("./sectionCues").SectionCue[];
+  section_disagreement?: import("./sectionCues").SectionDisagreement[];
+  input_change_receipts?: import("./modeReceipt").InputChangeReceipt[];
   melody: Array<{ t_ms: number; midi: number; name: string }>;
   vocal_regions: Array<{ t_start_ms: number; t_end_ms: number; likelihood: number }>;
   lyrics: {

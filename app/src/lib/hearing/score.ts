@@ -4,6 +4,9 @@ import { vocalMask } from "@/lib/audio/vocal";
 import { inferChords } from "./chords";
 import { hierarchicalForm } from "./form";
 import { beatGridAligned, estimateTempo, tempoFromTicks } from "./tempo";
+import { attachHypothesesToEstimate } from "./tempoHypotheses";
+import { resampleOntoSpectralGrid } from "./spectralGrid";
+import { attachSectionCues } from "./sectionCues";
 import { falsifyChromatic, type PassOptions } from "./songModel";
 import { buildAffect } from "./affect";
 import {
@@ -29,6 +32,8 @@ export function emptyChart(): SongChart {
     tempo_confidence: 0,
     tempo_candidates: [],
     tempo_note: undefined,
+    tempo_hypotheses: [],
+    preferred_for: { transcription_grid: null, felt_groove: null, unresolved: true },
     key: null,
     key_hypotheses: [],
     local_centers: [],
@@ -40,6 +45,9 @@ export function emptyChart(): SongChart {
     chords: [],
     beats: [],
     sections: [],
+    section_cues: [],
+    section_disagreement: [],
+    input_change_receipts: [],
     melody: [],
     vocal_regions: [],
     lyrics: { source: "none", text: "", lines: [] },
@@ -56,10 +64,15 @@ export function buildChart(
   const { tempo, onsetMs } = chartTempo(frames);
   const lastT = frames[frames.length - 1]?.t_ms ?? 0;
   const beats = tempo?.bpm ? beatGridAligned(lastT, tempo.bpm, onsetMs) : [];
-  const rel = chromaReliability(frames.map((f) => ({ chroma: f.chroma })));
+  // Key and sections read a fixed 10 ms audio-clock grid so display rate
+  // (and per-read analyser smoothing) cannot change the answer.
+  const gridFrames = resampleOntoSpectralGrid(frames);
+  const rel = chromaReliability(gridFrames.map((f) => ({ chroma: f.chroma })));
+  const vMaskGrid = chartVocalMask(gridFrames);
   const vMask = chartVocalMask(frames);
-  const sections = hierarchicalForm(frames, tempo?.bpm ?? null, beats, vMask);
-  const keyEst = estimateKey(frames, sections);
+  const sections = hierarchicalForm(gridFrames, tempo?.bpm ?? null, beats, vMaskGrid);
+  const form = attachSectionCues(sections, gridFrames, { vocalMask: vMaskGrid, lyrics: lyrics.lines });
+  const keyEst = estimateKey(gridFrames, form.sections);
   const key = rel.ok ? (keyEst?.key ?? null) : null;
   const hypotheses = [
     ...(pass?.keyPrior ?? []),
@@ -101,11 +114,30 @@ export function buildChart(
     vocal_range = { low: midiToName(lo), high: midiToName(hi), median: midiToName(med) };
   }
 
+  const sparseOnsets = sparseRegularOnsets(frames);
+  const tickMs: number[] = [];
+  const tickFlux: number[] = [];
+  for (const f of frames) {
+    if (!f.ticks) continue;
+    for (let i = 0; i < f.ticks.t_ms.length; i++) {
+      tickMs.push(f.ticks.t_ms[i] ?? 0);
+      tickFlux.push(f.ticks.flux[i] ?? 0);
+    }
+  }
+  const hypothesesTempo = attachHypothesesToEstimate(
+    tempo ? { bpm: tempo.bpm, confidence: tempo.confidence, note: tempo.note, candidates: tempo.candidates } : null,
+    sparseOnsets,
+    onsetMs,
+    tickMs.length ? { t_ms: tickMs, flux: tickFlux } : undefined,
+  );
+
   return {
     tempo_bpm: tempo?.bpm ?? null,
     tempo_confidence: tempo?.confidence ?? 0,
     tempo_candidates: tempo?.candidates,
     tempo_note: tempo?.note,
+    tempo_hypotheses: hypothesesTempo.tempo_hypotheses,
+    preferred_for: hypothesesTempo.preferred_for,
     key,
     key_hypotheses: hypotheses,
     local_centers,
@@ -118,7 +150,9 @@ export function buildChart(
     vocal_melody,
     chords,
     beats,
-    sections,
+    sections: form.sections,
+    section_cues: form.cues,
+    section_disagreement: form.disagreement,
     melody: vocal_melody.map((n) => ({ t_ms: n.t_ms, midi: n.midi, name: n.name })),
     vocal_regions,
     lyrics,
@@ -696,4 +730,37 @@ export function fmtTime(ms: number): string {
   const m = Math.floor(s / 60);
   const r = s - m * 60;
   return `${m}:${r.toFixed(1).padStart(4, "0")}`;
+}
+
+/** Sparse, sharp peaks — the click/metronome candidates. Denser onsets stay in onsetMs. */
+function sparseRegularOnsets(frames: HearingFrame[]): number[] {
+  const tickMs: number[] = [];
+  const tickFlux: number[] = [];
+  for (const f of frames) {
+    if (!f.ticks) continue;
+    for (let i = 0; i < f.ticks.t_ms.length; i++) {
+      tickMs.push(f.ticks.t_ms[i] ?? 0);
+      tickFlux.push(f.ticks.flux[i] ?? 0);
+    }
+  }
+  if (tickFlux.length < 8) {
+    return frames
+      .filter((f) => Math.max(f.left_ear.onset, f.right_ear.onset, f.flux) > 0.45)
+      .map((f) => f.t_ms);
+  }
+  const mean = tickFlux.reduce((a, b) => a + b, 0) / tickFlux.length;
+  const sd = Math.sqrt(tickFlux.reduce((a, b) => a + (b - mean) ** 2, 0) / tickFlux.length);
+  const thr = mean + 1.8 * sd;
+  const out: number[] = [];
+  let last = -1e9;
+  for (let i = 1; i < tickFlux.length - 1; i++) {
+    const v = tickFlux[i]!;
+    if (!(v > tickFlux[i - 1]! && v >= tickFlux[i + 1]!)) continue;
+    if (v < thr) continue;
+    const t = tickMs[i]!;
+    if (t - last < 200) continue; // refractory: click-like, not strum
+    out.push(t);
+    last = t;
+  }
+  return out;
 }

@@ -67,6 +67,11 @@ function metrics(name: string, frames: HearingFrame[], sens: number, tickFlux: n
     pitch: { voiced: pct(frames.filter((f) => f.pitch_hz != null).length / n), vocal_gate: pct(frames.filter((f) => f.vocal_gate).length / n) },
     itd_null: pct(frames.filter((f) => f.binaural_measurement.itd_ms_R_minus_L == null).length / n),
     tempo: { bpm: r2(c.tempo_bpm), confidence: r2(c.tempo_confidence), note: c.tempo_note ?? "", path: tp.path },
+    tempo_hypotheses: c.tempo_hypotheses ?? [],
+    preferred_for: c.preferred_for ?? { transcription_grid: c.tempo_bpm, felt_groove: c.tempo_bpm, unresolved: false },
+    section_cues: c.section_cues ?? [],
+    section_disagreement: c.section_disagreement ?? [],
+    input_change_receipts: c.input_change_receipts ?? [],
     onset_sweep: sweep,
     tick_onset_tempo: { onsets: tOn.length, bpm: tickTempo?.bpm ?? null, conf: r2(tickTempo?.confidence ?? 0), note: tickTempo?.note ?? "" },
     key: c.key ? `${c.key.tonic} ${c.key.mode} (${r2(c.key.confidence)})` : "UNKNOWN",
@@ -171,11 +176,13 @@ async function main() {
     console.log(`\n=== ${name}  (${((Date.now() - t0) / 1000).toFixed(1)} s compute; ticks ${tickHz} Hz${jitterMs ? ` ±${jitterMs} ms` : ""}${gapMs ? ` gap ${gapMs[0]}-${gapMs[1]} ms` : ""})`);
     console.log(`  duration ${m.duration_s}s · frames ${m.frames} · level mean ${m.level.mean} max ${m.level.max} · silent ${m.level.silent_frames}`);
     console.log(`  tempo ${m.tempo.bpm} BPM conf ${m.tempo.confidence} — ${m.tempo.note}`);
+    if (m.tempo_hypotheses?.length) console.log(`  tempo_hypotheses: ${m.tempo_hypotheses.map((h) => `${h.role}=${h.value_bpm}`).join(", ")} · preferred_for grid=${m.preferred_for?.transcription_grid} groove=${m.preferred_for?.felt_groove} unresolved=${m.preferred_for?.unresolved}`);
     console.log(`  onset-gate sweep: ` + m.onset_sweep.map((s) => `${s.gate}:${s.onsets}on→${s.bpm ?? "—"}bpm@${r2(s.conf)}`).join("  "));
     console.log(`  [old proposal, kept for comparison] 60Hz adaptive onsets: ${m.tick_onset_tempo.onsets}on → ${m.tick_onset_tempo.bpm ?? "—"} BPM conf ${m.tick_onset_tempo.conf} — ${m.tick_onset_tempo.note}`);
     console.log(`  app tempo path: ${m.tempo.path}`);
     console.log(`  key ${m.key} · chroma_reliable ${m.chroma_reliable} · chords ${m.chords} · sections ${m.sections}${m.key_note ? ` · ${m.key_note}` : ""}`);
     console.log(`  sections: ${m.section_list.join(" | ")}`);
+    if (m.section_disagreement?.length) console.log(`  section disagreement: ${m.section_disagreement.map((d) => d.statement).join(" | ")}`);
     console.log(`  chart vocal mask ${m.vocal_mask} · vocal regions ${m.vocal_regions}`);
     if (demoName === name) console.log(`  demo grains: ${demoGrains(frames)}`);
     if (truth && name === basename(truthFor)) console.log(`  vs truth: ${scoreTruth(m)}`);
@@ -203,30 +210,26 @@ async function main() {
   if (jsonOut) { writeFileSync(jsonOut, JSON.stringify(results, null, 2)); console.log(`\nwrote ${jsonOut}`); }
 }
 /**
- * Feeling flag (P0, Arch review 10 / Swordthumb 7). The first-listen appraisal in
- * songModel.ts picks its valence from key mode alone (minor -> "inward", major ->
- * "release"). A detector change that flips the mode silently changes what the
- * resident "felt", so the harness reports every mode flip against a previous run.
- * Appraisal itself stays in the engine for now (Ear Organ track).
+ * P1: a key-mode change is a REVIEW / changed-input receipt, not a feeling
+ * promotion. Mode no longer drives first-listen valence (inward/release).
  */
 function reportAppraisalFlips(prev: Array<any>, cur: Array<any>) {
   const mode = (k: string) => (/\bminor\b/.test(k) ? "minor" : /\bmajor\b/.test(k) ? "major" : "unknown");
-  const valence = (m: string) => (m === "minor" ? "inward" : m === "major" ? "release" : "—");
   const tonic = (k: string) => String(k).split(" ")[0];
   let flips = 0, n = 0;
-  console.log("\n--- appraisal-input flips (key mode drives first-listen valence) ---");
+  console.log("\n--- REVIEW / changed-input receipts (mode flip; not a feeling promotion) ---");
   for (const r of cur) {
     const p = prev.find((q) => q.name === r.name); if (!p) continue; n++;
     const a = mode(String(p.key)), b = mode(String(r.key));
     const tonicMoved = tonic(p.key) !== tonic(r.key);
     if (a !== b) {
       flips++;
-      console.log(`  FLIP ${r.name}: ${p.key} -> ${r.key} · first-listen valence ${valence(a)} -> ${valence(b)}`);
+      console.log(`  REVIEW changed-input cue=mode ${r.name}: ${p.key} -> ${r.key}`);
     } else if (tonicMoved) {
-      console.log(`  key moved (mode kept, valence unchanged) ${r.name}: ${p.key} -> ${r.key}`);
+      console.log(`  key tonic moved (mode kept) ${r.name}: ${p.key} -> ${r.key}`);
     }
   }
-  console.log(`  ${flips}/${n} songs flip the appraisal input`);
+  console.log(`  ${flips}/${n} songs issued a mode changed-input receipt`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

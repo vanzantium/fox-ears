@@ -244,14 +244,18 @@ export function buildAffect(frames: FrameLite[]): AffectSummary {
       harsh_wall: 0,
     };
 
-    // Mode as direct valence term (music-emotion literature's robust cue).
-    // Resting in minor (low tension) → darker; straining (high tension) softens the floor.
+    // Mode is recorded as a cue (for citation / REVIEW receipts) but is not
+    // added into valence. A gospel remix and a screamed one can share a key
+    // and not share a feeling. P1, 2026-11-16, after Veyra's review.
     if (f.mode === "minor") {
       const rest = f.tension <= 3.5 ? 1 : f.tension >= 6.5 ? 0.35 : 0.65;
       components.mode = -0.22 * rest;
     } else if (f.mode === "major") {
       components.mode = f.tension <= 3.5 ? 0.12 : 0.04;
     }
+    // Intentionally unused in the sum below.
+    const modeCue = components.mode;
+    void modeCue;
 
     // f0 cues only when reliable — quiet tender singing keeps confidence; noise doesn't
     if (f0_reliable) {
@@ -273,8 +277,8 @@ export function buildAffect(frames: FrameLite[]): AffectSummary {
     if (f.high_band > 0.55 && f.energy > 0.45 && !f0_reliable) components.harsh_wall = -0.22;
     else if (f.high_band > 0.55 && f.energy > 0.45 && vib.depth < 5) components.harsh_wall = -0.18;
 
-    // Symmetric-ish range: components span roughly -0.72 .. +0.92 before clamp
-    const valence = clamp(sumComponents(components), -1, 1);
+    // Mode stays on the component ledger but is excluded from valence.
+    const valence = clamp(sumComponents(components) - components.mode, -1, 1);
 
     samples.push({
       t_ms: f.t_ms,

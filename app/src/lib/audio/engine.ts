@@ -1,3 +1,4 @@
+import { smoothPole, SPECTRAL_GRID_MS } from "@/lib/hearing/spectralGrid";
 import {
   bandEnergy,
   estimateItdMs,
@@ -104,6 +105,10 @@ export class AudioEngine {
   private freqM = new Uint8Array(FFT_SIZE / 2);
   private timeL = new Float32Array(FFT_SIZE);
   private timeR = new Float32Array(FFT_SIZE);
+  private smoothL = new Float64Array(FFT_SIZE / 2);
+  private smoothR = new Float64Array(FFT_SIZE / 2);
+  private smoothM = new Float64Array(FFT_SIZE / 2);
+  private lastSpecMs: number | null = null;
 
   subscribe(fn: Listener) {
     this.listeners.add(fn);
@@ -130,7 +135,7 @@ export class AudioEngine {
     const aM = ctx.createAnalyser();
     for (const a of [aL, aR, aM]) {
       a.fftSize = FFT_SIZE;
-      a.smoothingTimeConstant = 0.62;
+      a.smoothingTimeConstant = 0; // P1: time-constant smoothing is applied in snapshot()
       a.minDecibels = this.minDb();
       a.maxDecibels = -18;
     }
@@ -422,6 +427,16 @@ export class AudioEngine {
     return Boolean(this.element && this.element.ended);
   }
 
+  private applyTimeConstantSmooth(raw: Uint8Array, state: Float64Array, dtMs: number) {
+    const a = smoothPole(dtMs);
+    const b = 1 - a;
+    for (let i = 0; i < raw.length; i++) {
+      const s = a * state[i]! + b * (raw[i] ?? 0);
+      state[i] = s;
+      raw[i] = Math.max(0, Math.min(255, Math.round(s)));
+    }
+  }
+
   snapshot(): EngineSnapshot {
     const aL = this.analyserL;
     const aR = this.analyserR;
@@ -434,6 +449,12 @@ export class AudioEngine {
       aM.getByteFrequencyData(this.freqM);
       aL.getFloatTimeDomainData(this.timeL);
       aR.getFloatTimeDomainData(this.timeR);
+      const nowMs = this.currentTime() * 1000;
+      const dtMs = this.lastSpecMs == null ? SPECTRAL_GRID_MS : Math.max(1, nowMs - this.lastSpecMs);
+      this.lastSpecMs = nowMs;
+      this.applyTimeConstantSmooth(this.freqL, this.smoothL, dtMs);
+      this.applyTimeConstantSmooth(this.freqR, this.smoothR, dtMs);
+      this.applyTimeConstantSmooth(this.freqM, this.smoothM, dtMs);
     }
 
     const rmsL = rms(this.timeL);
