@@ -182,7 +182,16 @@ export type SongChart = {
   tempo_hypotheses?: import("./tempoHypotheses").TempoHypothesis[];
   preferred_for?: import("./tempoHypotheses").PreferredFor;
   key: { tonic: string; mode: "major" | "minor"; confidence: number } | null;
-  key_hypotheses?: Array<{ tonic: string; mode: "major" | "minor"; corr: number }>;
+  key_hypotheses?: Array<{
+    tonic: string;
+    mode: "major" | "minor";
+    corr: number;
+    role?: import("./keyResolve").KeyRole;
+    t_start_ms?: number;
+    t_end_ms?: number;
+  }>;
+  /** RESOLVED, or UNRESOLVED when tonic-vs-dominant (or relative) evidence is close and split. */
+  key_status?: "RESOLVED" | "UNRESOLVED";
   local_centers?: Array<{
     t_start_ms: number;
     t_end_ms: number;
