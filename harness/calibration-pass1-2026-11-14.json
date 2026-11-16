@@ -1,0 +1,259 @@
+{
+ "made_at_america_dawson_creek": "2026-11-14",
+ "note": "Metrics only, from harness/fox-calibrate.ts at default sensitivity 0.58. before = e82dd07 (test-song/baseline-master), after = tuning/pass-1. Vocal P/R are 80 ms frames vs the htdemucs vocal stem (on when stem RMS > -40 dBFS).",
+ "songs": [
+  {
+   "name": "demo: Listening etude (36 s, ground truth = 9 grains / 5 scenes H N C T Q)",
+   "before": {
+    "bpm": "\u2014",
+    "key": "UNKNOWN",
+    "sections": 15
+   },
+   "after": {
+    "bpm": "\u2014",
+    "key": "UNKNOWN",
+    "sections": 3
+   }
+  },
+  {
+   "name": "fox-at-the-gate-master.wav",
+   "before": {
+    "bpm": 90,
+    "key": "D major (0.88)",
+    "sections": 2
+   },
+   "after": {
+    "bpm": 96,
+    "key": "G major (0.86)",
+    "sections": 7,
+    "vocal_P": 0.92,
+    "vocal_R": 0.72
+   },
+   "stem_vocal_fraction": 0.581
+  },
+  {
+   "name": "10-turn_the_screw.mp3",
+   "before": {
+    "bpm": 90,
+    "key": "D# minor (0.77)",
+    "sections": 2
+   },
+   "after": {
+    "bpm": 98,
+    "key": "D# minor (0.83)",
+    "sections": 17,
+    "vocal_P": 0.84,
+    "vocal_R": 0.55
+   },
+   "stem_vocal_fraction": 0.709
+  },
+  {
+   "name": "4-spiral_system.mp3",
+   "before": {
+    "bpm": 90,
+    "key": "F# minor (0.8)",
+    "sections": 6
+   },
+   "after": {
+    "bpm": 93,
+    "key": "F# minor (0.66)",
+    "sections": 15,
+    "vocal_P": 0.98,
+    "vocal_R": 0.62
+   },
+   "stem_vocal_fraction": 0.896
+  },
+  {
+   "name": "5-spiralling.mp3",
+   "before": {
+    "bpm": 80,
+    "key": "E minor (0.81)",
+    "sections": 2
+   },
+   "after": {
+    "bpm": 121,
+    "key": "A minor (0.85)",
+    "sections": 15,
+    "vocal_P": 0.44,
+    "vocal_R": 0.29
+   },
+   "stem_vocal_fraction": 0.208
+  },
+  {
+   "name": "6-pressure_makes.mp3",
+   "before": {
+    "bpm": 90,
+    "key": "A major (0.8)",
+    "sections": 3
+   },
+   "after": {
+    "bpm": 126,
+    "key": "A major (0.81)",
+    "sections": 21,
+    "vocal_P": 0.54,
+    "vocal_R": 0.48
+   },
+   "stem_vocal_fraction": 0.569
+  },
+  {
+   "name": "7-involuntary_spiral.mp3",
+   "before": {
+    "bpm": 90,
+    "key": "C minor (0.78)",
+    "sections": 5
+   },
+   "after": {
+    "bpm": 98,
+    "key": "C major (0.77)",
+    "sections": 9,
+    "vocal_P": 1.0,
+    "vocal_R": 0.07
+   },
+   "stem_vocal_fraction": 0.865
+  },
+  {
+   "name": "8-racer.mp3",
+   "before": {
+    "bpm": 180,
+    "key": "D# major (0.81)",
+    "sections": 2
+   },
+   "after": {
+    "bpm": 73.4,
+    "key": "C minor (0.78)",
+    "sections": 7,
+    "vocal_P": 0.31,
+    "vocal_R": 0.8
+   },
+   "stem_vocal_fraction": 0.332
+  },
+  {
+   "name": "9-step_up.mp3",
+   "before": {
+    "bpm": 90,
+    "key": "A major (0.76)",
+    "sections": 2
+   },
+   "after": {
+    "bpm": 95,
+    "key": "A major (0.81)",
+    "sections": 8,
+    "vocal_P": 0.69,
+    "vocal_R": 0.72
+   },
+   "stem_vocal_fraction": 0.66
+  },
+  {
+   "name": "music_midnight_funky.ogg",
+   "before": {
+    "bpm": 72,
+    "key": "D major (0.81)",
+    "sections": 4
+   },
+   "after": {
+    "bpm": 68,
+    "key": "D major (0.86)",
+    "sections": 8,
+    "vocal_P": 0.8,
+    "vocal_R": 0.37
+   },
+   "stem_vocal_fraction": 0.74
+  },
+  {
+   "name": "music_midnight_slow.ogg",
+   "before": {
+    "bpm": 180,
+    "key": "A major (0.79)",
+    "sections": 2
+   },
+   "after": {
+    "bpm": 91.9,
+    "key": "D major (0.82)",
+    "sections": 11,
+    "vocal_P": 0.68,
+    "vocal_R": 0.48
+   },
+   "stem_vocal_fraction": 0.756
+  },
+  {
+   "name": "music_track_a.ogg",
+   "before": {
+    "bpm": 180,
+    "key": "F major (0.83)",
+    "sections": 1
+   },
+   "after": {
+    "bpm": 130.6,
+    "key": "F major (0.77)",
+    "sections": 16,
+    "vocal_P": 0.81,
+    "vocal_R": 0.66
+   },
+   "stem_vocal_fraction": 0.813
+  },
+  {
+   "name": "music_track_b.ogg",
+   "before": {
+    "bpm": 180,
+    "key": "G minor (0.94)",
+    "sections": 1
+   },
+   "after": {
+    "bpm": 108,
+    "key": "G minor (0.85)",
+    "sections": 15,
+    "vocal_P": 0.88,
+    "vocal_R": 0.59
+   },
+   "stem_vocal_fraction": 0.781
+  },
+  {
+   "name": "my-little-monkey.mp3",
+   "before": {
+    "bpm": 90,
+    "key": "A major (0.84)",
+    "sections": 3
+   },
+   "after": {
+    "bpm": 79.3,
+    "key": "A major (0.82)",
+    "sections": 8,
+    "vocal_P": 0.97,
+    "vocal_R": 0.67
+   },
+   "stem_vocal_fraction": 0.889
+  },
+  {
+   "name": "neon-whiskers.mp3",
+   "before": {
+    "bpm": 90,
+    "key": "G minor (0.85)",
+    "sections": 3
+   },
+   "after": {
+    "bpm": 128,
+    "key": "D# major (0.89)",
+    "sections": 11,
+    "vocal_P": 0.97,
+    "vocal_R": 0.75
+   },
+   "stem_vocal_fraction": 0.891
+  },
+  {
+   "name": "stinky-skunk-shuffle.mp3",
+   "before": {
+    "bpm": 180,
+    "key": "C major (0.89)",
+    "sections": 1
+   },
+   "after": {
+    "bpm": 100,
+    "key": "C major (0.92)",
+    "sections": 8,
+    "vocal_P": 0.01,
+    "vocal_R": 0.26
+   },
+   "stem_vocal_fraction": 0.013
+  }
+ ]
+}

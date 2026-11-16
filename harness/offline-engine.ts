@@ -10,7 +10,8 @@ import {
   bandEnergy, estimateItdMs, FFT_SIZE, rms, spectralCentroidHz, spectralFlux,
 } from "@/lib/audio/analyse";
 import { chromaFromSpectrum, hpssFrame } from "@/lib/audio/chroma";
-import { detectPitch, harmonicity, vocalLikelihood } from "@/lib/audio/pitch";
+import { detectPitch, harmonicity } from "@/lib/audio/pitch";
+import { LoudFollower, vocalCuesPass, vocalFeatures, vocalScore } from "@/lib/audio/vocal";
 import type { EngineSnapshot } from "@/lib/audio/engine";
 import { HearingSampler, SAMPLE_INTERVAL_MS } from "@/lib/hearing/sampler";
 import type { HearingFrame } from "@/lib/hearing/types";
@@ -90,6 +91,7 @@ export function hearPcm(
   const sampler = new HearingSampler();
   sampler.start();
   let lastSampleMs = -Infinity;
+  const loudF = new LoudFollower();
 
   for (let end = FFT_SIZE; end <= L.length; end += hop) {
     const st = end - FFT_SIZE;
@@ -107,7 +109,10 @@ export function hearPcm(
     if (specHist.length > 15) specHist.shift();
 
     const clockMs = (end / sr) * 1000;
-    if (clockMs - lastSampleMs < SAMPLE_INTERVAL_MS) continue; // sampler would drop it anyway
+    if (clockMs - lastSampleMs < SAMPLE_INTERVAL_MS) {
+      sampler.tick(flux, clockMs); // the app's push() records every tick too
+      continue; // the sampler would drop the full snapshot anyway
+    }
     lastSampleMs = clockMs;
 
     const rmsL = rms(timeL), rmsR = rms(timeR);
@@ -119,19 +124,19 @@ export function hearPcm(
     const chroma = chromaFromSpectrum(hp.harmonic, sr, FFT_SIZE, 90, 1800, true);
     const bass = chromaFromSpectrum(hp.harmonic, sr, FFT_SIZE, 55, 180, false);
     const harm = harmonicity(hp.harmonic, sr, FFT_SIZE, pitch?.hz ?? null);
-    const energy = (rmsL + rmsR) * 0.5;
     const centroid = spectralCentroidHz(freqM, sr, FFT_SIZE);
-    const body = ((bandsL[500] ?? 0) + (bandsR[500] ?? 0)) * 0.5;
-    const mid = ((bandsL[2000] ?? 0) + (bandsR[2000] ?? 0)) * 0.5;
-    const vocal = vocalLikelihood({ pitchHz: pitch?.hz ?? null, harmonicity: harm, centroid, energy, perc: hp.percEnergy, body, mid });
-    const hz = pitch?.hz ?? 0;
-    const vocalGate = vocal > 0.72 && hz >= 185 && hz <= 560 && mid > body * 0.28 && hp.percEnergy < 0.42;
+    // Same vocal cues as AudioEngine.snapshot() (lib/audio/vocal.ts); the app
+    // refreshes them every 2nd tick, here every sampled frame.
+    const vocalFeat = vocalFeatures(timeL, timeR, sr);
+    const loud = loudF.push(vocalFeat.midDb, clockMs);
+    const vocal = vocalScore(vocalFeat, loud);
+    const vocalGate = vocalCuesPass(vocalFeat, loud);
     const snap: EngineSnapshot = {
       freqL, freqR, freqM, timeL, timeR, rmsL, rmsR, bandsL, bandsR,
       ild: rmsL - rmsR, itdMs: itd, onset: onsetHold, flux, centroid,
       pitchHz: pitch?.hz ?? null, midi: pitch?.midi ?? null, note: pitch?.name ?? null,
       pitchConfidence: pitch?.confidence ?? 0, harmonicity: harm, chroma, bassChroma: bass,
-      vocal, perc: hp.percEnergy, harm: hp.harmEnergy, vocalGate, playing: true,
+      vocal, perc: hp.percEnergy, harm: hp.harmEnergy, vocalGate, vocalFeat, playing: true,
       currentTime: end / sr, duration: L.length / sr, sampleRate: sr,
     };
     sampler.push(snap, clockMs);
@@ -140,7 +145,7 @@ export function hearPcm(
   return sampler.frames;
 }
 
-/** Experimental: adaptive peak-picking on the 60 Hz flux stream (proposal, not in app). */
+/** The 2026-11-14 harness proposal (fixed k, 60 Hz). The app now does this in hearing/tempo.ts pickTickOnsets; kept here only for before/after comparison. */
 export function tickOnsetsMs(flux: number[], tickHz = 60, k = 1.0, winS = 1.0): number[] {
   const w = Math.max(3, Math.round(winS * tickHz)), out: number[] = [];
   let lastMs = -1e9;

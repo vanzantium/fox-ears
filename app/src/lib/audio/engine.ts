@@ -13,9 +13,15 @@ import {
 import {
   detectPitch,
   harmonicity,
-  vocalLikelihood,
 } from "./pitch";
 import { getDemoUrl, DEMO_DURATION_S, DEMO_TITLE } from "./demo";
+import {
+  LoudFollower,
+  vocalCuesPass,
+  vocalFeatures,
+  vocalScore,
+  type VocalFeatures,
+} from "./vocal";
 import type { Bands, SourceKind } from "@/lib/hearing/types";
 import { EMPTY_BANDS } from "@/lib/hearing/types";
 
@@ -45,6 +51,8 @@ export type EngineSnapshot = {
   perc: number;
   harm: number;
   vocalGate: boolean;
+  /** Mid/side vocal-band cues behind vocal + vocalGate (tuning pass 1). */
+  vocalFeat: VocalFeatures | null;
   playing: boolean;
   currentTime: number;
   duration: number;
@@ -73,6 +81,8 @@ export class AudioEngine {
   private onsetHold = 0;
   private mixBuf = new Float32Array(FFT_SIZE);
   private specHist: Uint8Array[] = [];
+  private loud = new LoudFollower();
+  private lastVocal: VocalFeatures | null = null;
   private lastPitch: {
     hz: number;
     midi: number;
@@ -218,6 +228,8 @@ export class AudioEngine {
 
   async loadFile(file: File) {
     this.specHist = [];
+    this.loud.reset();
+    this.lastVocal = null;
     this.error = null;
     await this.ensureContext();
     this.stopMicOnly();
@@ -237,6 +249,8 @@ export class AudioEngine {
 
   async playDemo() {
     this.specHist = [];
+    this.loud.reset();
+    this.lastVocal = null;
     this.error = null;
     await this.ensureContext();
     this.stopMicOnly();
@@ -255,6 +269,8 @@ export class AudioEngine {
 
   async playMic() {
     this.specHist = [];
+    this.loud.reset();
+    this.lastVocal = null;
     this.error = null;
     const ctx = await this.ensureContext();
     if (this.element) this.element.pause();
@@ -377,20 +393,12 @@ export class AudioEngine {
     const chroma = chromaFromSpectrum(hp.harmonic, sr, FFT_SIZE, 90, 1800, true);
     const bass = chromaFromSpectrum(hp.harmonic, sr, FFT_SIZE, 55, 180, false);
     const harm = harmonicity(hp.harmonic, sr, FFT_SIZE, this.lastPitch?.hz ?? null);
-    const energy = (rmsL + rmsR) * 0.5;
-    const vocal = vocalLikelihood({
-      pitchHz: this.lastPitch?.hz ?? null,
-      harmonicity: harm,
-      centroid: spectralCentroidHz(this.freqM, sr, FFT_SIZE),
-      energy,
-      perc: hp.percEnergy,
-      body: ((bandsL[500] ?? 0) + (bandsR[500] ?? 0)) * 0.5,
-      mid: ((bandsL[2000] ?? 0) + (bandsR[2000] ?? 0)) * 0.5,
-    });
-    const hz = this.lastPitch?.hz ?? 0;
-    const mid = ((bandsL[2000] ?? 0) + (bandsR[2000] ?? 0)) * 0.5;
-    const body = ((bandsL[500] ?? 0) + (bandsR[500] ?? 0)) * 0.5;
-    const vocalGate = vocal > 0.72 && hz >= 185 && hz <= 560 && mid > body * 0.28 && hp.percEnergy < 0.42;
+    if (this.itdClock % 2 === 0 || !this.lastVocal) {
+      this.lastVocal = vocalFeatures(this.timeL, this.timeR, sr);
+    }
+    const loud = this.loud.push(this.lastVocal.midDb, performance.now());
+    const vocal = vocalScore(this.lastVocal, loud);
+    const vocalGate = vocalCuesPass(this.lastVocal, loud);
 
     return {
       freqL: this.freqL,
@@ -418,6 +426,7 @@ export class AudioEngine {
       perc: hp.percEnergy,
       harm: hp.harmEnergy,
       vocalGate,
+      vocalFeat: this.lastVocal,
       playing: this.isPlaying(),
       currentTime: this.currentTime(),
       duration: this.duration(),
