@@ -17,6 +17,13 @@ node calibration/run.mjs --truth ../test-song/results/scoring-truth-master.json 
 
 `--truth <json> <name>` scores the named file against the truth JSON: tempo error, section boundary error in seconds, and vocal frame precision and recall. `--demo` also scores the 36 s etude's grains.
 
+**Update 2026-11-15 (P0):**
+- **Display-rate simulation:** `--tick-hz 60|90|120`, `--jitter-ms N` and `--gap fromMs:toMs` (no analyser reads, like a background tab).
+- **Tempo vs `FOX_REF`:** reported **STRICT** (displayed BPM within ±4%) and **FORGIVEN** (half, double, 2:3 or 3:2 also accepted) separately.
+- **Feeling flag:** `--compare previous.json` lists songs whose key mode flipped, since key mode alone sets the first-listen feeling.
+- **Same timing path as the app:** ticks are resampled onto the 10 ms grid inside `chartTempo`.
+- All numbers are SOFT until Taylor's answer key lands.
+
 Needs ffmpeg on PATH. `offline-engine.ts` mirrors the Web Audio AnalyserNode (Blackman window, smoothing 0.62, byte dB mapping) and the engine's snapshot math, then feeds the real HearingSampler + assembleMap. It is a replica, so confirm headline numbers with one browser pass.
 
 Do not commit audio. Taylor's songs stay in Drive.
@@ -29,4 +36,4 @@ Do not commit audio. Taylor's songs stay in Drive.
 
 ## Research line (fox-ears-0.2)
 
-The Cal 003 self-check script compares the runtime with the locked key, so it is held back on the box at `/workspace/fox-ears/cal003-key/cal003_selfcheck.py` until Vela has taken Calibration 003 blind.
+The Cal 003 self-check script compares the runtime with the locked key and is kept on the box at `/workspace/fox-ears/cal003-key/cal003_selfcheck.py`. Per Arch's 2026-11-15 review and Taylor's ruling, Cal 003 is a **challenge fixture**, not a blind test: its manipulation map is already visible in the generator source. The script stays off the repo only because it isn't needed there.

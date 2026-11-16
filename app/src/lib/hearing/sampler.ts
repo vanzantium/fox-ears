@@ -10,11 +10,13 @@ export class HearingSampler {
   private running = false;
   private tickMs: number[] = [];
   private tickFlux: number[] = [];
+  private lastTickT = -Infinity;
 
   start() {
     this.frames = [];
     this.tickMs = [];
     this.tickFlux = [];
+    this.lastTickT = -Infinity;
     this.lastT = -Infinity;
     this.origin = performance.now();
     this.running = true;
@@ -28,6 +30,7 @@ export class HearingSampler {
     this.frames = [];
     this.tickMs = [];
     this.tickFlux = [];
+    this.lastTickT = -Infinity;
     this.lastT = -Infinity;
     this.origin = performance.now();
   }
@@ -43,16 +46,30 @@ export class HearingSampler {
   }
 
   /**
-   * Record one analyser tick's spectral flux. push() calls this for every
+   * Record one analyser tick's spectral flux, stamped with the caller's clock
+   * (the app passes AudioContext time on the file timeline; see
+   * AudioEngine.clockMs). Ticks arrive at the display rate and are resampled
+   * onto a fixed 10 ms grid later (tempo.ts resampleTicks). push() calls this for every
    * snapshot, so the app needs nothing extra; offline callers that skip the
    * full snapshot on non-sample ticks call it directly.
    */
   tick(flux: number, fileClockMs?: number) {
     if (!this.running) return;
     const t = this.clock(fileClockMs);
-    const prev = this.tickMs[this.tickMs.length - 1];
-    if (prev !== undefined && t <= prev) return;
-    this.tickMs.push(Math.round(t * 10) / 10);
+    const tr = Math.round(t * 10) / 10;
+    // A jump back of more than 500 ms is a seek, not a stalled clock: accept it.
+    if (tr <= this.lastTickT && tr > this.lastTickT - 500) {
+      // Clock did not advance since the last read (audio-callback granularity):
+      // keep the spectral change on the previous tick instead of dropping it,
+      // even if that tick already went out with the previous frame (P0, 2026-11-15).
+      const buf = this.tickFlux.length
+        ? this.tickFlux
+        : this.frames[this.frames.length - 1]?.ticks?.flux;
+      if (buf && buf.length) buf[buf.length - 1] = round4((buf[buf.length - 1] ?? 0) + flux);
+      return;
+    }
+    this.lastTickT = tr;
+    this.tickMs.push(tr);
     this.tickFlux.push(round4(flux));
   }
 

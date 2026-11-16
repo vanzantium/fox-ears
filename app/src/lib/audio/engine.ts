@@ -82,6 +82,10 @@ export class AudioEngine {
   private mixBuf = new Float32Array(FFT_SIZE);
   private specHist: Uint8Array[] = [];
   private loud = new LoudFollower();
+  /** AudioContext time <-> media time anchor for the observation clock (P0). */
+  private clockAnchor: { ctx: number; media: number; rate: number } | null = null;
+  private micOriginCtx = 0;
+  private lastAudioNow = 0;
   private lastVocal: VocalFeatures | null = null;
   private lastPitch: {
     hz: number;
@@ -169,6 +173,66 @@ export class AudioEngine {
     return this.element?.currentTime ?? 0;
   }
 
+  /**
+   * Audio-clock "now" in seconds. AudioContext.currentTime only advances once per
+   * audio callback (~10.7 ms seen in headless Chrome on 2026-11-15), so display
+   * frames between callbacks would share a timestamp. getOutputTimestamp() pairs
+   * an audio time with a performance.now() time, which lets us interpolate to the
+   * moment of this read. Monotonic; falls back to currentTime.
+   */
+  private audioNow(): number {
+    const ctx = this.ctx;
+    if (!ctx) return 0;
+    let t = ctx.currentTime;
+    const ts = typeof ctx.getOutputTimestamp === "function" ? ctx.getOutputTimestamp() : null;
+    if (ts && ts.contextTime !== undefined && ts.performanceTime !== undefined && ts.performanceTime > 0) {
+      const est = ts.contextTime + (performance.now() - ts.performanceTime) / 1000;
+      // Stay within one callback-ish of the render clock; never run backwards.
+      if (Math.abs(est - t) < 0.2) t = est;
+    }
+    if (t < this.lastAudioNow) t = this.lastAudioNow;
+    this.lastAudioNow = t;
+    return t;
+  }
+
+  private reanchorClock() {
+    if (!this.ctx || !this.element) {
+      this.clockAnchor = null;
+      return;
+    }
+    this.clockAnchor = {
+      ctx: this.audioNow(),
+      media: this.element.currentTime,
+      rate: this.element.playbackRate || 1,
+    };
+  }
+
+  /**
+   * Observation clock in ms (P0, 2026-11-15). Analyser reads happen on display
+   * frames (requestAnimationFrame: 60/90/120 Hz, paused in background tabs), so
+   * they are stamped with AudioContext.currentTime, the clock the analyser data
+   * actually comes from, mapped onto the file timeline via an anchor taken on
+   * play / seek / rate change, interpolated between audio callbacks (audioNow).
+   * For the mic it is audio time since the mic began.
+   * Re-anchors if the media clock drifts more than 250 ms (stall, buffering).
+   */
+  clockMs(): number | null {
+    const ctx = this.ctx;
+    if (!ctx) return null;
+    if (this.sourceKind === "mic") return (this.audioNow() - this.micOriginCtx) * 1000;
+    const el = this.element;
+    if (!el) return null;
+    if (!this.clockAnchor) this.reanchorClock();
+    const a = this.clockAnchor;
+    if (!a) return el.currentTime * 1000;
+    const t = a.media + (this.audioNow() - a.ctx) * a.rate;
+    if (Math.abs(t - el.currentTime) > 0.25) {
+      this.reanchorClock();
+      return el.currentTime * 1000;
+    }
+    return Math.max(0, t) * 1000;
+  }
+
   duration() {
     if (this.sourceKind === "demo") return DEMO_DURATION_S;
     const d = this.element?.duration;
@@ -206,7 +270,13 @@ export class AudioEngine {
     el.crossOrigin = "anonymous";
     el.preload = "auto";
     el.addEventListener("ended", () => this.emit());
-    el.addEventListener("play", () => this.emit());
+    el.addEventListener("play", () => {
+      this.reanchorClock();
+      this.emit();
+    });
+    el.addEventListener("playing", () => this.reanchorClock());
+    el.addEventListener("seeked", () => this.reanchorClock());
+    el.addEventListener("ratechange", () => this.reanchorClock());
     el.addEventListener("pause", () => this.emit());
     el.addEventListener("timeupdate", () => this.emit());
     el.addEventListener("loadedmetadata", () => this.emit());
@@ -285,6 +355,7 @@ export class AudioEngine {
       });
       this.micStream = stream;
       this.micSource = ctx.createMediaStreamSource(stream);
+      this.micOriginCtx = this.audioNow();
       if (this.master) this.micSource.connect(this.master);
       this.sourceKind = "mic";
       this.fileName = "Microphone";

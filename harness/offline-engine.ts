@@ -70,7 +70,16 @@ class OfflineAnalyser {
   }
 }
 
-export type RunOptions = { sensitivity?: number; tickHz?: number; tickFlux?: number[] };
+export type RunOptions = {
+  sensitivity?: number;
+  /** Analyser read rate (the app's requestAnimationFrame rate). Default 60. */
+  tickHz?: number;
+  /** Uniform +/- jitter on each tick interval, ms (seeded, deterministic). */
+  jitterMs?: number;
+  /** [fromMs, toMs]: no analyser reads in this span, like a backgrounded tab. */
+  gapMs?: [number, number];
+  tickFlux?: number[];
+};
 
 export function hearPcm(
   L: Float32Array, R: Float32Array, sr: number, opts: RunOptions = {},
@@ -80,6 +89,10 @@ export function hearPcm(
   const minDb = -92 + (1 - sens) * 38;
   const tickHz = opts.tickHz ?? 60;
   const hop = Math.round(sr / tickHz);
+  const jit = Math.round(((opts.jitterMs ?? 0) / 1000) * sr);
+  let seed = 4242;
+  const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 0x100000000; };
+  const nextHop = () => Math.max(1, hop + (jit ? Math.round((rand() * 2 - 1) * jit) : 0));
   const fft = new Fft(FFT_SIZE);
   const aL = new OfflineAnalyser(fft, minDb), aR = new OfflineAnalyser(fft, minDb), aM = new OfflineAnalyser(fft, minDb);
   const freqL = new Uint8Array(FFT_SIZE / 2), freqR = new Uint8Array(FFT_SIZE / 2), freqM = new Uint8Array(FFT_SIZE / 2);
@@ -93,7 +106,9 @@ export function hearPcm(
   let lastSampleMs = -Infinity;
   const loudF = new LoudFollower();
 
-  for (let end = FFT_SIZE; end <= L.length; end += hop) {
+  for (let end = FFT_SIZE; end <= L.length; end += nextHop()) {
+    const gapClock = (end / sr) * 1000;
+    if (opts.gapMs && gapClock > opts.gapMs[0] && gapClock < opts.gapMs[1]) continue; // no rAF while hidden
     const st = end - FFT_SIZE;
     for (let i = 0; i < FFT_SIZE; i++) {
       const l = (L[st + i] ?? 0) * gain, r = (R[st + i] ?? 0) * gain;
@@ -108,6 +123,8 @@ export function hearPcm(
     specHist.push(Uint8Array.from(freqM));
     if (specHist.length > 15) specHist.shift();
 
+    // The app stamps ticks with AudioContext time on the file timeline (P0); offline
+    // that is exactly the sample clock.
     const clockMs = (end / sr) * 1000;
     if (clockMs - lastSampleMs < SAMPLE_INTERVAL_MS) {
       sampler.tick(flux, clockMs); // the app's push() records every tick too

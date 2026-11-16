@@ -109,8 +109,9 @@ export function FoxEarsApp({ initialMap }: { initialMap?: HearingMap }) {
         endedHandled.current = false;
       }
       if (playingNow) {
-        const clock =
-          engine.sourceKind === "mic" ? undefined : engine.currentTime() * 1000;
+        // P0 2026-11-15: observations carry AudioContext time (file timeline for
+        // files, audio time since start for the mic), not the display frame clock.
+        const clock = engine.clockMs() ?? undefined;
         samplerRef.current.push(snap, clock);
         pushMapColumn(snap, clock ?? performance.now());
         paintStep(snap, clock ?? performance.now(), engine.duration(), THEMES[themeId]);
@@ -239,6 +240,10 @@ export function FoxEarsApp({ initialMap }: { initialMap?: HearingMap }) {
       paintingPng: paintingPng(),
       pass: plan.options,
     });
+    if (import.meta.env.DEV) {
+      // Dev-only hook for scripts/browser-pass.mjs (P0 browser check); not in production builds.
+      (window as unknown as { __foxEarsLastMap?: unknown }).__foxEarsLastMap = next;
+    }
     const song = fileEncounter(next, plan.kind, plan.focus);
     const following = plannedPass(song.title, song.duration_ms);
     next.listen = {
