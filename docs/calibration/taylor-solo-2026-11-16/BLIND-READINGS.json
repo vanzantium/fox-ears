@@ -1,0 +1,652 @@
+{
+  "title": "Fox Ears sealed blind readings \u2014 Taylor solo voice+guitar+metronome",
+  "date": "2026-11-16",
+  "zone": "America/Dawson_Creek",
+  "label": "SOFT",
+  "status": "BLIND \u2014 sealed before Taylor's BPM/lyrics answer key",
+  "operator": "Riven",
+  "harness": {
+    "fox_ears": "P0 headless Node harness (PR #5), --tick-hz 60 --sens 0.58, same assembleMap path as the app",
+    "branch_base": "research/oss-tools-bakeoff (PR #6), stacked on p0/binding-timing-cleanup (PR #5)"
+  },
+  "files": {
+    "A": {
+      "label": "Song A",
+      "source_attachment": "24bdd7d77507f78890ab8d313e3c2bcfc65bac35f12082861f56d8c13111192b.m4a",
+      "sha256_m4a": "0dbe52ee9a2049c6b36e719545e96e79e49ae62d5d838b19d81f205755d8c839",
+      "container": "AAC LC stereo 48 kHz, 141 kb/s, encoder Lavf58.29.100",
+      "duration_m4a_s": 306.36,
+      "duration_wav_44100_s": 306.325,
+      "duration_fox_ears_s": 306.3
+    },
+    "B": {
+      "label": "Song B",
+      "source_attachment": "3915eeda75f44043e50e40ca1c2ff184e183796e382d7debae38f7fda7d25453.m4a",
+      "sha256_m4a": "2394f9ed79b74d52bdf01c801574d74c93470cceb67e34fe61da81a75a9398b8",
+      "container": "AAC LC stereo 48 kHz, 141 kb/s, encoder Lavf58.29.100",
+      "duration_m4a_s": 251.54,
+      "duration_wav_44100_s": 251.499,
+      "duration_fox_ears_s": 251.46
+    }
+  },
+  "tracks": {
+    "A": {
+      "label": "SOFT",
+      "duration_s": 306.325,
+      "click_metronome": {
+        "label": "SOFT",
+        "quarter_note_bpm": 80.0,
+        "bpm_4dp": 79.9999,
+        "period_s": 0.750001,
+        "bar_period_s": 3.000002,
+        "bar_bpm": 20.0,
+        "meter_guess": "4/4 (downbeats every 3.000 s)",
+        "phase_s": 0.00194,
+        "phase_note": "\u22481.9 ms; consistent with AAC priming/resampling delay, not a musical offset. Grid starts at t\u22480.",
+        "first_downbeat_s": 0.0015,
+        "last_downbeat_s": 306.0027,
+        "mean_grid_err_ms": 2.03,
+        "source": "Demucs htdemucs_6s drums stem, 1\u20135 kHz bar-accent onsets (the metronome landed in the drums stem). All 37 detected downbeats inlier to the 3.000 s grid.",
+        "stability": "Locked at 80.00 across the file. Window BPM on isolated downbeats 79.996\u201380.007.",
+        "note": "Beat trackers that listen to the mix (guitar strums) come in higher: Fox Ears 84 (rival 165.5 at 87%), librosa 166.709, Essentia RhythmExtractor 164.16 / Percival 83.35, madmom median 83.333. The click itself stays at 80.00."
+      },
+      "tempo_tools": {
+        "fox_ears_p0_60hz": {
+          "bpm": 84,
+          "confidence": 0.32,
+          "note": "sub-grid; nearest rival 165.5 BPM at 87%",
+          "label": "SOFT"
+        },
+        "librosa_feature_and_beat_track": {
+          "bpm": 166.709,
+          "median_ibi_bpm": 166.709,
+          "mean_ibi_bpm": 166.023,
+          "cv": 0.0443,
+          "label": "SOFT"
+        },
+        "essentia_rhythm_extractor2013": {
+          "bpm": 164.1575,
+          "confidence": 1.4661,
+          "label": "SOFT"
+        },
+        "essentia_percival": {
+          "bpm": 83.3543,
+          "label": "SOFT"
+        },
+        "madmom_rnn_dbn": {
+          "mean_ibi_bpm": 82.64,
+          "median_ibi_bpm": 83.333,
+          "std": 2.526,
+          "cv": 0.0306,
+          "inferred_beats_per_bar": 4,
+          "label": "SOFT"
+        }
+      },
+      "key": {
+        "label": "SOFT",
+        "fox_ears_p0_60hz": "E major (0.93)",
+        "librosa_vote": {
+          "majority": "E major",
+          "n_agreeing": "3/4",
+          "cqt_kk": "E major r=0.8713 high",
+          "cqt_temperley": "E major r=0.8501 high",
+          "stft_kk": "G# minor r=0.5114 low",
+          "stft_temperley": "E major r=0.3885 low",
+          "intro_15s_cqt_kk": "E major r=0.8086",
+          "after_15s_cqt_kk": "E major r=0.7091"
+        },
+        "essentia_keyextractor": {
+          "key": "E major",
+          "strength": 0.9024,
+          "intro_15s": "E major 0.8356",
+          "after_15s": "E major 0.9257"
+        },
+        "consensus": "E major (Fox Ears, Essentia, librosa CQT). Still SOFT until Taylor's key list."
+      },
+      "chords": {
+        "label": "SOFT",
+        "madmom_top": [
+          {
+            "chord": "A:maj",
+            "share": 0.279
+          },
+          {
+            "chord": "E:maj",
+            "share": 0.269
+          },
+          {
+            "chord": "C#:min",
+            "share": 0.135
+          },
+          {
+            "chord": "E:min",
+            "share": 0.115
+          },
+          {
+            "chord": "F#:min",
+            "share": 0.087
+          },
+          {
+            "chord": "G#:min",
+            "share": 0.067
+          }
+        ],
+        "essentia_top": [
+          {
+            "chord": "E",
+            "share": 0.381
+          },
+          {
+            "chord": "A",
+            "share": 0.125
+          },
+          {
+            "chord": "Abm",
+            "share": 0.106
+          },
+          {
+            "chord": "C#m",
+            "share": 0.096
+          },
+          {
+            "chord": "Em",
+            "share": 0.074
+          },
+          {
+            "chord": "B",
+            "share": 0.058
+          },
+          {
+            "chord": "F#m",
+            "share": 0.046
+          }
+        ],
+        "family": "E major / A major, with C#m, F#m, G#m \u2014 diatonic to E major, plus some E minor colour. Opening ~0\u20136 s E, ~9\u201311 s A, then E again.",
+        "timeline_source": "madmom CNN+CRF (preferred over Essentia's very short frames for a readable progression)"
+      },
+      "fox_ears_p0_60hz": {
+        "label": "SOFT",
+        "duration_s": 306.3,
+        "tempo_bpm": 84,
+        "tempo_confidence": 0.32,
+        "tempo_note": "sub-grid onsets (882); comb x prior picked 84 BPM; nearest rival 165.5 BPM at 87%",
+        "key": "E major (0.93)",
+        "chroma_reliable": true,
+        "chords_n": 37,
+        "sections_n": 13,
+        "section_list": [
+          "0.0-24.8s intro A",
+          "24.8-41.1s verse Av",
+          "41.1-69.7s chorus B",
+          "69.7-99.7s verse C",
+          "99.7-116.8s verse D",
+          "116.8-154.7s bridge E",
+          "154.7-169.0s verse F",
+          "169.0-215.4s verse G",
+          "215.4-244.0s verse H",
+          "244.0-266.1s verse I",
+          "266.1-278.3s chorus H'",
+          "278.3-301.1s verse J",
+          "301.1-306.3s outro K"
+        ],
+        "vocal_notes_n": 33,
+        "vocal_range": {
+          "low": "G3",
+          "high": "G#4",
+          "median": "B3"
+        },
+        "overall_range": {
+          "low": "E2",
+          "high": "A5",
+          "median": "F#3"
+        },
+        "vocal_mask": "52.2%",
+        "vocal_regions": 76,
+        "notes_n": 533,
+        "voiced": "84.5%",
+        "vocal_gate": "48.9%",
+        "objects": 225,
+        "conflicts": 317
+      },
+      "stems_htdemucs_6s": {
+        "label": "SOFT",
+        "vocals_whole_dbfs": -14.76,
+        "guitar_whole_dbfs": -18.86,
+        "vocals_first_15s_dbfs": -57.21,
+        "guitar_first_15s_dbfs": -23.98,
+        "vocal_energy_onset_s": 24.38,
+        "vocal_energy_end_s": 301.35,
+        "frac_vocal_dominant_frames": 0.3146,
+        "frac_guitar_dominant_frames": 0.3949,
+        "frac_both_active_frames": 0.626,
+        "vocals_db_when_guitar_dominant_median": -57.21,
+        "guitar_db_when_vocal_dominant_median": -21.75,
+        "other_stems_whole_dbfs": {
+          "bass": -54.79,
+          "drums": -47.33,
+          "piano": -54.9,
+          "other": -53.42
+        },
+        "separation_note": "Clean intro mute: vocal stem is ~-57 dBFS until 24.38 s while guitar is present. After the voice enters, guitar still leaks into the vocal stem at a median of -21.8 dBFS during vocal-dominant frames. Bass/piano/other are essentially empty. The metronome downbeats were routed into the drums stem."
+      },
+      "vocal_melody_torchcrepe": {
+        "label": "SOFT",
+        "source": "vocal stem, torchcrepe full, 16 kHz, 10 ms hop, periodicity \u2265 0.4",
+        "median_f0_hz": 211.37,
+        "median_note": "G#3",
+        "p5_f0_hz": 131.0,
+        "p95_f0_hz": 401.39,
+        "p5_note": "C3",
+        "p95_note": "G4",
+        "range_semitones_p5_p95": 19.39,
+        "min_max_note": "E2\u2013F5 (extremes likely include leakage/false voicing in the silent intro; prefer p5\u2013p95)",
+        "voiced_fraction": 0.6712,
+        "note": "Fox Ears vocal melody (33 notes) was G3\u2013G#4 median B3, a tighter band around the same centre."
+      },
+      "lyrics": {
+        "label": "SOFT",
+        "tool": "faster-whisper medium, CPU int8, beam 5, VAD, temperature=0 (MIT)",
+        "primary": "vocal_stem",
+        "vocal_stem": {
+          "n_segments": 43,
+          "mean_avg_logprob": -0.3151,
+          "min_avg_logprob": -0.4449,
+          "n_flagged_segments": 7,
+          "first_line_start_s": 24.5,
+          "text": "They've been selling you a pair of seat Can't you see? Everything that you've been told was written by them when they were really evil Every dream with a scene that they sold you as a debt As a regret They don't want to show you You can dream a bigger dream You can show them what it means to be alive Baby, you can thrive Don't take it all on yourself You can go faster than the wind Don't put your heart into yourself This is the show that you used to be You tell them how you're gonna set them free You've got the whip Yeah, it's time for you to show us what you can do with it Don't grow, baby Let them sell you despite You could just open up your eyes See a bunch of scared fears There's stuff like they know what it is Feel now, but there's rambling It's hysteria Let their own show Maybe we can show Don't take it all on yourself You can grow faster than the wind Don't put your heart into yourself This is the show that you used to be You tell them about the now and everything you see Don't go and dream that Baby, listen your day You can take the stars down You can play the high and low You can dream where I could share I think that there was a place for that When you can't use the air And then you let it down Now you don't have to frown about it You can go crazy and change the whole dancing Baby, let your down grow Throw the world you know It's crack now, it is the fill of time"
+        },
+        "mix_first_line_alternative": "They've been selling you currency, can't you see?",
+        "garbled_or_disputed": [
+          "Opening line disagrees: vocal stem 'a pair of seat' vs mix 'currency'. Both uncertain.",
+          "Opening verse also disagrees on 'written by them when they were really evil' vs mix 'written by the wind / They were really over the scene'.",
+          "First 7 vocal segments flagged high_no_speech (nsp=0.61) even though they are clearly sung \u2014 treat wording as tentative.",
+          "Chorus line 'go faster' (first chorus) vs 'grow faster' (repeat) \u2014 one of these is probably a typo in the ASR.",
+          "Middle verse (~124\u2013186 s) is the weakest stretch: 'Don't grow, baby / Let them sell you despite', 'scared fears', 'rambling', 'hysteria'.",
+          "Late lines (~241\u2013301 s) also shaky: 'let your down grow', 'It's crack now, it is the fill of time'.",
+          "Two unusually long segments (126.1\u2013146.6 and 244.0\u2013258.7) may span held notes or a brief guitar break."
+        ],
+        "repeated_chorus": "Don't take it all on yourself / You can go|grow faster than the wind / Don't put your heart into yourself \u2014 heard at 71.1\u201388.9 and 186.4\u2013204.3.",
+        "repeated_hook": "This is the show that you used to be \u2014 heard at 91.5\u201399.2 and 208.4\u2013214.2."
+      },
+      "sections_soft": {
+        "label": "SOFT",
+        "method": "Vocal-stem energy onset + lyric repetition, with Fox Ears section list as a second opinion. Librosa novelty over-segmented (34 peaks) and Essentia SBic under-segmented (1 cut at 297 s).",
+        "boundaries": [
+          {
+            "t0": 0.0,
+            "t1": 24.4,
+            "role": "intro",
+            "note": "guitar + metronome only. Vocal stem silent until 24.38 s. Fox Ears intro 0\u201324.8 s agrees."
+          },
+          {
+            "t0": 24.4,
+            "t1": 62.5,
+            "role": "verse",
+            "note": "opening verse (ASR uncertain on the first lines)"
+          },
+          {
+            "t0": 62.5,
+            "t1": 70.5,
+            "role": "pre-chorus",
+            "note": "You can show them what it means to be alive / Baby, you can thrive"
+          },
+          {
+            "t0": 71.1,
+            "t1": 88.9,
+            "role": "chorus",
+            "note": "Don't take it all on yourself\u2026"
+          },
+          {
+            "t0": 91.5,
+            "t1": 112.5,
+            "role": "hook / post-chorus",
+            "note": "This is the show that you used to be\u2026"
+          },
+          {
+            "t0": 112.5,
+            "t1": 124.5,
+            "role": "instrumental",
+            "note": "lyric gap"
+          },
+          {
+            "t0": 124.5,
+            "t1": 186.4,
+            "role": "verse",
+            "note": "second verse; ASR weaker; may contain a short break"
+          },
+          {
+            "t0": 186.4,
+            "t1": 204.3,
+            "role": "chorus",
+            "note": "chorus repeat"
+          },
+          {
+            "t0": 208.4,
+            "t1": 220.5,
+            "role": "hook / post-chorus",
+            "note": "hook repeat, partial wording"
+          },
+          {
+            "t0": 220.5,
+            "t1": 301.4,
+            "role": "verse / outro vocal",
+            "note": "later verse; wording shakier"
+          },
+          {
+            "t0": 301.4,
+            "t1": 306.3,
+            "role": "outro",
+            "note": "short instrumental tail"
+          }
+        ]
+      }
+    },
+    "B": {
+      "label": "SOFT",
+      "duration_s": 251.499,
+      "click_metronome": {
+        "label": "SOFT",
+        "quarter_note_bpm": 80.0,
+        "bpm_4dp": 80.0,
+        "period_s": 0.75,
+        "bar_period_s": 2.999999,
+        "bar_bpm": 20.0,
+        "meter_guess": "4/4 (downbeats every 3.000 s)",
+        "phase_s": 0.0008,
+        "phase_note": "\u22480.8 ms encoder/resample delay. Grid starts at t\u22480.",
+        "first_downbeat_s": 0.0015,
+        "last_downbeat_s": 249.0006,
+        "mean_grid_err_ms": 0.75,
+        "source": "Demucs htdemucs_6s drums stem, 1\u20135 kHz bar-accent onsets. All 22 detected downbeats inlier to the 3.000 s grid.",
+        "stability": "Locked at 80.00 across the file. Cleaner than Song A. Mix-side beat trackers also sit on ~80.",
+        "note": "Madmom's first eight mix beats land on 0.02, 0.75, 1.50, 2.25, 3.00 \u2014 the same 80.00 grid."
+      },
+      "tempo_tools": {
+        "fox_ears_p0_60hz": {
+          "bpm": 79.9,
+          "confidence": 0.4,
+          "note": "sub-grid; nearest rival 160 BPM at 54%",
+          "label": "SOFT"
+        },
+        "librosa_feature_and_beat_track": {
+          "bpm": 79.507,
+          "median_ibi_bpm": 79.507,
+          "mean_ibi_bpm": 79.857,
+          "cv": 0.0372,
+          "label": "SOFT"
+        },
+        "essentia_rhythm_extractor2013": {
+          "bpm": 79.571,
+          "confidence": 3.3469,
+          "label": "SOFT"
+        },
+        "essentia_percival": {
+          "bpm": 159.0144,
+          "label": "SOFT"
+        },
+        "madmom_rnn_dbn": {
+          "mean_ibi_bpm": 79.591,
+          "median_ibi_bpm": 80.0,
+          "std": 2.178,
+          "cv": 0.0274,
+          "inferred_beats_per_bar": 4,
+          "label": "SOFT"
+        }
+      },
+      "key": {
+        "label": "SOFT",
+        "fox_ears_p0_60hz": "E minor (0.75)",
+        "librosa_vote": {
+          "majority": "E minor",
+          "n_agreeing": "4/4",
+          "cqt_kk": "E minor r=0.7501 high, runner-up G major 0.5217",
+          "cqt_temperley": "E minor r=0.6772 medium, runner-up G major 0.5537",
+          "stft_kk": "E minor r=0.3117 low",
+          "stft_temperley": "E minor r=0.3268 low",
+          "intro_15s_cqt_kk": "E minor r=0.726",
+          "after_15s_cqt_kk": "E minor r=0.7507"
+        },
+        "essentia_keyextractor": {
+          "key": "G major",
+          "strength": 0.8716,
+          "intro_15s": "G major 0.8254",
+          "after_15s": "G major 0.8749"
+        },
+        "consensus": "UNRESOLVED relative-key pair: E minor (Fox Ears, librosa) vs G major (Essentia). Chords use G, Em, C, D, Am, A \u2014 consistent with either. Leave both as candidates."
+      },
+      "chords": {
+        "label": "SOFT",
+        "madmom_top": [
+          {
+            "chord": "G:maj",
+            "share": 0.248
+          },
+          {
+            "chord": "E:min",
+            "share": 0.211
+          },
+          {
+            "chord": "C:maj",
+            "share": 0.128
+          },
+          {
+            "chord": "E:maj",
+            "share": 0.119
+          },
+          {
+            "chord": "A:maj",
+            "share": 0.119
+          },
+          {
+            "chord": "D:maj",
+            "share": 0.11
+          }
+        ],
+        "essentia_top": [
+          {
+            "chord": "Em",
+            "share": 0.261
+          },
+          {
+            "chord": "G",
+            "share": 0.174
+          },
+          {
+            "chord": "C",
+            "share": 0.14
+          },
+          {
+            "chord": "E",
+            "share": 0.104
+          },
+          {
+            "chord": "D",
+            "share": 0.098
+          },
+          {
+            "chord": "Gm",
+            "share": 0.066
+          },
+          {
+            "chord": "Am",
+            "share": 0.051
+          }
+        ],
+        "family": "G major / E minor: G, Em, C, D, Am, plus some E major and A major. Intro 0\u20133 s is 'N' (no chord) in madmom, then a cycling G\u2013C\u2013Am/A\u2013E pattern once the guitar is in.",
+        "timeline_source": "madmom CNN+CRF"
+      },
+      "fox_ears_p0_60hz": {
+        "label": "SOFT",
+        "duration_s": 251.46,
+        "tempo_bpm": 79.9,
+        "tempo_confidence": 0.4,
+        "tempo_note": "sub-grid onsets (503); comb x prior picked 79.9 BPM; nearest rival 160 BPM at 54%",
+        "key": "E minor (0.75)",
+        "chroma_reliable": true,
+        "chords_n": 53,
+        "sections_n": 10,
+        "section_list": [
+          "0.0-15.8s intro A",
+          "15.8-62.9s verse Av",
+          "62.9-99.0s chorus B",
+          "99.0-134.3s bridge A'",
+          "134.3-161.3s chorus B'",
+          "161.3-176.3s bridge C",
+          "176.3-195.1s verse D",
+          "195.1-216.1s chorus E",
+          "216.1-246.1s chorus F",
+          "246.1-251.5s outro G"
+        ],
+        "vocal_notes_n": 7,
+        "vocal_range": {
+          "low": "G3",
+          "high": "B3",
+          "median": "A3"
+        },
+        "overall_range": {
+          "low": "E2",
+          "high": "E6",
+          "median": "D#3"
+        },
+        "vocal_mask": "59.8%",
+        "vocal_regions": 46,
+        "notes_n": 383,
+        "voiced": "80.3%",
+        "vocal_gate": "56.6%",
+        "objects": 231,
+        "conflicts": 408,
+        "note": "Fox Ears only kept 7 vocal-melody notes (G3\u2013B3). torchcrepe on the vocal stem hears a wider sung range; the engine is under-detecting the melody on this take."
+      },
+      "stems_htdemucs_6s": {
+        "label": "SOFT",
+        "vocals_whole_dbfs": -19.01,
+        "guitar_whole_dbfs": -18.52,
+        "vocals_first_15s_dbfs": -66.14,
+        "guitar_first_15s_dbfs": -22.26,
+        "vocal_energy_onset_s": 27.68,
+        "vocal_energy_end_s": 246.27,
+        "frac_vocal_dominant_frames": 0.1435,
+        "frac_guitar_dominant_frames": 0.448,
+        "frac_both_active_frames": 0.5756,
+        "vocals_db_when_guitar_dominant_median": -47.88,
+        "guitar_db_when_vocal_dominant_median": -25.3,
+        "other_stems_whole_dbfs": {
+          "bass": -59.28,
+          "drums": -44.26,
+          "piano": -50.93,
+          "other": -64.4
+        },
+        "separation_note": "Very clean intro mute: vocal stem ~-66 dBFS until 27.68 s. After the voice enters, the vocal stem is less dominant than in Song A (only 14% of frames vocal-dominant; more guitar in the mix). Metronome downbeats again landed in the drums stem. Bass/other empty; a little mid-song energy in piano is likely leakage, not a real piano."
+      },
+      "vocal_melody_torchcrepe": {
+        "label": "SOFT",
+        "source": "vocal stem, torchcrepe full, 16 kHz, 10 ms hop, periodicity \u2265 0.4",
+        "median_f0_hz": 207.17,
+        "median_note": "G#3",
+        "p5_f0_hz": 157.38,
+        "p95_f0_hz": 476.53,
+        "p5_note": "D#3",
+        "p95_note": "A#4",
+        "range_semitones_p5_p95": 19.18,
+        "min_max_note": "D#2\u2013C#5 (extremes likely include leakage/false voicing before 27.7 s; prefer p5\u2013p95)",
+        "voiced_fraction": 0.6325,
+        "note": "Fox Ears vocal melody (only 7 notes, G3\u2013B3 median A3) is much narrower than torchcrepe on the same take."
+      },
+      "lyrics": {
+        "label": "SOFT",
+        "tool": "faster-whisper medium, CPU int8, beam 5, VAD, temperature=0 (MIT)",
+        "primary": "vocal_stem",
+        "vocal_stem": {
+          "n_segments": 23,
+          "mean_avg_logprob": -0.2747,
+          "min_avg_logprob": -0.3587,
+          "n_flagged_segments": 0,
+          "first_line_start_s": 27.8,
+          "text": "I can show you the game, I can teach you the rules You just do the same, learn to play with the rules You can sing your own notes, you can make your own life Get caught in your throat if you can't do the time Where they sell dreams, and they're selling lies It's the same old game in a new disguise So pull off your mask, pull out your car And just live your life like you've got a heart You can die, but play it still Might as well learn to kill, play the game Live without the pain You can try, you can try to escape You can tell all the lies, they'll find you in the end You can try to breathe, you can try to sing It's the same old game in a new disguise So pull off your mask, pull out your car Live without the pain There's nobody else for you to live the life Every person, every other fucking guy And you can't escape They're never gonna find you, but it's fucking too late You can die, but play it still Might as well learn to kill, play the game"
+        },
+        "mix_note": "Mix transcript collapsed to 3 low-confidence segments and is not usable as a second full text. Opening line on the mix agrees: 'I can show you the game, I can teach you the rules'.",
+        "garbled_or_disputed": [
+          "'pull out your car' may be a mishear (cards/core/guard?).",
+          "'You can die, but play it still / Might as well learn to kill' \u2014 wording may be off; repeated clearly enough to report, but not certain.",
+          "Segment 141.0\u2013183.5 s ('So pull off your mask, pull out your car') is 42 s long for one line: almost certainly an instrumental stretch with a bad timestamp, not a held lyric.",
+          "A 0.4 s fragment at 183.5\u2013183.9 ('Live without the pain') is also a timestamp glitch.",
+          "Late verse (183.9\u2013209.6) includes profanity in the ASR; reported as transcribed, not verified."
+        ],
+        "repeated_chorus": "It's the same old game in a new disguise / So pull off your mask, pull out your car \u2014 at 57.3\u201369.8 and 132.4\u2013141 (and maybe into the 141\u2013183 gap).",
+        "repeated_hook": "You can die, but play it still / Might as well learn to kill, play the game \u2014 at 75.5\u201394.0 and 209.6\u2013234.5. 'Live without the pain' sits near the first hook and again as a glitchy stamp around 183.5."
+      },
+      "sections_soft": {
+        "label": "SOFT",
+        "method": "Vocal-stem energy onset + lyric repetition. Fox Ears intro (0\u201315.8 s) is too short \u2014 the voice does not enter until 27.7 s.",
+        "boundaries": [
+          {
+            "t0": 0.0,
+            "t1": 27.8,
+            "role": "intro",
+            "note": "guitar + metronome only. Vocal stem silent until 27.68 s."
+          },
+          {
+            "t0": 27.8,
+            "t1": 51.5,
+            "role": "verse",
+            "note": "I can show you the game\u2026"
+          },
+          {
+            "t0": 51.5,
+            "t1": 75.5,
+            "role": "chorus",
+            "note": "sell dreams / same old game / pull off your mask\u2026"
+          },
+          {
+            "t0": 75.5,
+            "t1": 101.5,
+            "role": "hook",
+            "note": "You can die, but play it still\u2026 / Live without the pain"
+          },
+          {
+            "t0": 101.5,
+            "t1": 115.5,
+            "role": "instrumental",
+            "note": "lyric gap"
+          },
+          {
+            "t0": 115.5,
+            "t1": 132.4,
+            "role": "verse",
+            "note": "You can try to escape\u2026"
+          },
+          {
+            "t0": 132.4,
+            "t1": 141.0,
+            "role": "chorus",
+            "note": "chorus repeat; a long likely-instrumental stretch follows (~141\u2013183)"
+          },
+          {
+            "t0": 141.0,
+            "t1": 183.5,
+            "role": "instrumental (probable)",
+            "note": "ASR stamped one chorus line across 42 s \u2014 treat as a break, not a lyric span"
+          },
+          {
+            "t0": 183.9,
+            "t1": 209.6,
+            "role": "verse",
+            "note": "later verse; ASR weaker"
+          },
+          {
+            "t0": 209.6,
+            "t1": 234.5,
+            "role": "hook",
+            "note": "hook repeat"
+          },
+          {
+            "t0": 234.5,
+            "t1": 251.5,
+            "role": "outro",
+            "note": "instrumental tail; vocal energy ends ~246 s"
+          }
+        ]
+      }
+    }
+  }
+}

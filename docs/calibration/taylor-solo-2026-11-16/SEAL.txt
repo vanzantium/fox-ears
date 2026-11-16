@@ -1,0 +1,12 @@
+sha256(BLIND-READINGS.md) = 891e34af83a0bf4a7e77fe9bc2b748c44c78cf3ddee483d80e40b43664cc6755
+sealed: 2026-11-16 02:28 PM MST (America/Dawson_Creek)
+label: SOFT
+status: BLIND — readings locked before Taylor's BPM / lyrics answer key
+
+sha256(BLIND-READINGS.json) = 38e5e92e5d4c60628bc1725e9e28cf4166ed8aa3b80b239ef71ef346832271be
+
+Songs:
+  A  duration 306.33 s  sha256(m4a) = 0dbe52ee9a2049c6b36e719545e96e79e49ae62d5d838b19d81f205755d8c839
+  B  duration 251.50 s  sha256(m4a) = 2394f9ed79b74d52bdf01c801574d74c93470cceb67e34fe61da81a75a9398b8
+
+No audio is in this tree. Do not edit BLIND-READINGS.md or BLIND-READINGS.json after this seal; score Taylor's answers against these hashes.
