@@ -1,0 +1,122 @@
+{
+  "dated": "2026-11-16T16:54:00-07:00",
+  "zone": "America/Dawson_Creek",
+  "note": "Soft 14-song key score against the librosa Krumhansl stand-in in harness/reference-librosa-2026-11-14.json (not Taylor's own answer key). Pass-1 / P0 exact score was 10/14. P1 after the cadence/tonic-vs-dominant fix is still 10/14 exact, with a swap: pressure_makes now hits E major (was A major); involuntary_spiral is F vs C UNRESOLVED (preferred F; was a C major hit).",
+  "exact_hits": 10,
+  "n": 14,
+  "score": "10/14",
+  "songs": [
+    {
+      "file": "10-turn_the_screw.mp3",
+      "librosa_ks_key": "D# minor",
+      "pass1_key": "D# minor (0.83)",
+      "p1_key": "D# minor (0.86)",
+      "p1_key_note": "duration-weighted chroma + bass, intro discounted",
+      "hit": true
+    },
+    {
+      "file": "4-spiral_system.mp3",
+      "librosa_ks_key": "F# minor",
+      "pass1_key": "F# minor (0.66)",
+      "p1_key": "F# minor (0.68)",
+      "p1_key_note": "duration-weighted chroma + bass, intro discounted",
+      "hit": true
+    },
+    {
+      "file": "5-spiralling.mp3",
+      "librosa_ks_key": "A minor",
+      "pass1_key": "A minor (0.85)",
+      "p1_key": "A minor (0.86)",
+      "p1_key_note": "duration-weighted chroma + bass, intro discounted",
+      "hit": true
+    },
+    {
+      "file": "6-pressure_makes.mp3",
+      "librosa_ks_key": "E major",
+      "pass1_key": "A major (0.81)",
+      "p1_key": "E major (0.73)",
+      "p1_key_note": "tonic-vs-dominant: E over A on cadence/degree votes 3\u20131",
+      "hit": true
+    },
+    {
+      "file": "7-involuntary_spiral.mp3",
+      "librosa_ks_key": "C major",
+      "pass1_key": "C major (0.77)",
+      "p1_key": "F major (0.76)",
+      "p1_key_note": "tonic-vs-dominant: F vs C UNRESOLVED (degree F, cadence bass F, chroma C); preferred F",
+      "hit": false
+    },
+    {
+      "file": "8-racer.mp3",
+      "librosa_ks_key": "C minor",
+      "pass1_key": "C minor (0.78)",
+      "p1_key": "C minor (0.79)",
+      "p1_key_note": "duration-weighted chroma + bass, intro discounted",
+      "hit": true
+    },
+    {
+      "file": "9-step_up.mp3",
+      "librosa_ks_key": "A minor",
+      "pass1_key": "A major (0.81)",
+      "p1_key": "A major (0.79)",
+      "p1_key_note": "duration-weighted chroma + bass, intro discounted",
+      "hit": false
+    },
+    {
+      "file": "music_midnight_funky.ogg",
+      "librosa_ks_key": "D major",
+      "pass1_key": "D major (0.86)",
+      "p1_key": "D major (0.87)",
+      "p1_key_note": "duration-weighted chroma + bass, intro discounted",
+      "hit": true
+    },
+    {
+      "file": "music_midnight_slow.ogg",
+      "librosa_ks_key": "D major",
+      "pass1_key": "D major (0.82)",
+      "p1_key": "D major (0.83)",
+      "p1_key_note": "tonic-vs-dominant: D over A on cadence/degree votes 3\u20131",
+      "hit": true
+    },
+    {
+      "file": "music_track_a.ogg",
+      "librosa_ks_key": "F minor",
+      "pass1_key": "F major (0.77)",
+      "p1_key": "F major (0.77)",
+      "p1_key_note": "duration-weighted chroma + bass, intro discounted",
+      "hit": false
+    },
+    {
+      "file": "music_track_b.ogg",
+      "librosa_ks_key": "G minor",
+      "pass1_key": "G minor (0.85)",
+      "p1_key": "G minor (0.85)",
+      "p1_key_note": "duration-weighted chroma + bass, intro discounted",
+      "hit": true
+    },
+    {
+      "file": "my-little-monkey.mp3",
+      "librosa_ks_key": "D major",
+      "pass1_key": "A major (0.82)",
+      "p1_key": "A major (0.84)",
+      "p1_key_note": "tonic-vs-dominant: D vs A UNRESOLVED (degree A, cadence bass G, chroma D); preferred A",
+      "hit": false
+    },
+    {
+      "file": "neon-whiskers.mp3",
+      "librosa_ks_key": "D# major",
+      "pass1_key": "D# major (0.89)",
+      "p1_key": "D# major (0.9)",
+      "p1_key_note": "duration-weighted chroma + bass, intro discounted",
+      "hit": true
+    },
+    {
+      "file": "stinky-skunk-shuffle.mp3",
+      "librosa_ks_key": "C major",
+      "pass1_key": "C major (0.92)",
+      "p1_key": "C major (0.92)",
+      "p1_key_note": "duration-weighted chroma + bass, intro discounted",
+      "hit": true
+    }
+  ]
+}

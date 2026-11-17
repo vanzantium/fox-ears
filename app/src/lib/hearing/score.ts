@@ -4,16 +4,14 @@ import { vocalMask } from "@/lib/audio/vocal";
 import { inferChords } from "./chords";
 import { hierarchicalForm } from "./form";
 import { beatGridAligned, estimateTempo, tempoFromTicks } from "./tempo";
+import { attachHypothesesToEstimate } from "./tempoHypotheses";
+import { resampleOntoSpectralGrid } from "./spectralGrid";
+import { attachSectionCues } from "./sectionCues";
+import { estimateKeyDetailed } from "./keyResolve";
+export { KEY_TUNING } from "./keyResolve";
 import { falsifyChromatic, type PassOptions } from "./songModel";
 import { buildAffect } from "./affect";
-import {
-  degreeOf,
-  estimateTonic,
-  MAJOR_PROFILE,
-  MINOR_PROFILE,
-  PC_NAMES,
-  pearson,
-} from "./sonofield";
+import { degreeOf, estimateTonic, PC_NAMES } from "./sonofield";
 import type {
   ChordEvent,
   DegreeEvent,
@@ -29,8 +27,11 @@ export function emptyChart(): SongChart {
     tempo_confidence: 0,
     tempo_candidates: [],
     tempo_note: undefined,
+    tempo_hypotheses: [],
+    preferred_for: { transcription_grid: null, felt_groove: null, unresolved: true },
     key: null,
     key_hypotheses: [],
+    key_status: undefined,
     local_centers: [],
     chroma_reliable: true,
     range: null,
@@ -40,6 +41,9 @@ export function emptyChart(): SongChart {
     chords: [],
     beats: [],
     sections: [],
+    section_cues: [],
+    section_disagreement: [],
+    input_change_receipts: [],
     melody: [],
     vocal_regions: [],
     lyrics: { source: "none", text: "", lines: [] },
@@ -56,15 +60,20 @@ export function buildChart(
   const { tempo, onsetMs } = chartTempo(frames);
   const lastT = frames[frames.length - 1]?.t_ms ?? 0;
   const beats = tempo?.bpm ? beatGridAligned(lastT, tempo.bpm, onsetMs) : [];
-  const rel = chromaReliability(frames.map((f) => ({ chroma: f.chroma })));
+  // Key and sections read a fixed 10 ms audio-clock grid so display rate
+  // (and per-read analyser smoothing) cannot change the answer.
+  const gridFrames = resampleOntoSpectralGrid(frames);
+  const rel = chromaReliability(gridFrames.map((f) => ({ chroma: f.chroma })));
+  const vMaskGrid = chartVocalMask(gridFrames);
   const vMask = chartVocalMask(frames);
-  const sections = hierarchicalForm(frames, tempo?.bpm ?? null, beats, vMask);
-  const keyEst = estimateKey(frames, sections);
-  const key = rel.ok ? (keyEst?.key ?? null) : null;
+  const sections = hierarchicalForm(gridFrames, tempo?.bpm ?? null, beats, vMaskGrid);
+  const form = attachSectionCues(sections, gridFrames, { vocalMask: vMaskGrid, lyrics: lyrics.lines });
+  const keyEst = estimateKeyDetailed(gridFrames, form.sections);
+  const key = rel.ok ? (keyEst.key ?? null) : null;
   const hypotheses = [
     ...(pass?.keyPrior ?? []),
-    ...(keyEst?.key ? hypothesesFromKey(keyEst.key) : keyHypotheses(frames)),
-  ].slice(0, 4);
+    ...(rel.ok && keyEst.hypotheses.length ? keyEst.hypotheses : keyEst.key ? hypothesesFromKey(keyEst.key) : keyHypotheses(frames)),
+  ].slice(0, 16);
   let chords = rel.ok ? inferChords(frames, key, hypotheses, pass?.chordWinMs ?? 2200) : [];
   if (pass?.kind === "contradiction") chords = falsifyChromatic({ ...emptyChart(), chords }, frames).chords;
   const vocal_regions = vocalRegions(frames, vMask).filter((v) =>
@@ -101,24 +110,46 @@ export function buildChart(
     vocal_range = { low: midiToName(lo), high: midiToName(hi), median: midiToName(med) };
   }
 
+  const sparseOnsets = sparseRegularOnsets(frames);
+  const tickMs: number[] = [];
+  const tickFlux: number[] = [];
+  for (const f of frames) {
+    if (!f.ticks) continue;
+    for (let i = 0; i < f.ticks.t_ms.length; i++) {
+      tickMs.push(f.ticks.t_ms[i] ?? 0);
+      tickFlux.push(f.ticks.flux[i] ?? 0);
+    }
+  }
+  const hypothesesTempo = attachHypothesesToEstimate(
+    tempo ? { bpm: tempo.bpm, confidence: tempo.confidence, note: tempo.note, candidates: tempo.candidates } : null,
+    sparseOnsets,
+    onsetMs,
+    tickMs.length ? { t_ms: tickMs, flux: tickFlux } : undefined,
+  );
+
   return {
     tempo_bpm: tempo?.bpm ?? null,
     tempo_confidence: tempo?.confidence ?? 0,
     tempo_candidates: tempo?.candidates,
     tempo_note: tempo?.note,
+    tempo_hypotheses: hypothesesTempo.tempo_hypotheses,
+    preferred_for: hypothesesTempo.preferred_for,
     key,
     key_hypotheses: hypotheses,
     local_centers,
     chroma_reliable: rel.ok,
     chroma_note: rel.note,
-    key_note: rel.ok ? keyEst?.note : undefined,
+    key_note: rel.ok ? keyEst.note : undefined,
+    key_status: rel.ok ? keyEst.status : undefined,
     range,
     vocal_range,
     notes,
     vocal_melody,
     chords,
     beats,
-    sections,
+    sections: form.sections,
+    section_cues: form.cues,
+    section_disagreement: form.disagreement,
     melody: vocal_melody.map((n) => ({ t_ms: n.t_ms, midi: n.midi, name: n.name })),
     vocal_regions,
     lyrics,
@@ -211,105 +242,6 @@ export function chartTempo(frames: HearingFrame[]): {
     .filter((f) => Math.max(f.left_ear.onset, f.right_ear.onset, f.flux) > LEGACY_ONSET_GATE)
     .map((f) => f.t_ms);
   return { tempo: estimateTempo(onsetMs), onsetMs, path: "frame" };
-}
-
-/** Key-finding constants (tuning pass 1, 2026-11-14). */
-export const KEY_TUNING = {
-  /** Weight of frames in the intro / first section (a dominant vamp there fooled the old reader). */
-  introWeight: 0.3,
-  /** If no first section is found, treat this fraction of the song as the intro. */
-  introFallbackFrac: 0.1,
-  /** A first section longer than this fraction is not treated as an intro. */
-  introMaxFrac: 0.25,
-  /** Bass chroma (55-180 Hz, mostly fundamentals) mixed into the profile. */
-  bassWeight: 0.5,
-  /** Fifth-related rivals closer than this (Pearson r) go to tonic-vs-dominant resolution. */
-  closeCall: 0.1,
-} as const;
-
-/**
- * Whole-song key. Each voiced frame counts by duration (not loudness), the
- * intro / first section is discounted, and bass chroma is folded in because
- * the 90-1800 Hz chroma leans a fifth sharp (3rd harmonics). Then, when the
- * runner-up is a fifth away and close, tonic-vs-dominant resolution compares
- * the pitch class only one of the two keys owns (4th vs raised 4th; b6 vs 6 in
- * minor) and the bass tonic. Both must favour the rival to overturn the top
- * key; otherwise it stands, and a confirming test raises confidence.
- */
-function estimateKey(
-  frames: HearingFrame[],
-  sections: SongChart["sections"] = [],
-): { key: SongChart["key"]; note: string } | null {
-  const lastT = frames[frames.length - 1]?.t_ms ?? 0;
-  const first = sections[0];
-  const introEnd =
-    first && sections.length > 1 && first.t_end_ms <= lastT * KEY_TUNING.introMaxFrac
-      ? first.t_end_ms
-      : lastT * KEY_TUNING.introFallbackFrac;
-  const acc = new Array<number>(12).fill(0);
-  const bass = new Array<number>(12).fill(0);
-  for (const f of frames) {
-    const ch = f.chroma;
-    if (!ch || ch.length !== 12) continue;
-    const sum = ch.reduce((a, b) => a + b, 0);
-    if (sum < 0.05) continue;
-    const w = f.t_ms < introEnd ? KEY_TUNING.introWeight : 1;
-    for (let i = 0; i < 12; i++) acc[i] = (acc[i] ?? 0) + (ch[i] ?? 0) * w;
-    const bc = f.bass_chroma;
-    if (bc && bc.length === 12) for (let i = 0; i < 12; i++) bass[i] = (bass[i] ?? 0) + (bc[i] ?? 0) * w;
-  }
-  const aSum = acc.reduce((a, b) => a + b, 0);
-  const bSum = bass.reduce((a, b) => a + b, 0);
-  if (aSum <= 0) return null;
-  const a = acc.map((v) => v / aSum);
-  const b = bSum > 0 ? bass.map((v) => v / bSum) : new Array<number>(12).fill(0);
-  const profile = a.map((v, i) => v + KEY_TUNING.bassWeight * (b[i] ?? 0));
-  const ranked = rankKeys(profile);
-  const top = ranked[0];
-  if (!top || top.corr < 0.12) return null;
-  let pick = top;
-  let note = "duration-weighted chroma + bass, intro discounted";
-  for (const d of [-7, 7]) {
-    const altPc = (top.pc + d + 12) % 12;
-    const alt = ranked.find((r) => r.pc === altPc && r.mode === top.mode);
-    if (!alt || top.corr - alt.corr >= KEY_TUNING.closeCall) continue;
-    const lower = d === -7 ? altPc : top.pc;
-    const upper = (lower + 7) % 12;
-    // Pitch class only the lower key owns minus the one only the upper key owns.
-    const own =
-      top.mode === "major"
-        ? (a[(lower + 5) % 12] ?? 0) - (a[(lower + 6) % 12] ?? 0)
-        : (a[(lower + 8) % 12] ?? 0) - (a[(lower + 9) % 12] ?? 0);
-    const pcFavours = own > 0 ? lower : upper;
-    const bassFavours = (b[lower] ?? 0) > (b[upper] ?? 0) ? lower : upper;
-    if (pcFavours === altPc && bassFavours === altPc) {
-      pick = alt;
-      note = `tonic-vs-dominant: ${PC_NAMES[altPc]} over ${PC_NAMES[top.pc]} (scale-degree and bass tests agree)`;
-    } else if (pcFavours === top.pc) {
-      note = `tonic-vs-dominant: ${PC_NAMES[top.pc]} over ${PC_NAMES[altPc]} confirmed by the scale-degree test`;
-    } else {
-      note = `tonic-vs-dominant: ${PC_NAMES[top.pc]} vs ${PC_NAMES[altPc]} unresolved; kept the profile winner`;
-    }
-    break;
-  }
-  return {
-    key: {
-      tonic: PC_NAMES[pick.pc] ?? "C",
-      mode: pick.mode,
-      confidence: Math.round(Math.max(0, pick.corr) * 100) / 100,
-    },
-    note,
-  };
-}
-
-function rankKeys(profile: number[]): Array<{ pc: number; mode: "major" | "minor"; corr: number }> {
-  const rows: Array<{ pc: number; mode: "major" | "minor"; corr: number }> = [];
-  for (let t = 0; t < 12; t++) {
-    const shifted = profile.map((_, i) => profile[(i + t) % 12] ?? 0);
-    rows.push({ pc: t, mode: "major", corr: pearson(shifted, MAJOR_PROFILE) });
-    rows.push({ pc: t, mode: "minor", corr: pearson(shifted, MINOR_PROFILE) });
-  }
-  return rows.sort((x, y) => y.corr - x.corr);
 }
 
 /**
@@ -696,4 +628,37 @@ export function fmtTime(ms: number): string {
   const m = Math.floor(s / 60);
   const r = s - m * 60;
   return `${m}:${r.toFixed(1).padStart(4, "0")}`;
+}
+
+/** Sparse, sharp peaks — the click/metronome candidates. Denser onsets stay in onsetMs. */
+function sparseRegularOnsets(frames: HearingFrame[]): number[] {
+  const tickMs: number[] = [];
+  const tickFlux: number[] = [];
+  for (const f of frames) {
+    if (!f.ticks) continue;
+    for (let i = 0; i < f.ticks.t_ms.length; i++) {
+      tickMs.push(f.ticks.t_ms[i] ?? 0);
+      tickFlux.push(f.ticks.flux[i] ?? 0);
+    }
+  }
+  if (tickFlux.length < 8) {
+    return frames
+      .filter((f) => Math.max(f.left_ear.onset, f.right_ear.onset, f.flux) > 0.45)
+      .map((f) => f.t_ms);
+  }
+  const mean = tickFlux.reduce((a, b) => a + b, 0) / tickFlux.length;
+  const sd = Math.sqrt(tickFlux.reduce((a, b) => a + (b - mean) ** 2, 0) / tickFlux.length);
+  const thr = mean + 1.8 * sd;
+  const out: number[] = [];
+  let last = -1e9;
+  for (let i = 1; i < tickFlux.length - 1; i++) {
+    const v = tickFlux[i]!;
+    if (!(v > tickFlux[i - 1]! && v >= tickFlux[i + 1]!)) continue;
+    if (v < thr) continue;
+    const t = tickMs[i]!;
+    if (t - last < 200) continue; // refractory: click-like, not strum
+    out.push(t);
+    last = t;
+  }
+  return out;
 }

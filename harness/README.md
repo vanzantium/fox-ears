@@ -20,11 +20,11 @@ node calibration/run.mjs --truth ../test-song/results/scoring-truth-master.json 
 **Update 2026-11-15 (P0):**
 - **Display-rate simulation:** `--tick-hz 60|90|120`, `--jitter-ms N` and `--gap fromMs:toMs` (no analyser reads, like a background tab).
 - **Tempo vs `FOX_REF`:** reported **STRICT** (displayed BPM within ±4%) and **FORGIVEN** (half, double, 2:3 or 3:2 also accepted) separately.
-- **Feeling flag:** `--compare previous.json` lists songs whose key mode flipped, since key mode alone sets the first-listen feeling.
+- **Changed-input receipts:** `--compare previous.json` lists songs whose key mode flipped. As of P1 this is a REVIEW / changed-input receipt, not a first-listen feeling (mode no longer owns valence).
 - **Same timing path as the app:** ticks are resampled onto the 10 ms grid inside `chartTempo`.
 - All numbers are SOFT until Taylor's answer key lands.
 
-Needs ffmpeg on PATH. `offline-engine.ts` mirrors the Web Audio AnalyserNode (Blackman window, smoothing 0.62, byte dB mapping) and the engine's snapshot math, then feeds the real HearingSampler + assembleMap. It is a replica, so confirm headline numbers with one browser pass.
+Needs ffmpeg on PATH. `offline-engine.ts` mirrors the Web Audio AnalyserNode (Blackman window, time-constant smoothing on a fixed 10 ms audio-clock grid, byte dB mapping) and the engine's snapshot math, then feeds the real HearingSampler + assembleMap. It is a replica, so confirm headline numbers with one browser pass.
 
 Do not commit audio. Taylor's songs stay in Drive.
 

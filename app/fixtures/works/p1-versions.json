@@ -1,0 +1,209 @@
+{
+  "schema": "fox-ears-version-1",
+  "dated": "2026-11-16",
+  "note": "Measured facts from sealed blinds, SCORE.md, REMIX-COMPARE.md, and Fox at the Gate harness scores. Listener readings are kept separate. Audio itself is not stored here.",
+  "works": [
+    {
+      "work_id": "work:fox-at-the-gate",
+      "title": "Fox at the Gate"
+    },
+    {
+      "work_id": "work:dreaming-like-a-rocket-ship",
+      "title": "Dreaming Like a Rocket Ship"
+    },
+    {
+      "work_id": "work:tired-of-feeding-the-lie",
+      "title": "Tired of Feeding the Lie"
+    }
+  ],
+  "versions": [
+    {
+      "work_id": "work:fox-at-the-gate",
+      "version_id": "fox-at-the-gate/master",
+      "title": "Fox at the Gate (master)",
+      "audio_sha256": "19671e056afbc0e0322220ca38965ee1d50c0cd0e8aa43c0e134d71adcd34e8f",
+      "lyrics_source_id": null,
+      "relation_to_work": "original",
+      "measured": {
+        "tempo_hypotheses": [
+          {
+            "value_bpm": 96,
+            "role": "performed_groove",
+            "source": "fox_ears_harness",
+            "confidence": 0.89
+          },
+          {
+            "value_bpm": 192,
+            "role": "subdivision_or_double",
+            "source": "fox_ears_harness",
+            "confidence": 0.89,
+            "relation": "2x performed_groove"
+          }
+        ],
+        "preferred_for": { "transcription_grid": 96, "felt_groove": 96, "unresolved": false },
+        "key_hypotheses": [{ "tonic": "G", "mode": "major", "confidence": 0.93, "source": "fox_ears_harness" }],
+        "sections": [],
+        "tool": { "name": "fox-ears-p0-harness", "version": "fox-ears-0.3" },
+        "receipt": { "duration_s": 108.38, "note": "P0 / pass-1 harness: 96 BPM, G major" }
+      },
+      "reported": null,
+      "listener_reading": null,
+      "comparison": null
+    },
+    {
+      "work_id": "work:fox-at-the-gate",
+      "version_id": "fox-at-the-gate/stretch-108",
+      "title": "Fox at the Gate (108 BPM time-stretch of master)",
+      "audio_sha256": "4b824fc63b4c3901f6f2dc7feeda9fe50c546479c2b8e478c5f279f6b2189cf5",
+      "lyrics_source_id": null,
+      "relation_to_work": "stretch",
+      "measured": {
+        "tempo_hypotheses": [
+          {
+            "value_bpm": 108,
+            "role": "performed_groove",
+            "source": "fox_ears_harness",
+            "confidence": 0.51
+          },
+          {
+            "value_bpm": 216,
+            "role": "subdivision_or_double",
+            "source": "fox_ears_harness",
+            "confidence": 0.51,
+            "relation": "2x performed_groove"
+          }
+        ],
+        "preferred_for": { "transcription_grid": 108, "felt_groove": 108, "unresolved": false },
+        "key_hypotheses": [{ "tonic": "G", "mode": "major", "confidence": 0.87, "source": "fox_ears_harness" }],
+        "tool": { "name": "fox-ears-p0-harness", "version": "fox-ears-0.3" },
+        "receipt": { "duration_s": 96.3, "note": "time-stretch of master; requested 108 BPM" }
+      },
+      "reported": { "tempo_bpm": 108, "notes": "time-stretch of the master, requested 108 BPM", "date": "2026-11-14" },
+      "listener_reading": null,
+      "comparison": {
+        "vs_version_id": "fox-at-the-gate/master",
+        "changed_in_audio": ["tempo 96 → 108 (time-stretch)", "duration 108.38s → 96.3s"],
+        "changed_in_listener": [],
+        "uncertain": ["section count on the stretch is still unstable across read rates until P1"]
+      }
+    },
+    {
+      "work_id": "work:dreaming-like-a-rocket-ship",
+      "version_id": "dreaming-like-a-rocket-ship/solo-2026-11-16",
+      "title": "Dreaming Like a Rocket Ship (Song A solo)",
+      "audio_sha256": "0dbe52ee9a2049c6b36e719545e96e79e49ae62d5d838b19d81f205755d8c839",
+      "lyrics_source_id": "sha256:1eadc251e111b9bd0093128e25d2c830b3982670c24d422588eae4d3deaed620",
+      "relation_to_work": "original",
+      "measured": {
+        "tempo_hypotheses": [
+          { "value_bpm": 80.0, "role": "reference_click", "source": "drums_stem_click_fit", "confidence": 0.99, "median_error_ms": 2.27 },
+          { "value_bpm": 84, "role": "performed_groove", "source": "fox_ears_subgrid", "confidence": 0.32 },
+          { "value_bpm": 165.5, "role": "subdivision_or_double", "source": "fox_ears_subgrid", "confidence": 0.28, "relation": "rival ~2x performed_groove" }
+        ],
+        "preferred_for": { "transcription_grid": 80, "felt_groove": 84, "unresolved": false },
+        "key_hypotheses": [{ "tonic": "E", "mode": "major", "confidence": 0.93, "source": "fox_ears" }],
+        "tool": { "name": "fox-ears-p0-harness+click-fit", "version": "fox-ears-0.3" },
+        "receipt": { "duration_s": 306.33, "wer_vocal": 0.445, "note": "sealed blinds + SCORE.md 2026-11-16" }
+      },
+      "reported": { "tempo_bpm": 80, "key": { "tonic": "E", "mode": "major" }, "by": "Taylor Van Zant", "date": "2026-11-16", "notes": "80 BPM click / E major" },
+      "listener_reading": {
+        "by": "Veyra",
+        "date": "2026-11-16",
+        "epistemic": "INTERPRETED",
+        "text": "Not merely a wrong tempo detector: the recording contains an 80 click and a ~83–84 performed guitar pulse. Fox Ears should represent both rather than force one scalar."
+      },
+      "comparison": null
+    },
+    {
+      "work_id": "work:dreaming-like-a-rocket-ship",
+      "version_id": "dreaming-like-a-rocket-ship/suno-remix-2026-11-16",
+      "title": "Dreaming Like a Rocket Ship (Suno remix)",
+      "audio_sha256": "f5d9a870e5b0c63826d6afaf7319f7292537e749bb123461ef9e9e90bdb644f8",
+      "lyrics_source_id": "sha256:1eadc251e111b9bd0093128e25d2c830b3982670c24d422588eae4d3deaed620",
+      "relation_to_work": "remix",
+      "measured": {
+        "tempo_hypotheses": [
+          { "value_bpm": 83.35, "role": "performed_groove", "source": "drums_stem+essentia+percival+madmom", "confidence": 0.9 },
+          { "value_bpm": 83.8, "role": "performed_groove", "source": "fox_ears_subgrid", "confidence": 0.37 },
+          { "value_bpm": 166.709, "role": "subdivision_or_double", "source": "librosa", "confidence": null, "relation": "2x performed_groove" }
+        ],
+        "preferred_for": { "transcription_grid": 83.35, "felt_groove": 83.35, "unresolved": false },
+        "key_hypotheses": [{ "tonic": "E", "mode": "major", "confidence": 0.95, "source": "fox_ears" }],
+        "tool": { "name": "fox-ears-p0-harness+research", "version": "fox-ears-0.3" },
+        "receipt": { "duration_s": 278.69, "wer_vocal": 0.281, "note": "REMIX-COMPARE.md; no 80 click remains" }
+      },
+      "reported": null,
+      "listener_reading": {
+        "by": "Veyra",
+        "date": "2026-11-16",
+        "epistemic": "INTERPRETED",
+        "text": "Suno followed the original guitar pulse (~83.35), not the metronome."
+      },
+      "comparison": {
+        "vs_version_id": "dreaming-like-a-rocket-ship/solo-2026-11-16",
+        "changed_in_audio": ["reference_click 80 gone", "groove held near 83–84", "duration 306.33s → 278.69s", "vocal-stem WER 44.5% → 28.1%"],
+        "changed_in_listener": [],
+        "uncertain": ["Fox Ears mix-level vocal-note count dropped 33 → 9"]
+      }
+    },
+    {
+      "work_id": "work:tired-of-feeding-the-lie",
+      "version_id": "tired-of-feeding-the-lie/solo-2026-11-16",
+      "title": "Tired of Feeding the Lie (Song B solo)",
+      "audio_sha256": "2394f9ed79b74d52bdf01c801574d74c93470cceb67e34fe61da81a75a9398b8",
+      "lyrics_source_id": "sha256:099985d13ad0936a9153a56df35cbe6022eebdddf0eb4db1a283808bf5ef817c",
+      "relation_to_work": "original",
+      "measured": {
+        "tempo_hypotheses": [
+          { "value_bpm": 80.0, "role": "reference_click", "source": "drums_stem_click_fit", "confidence": 0.99, "median_error_ms": 0.73 },
+          { "value_bpm": 79.9, "role": "performed_groove", "source": "fox_ears_subgrid", "confidence": 0.4 },
+          { "value_bpm": 160, "role": "subdivision_or_double", "source": "fox_ears_subgrid", "confidence": 0.22, "relation": "2x reference_click" }
+        ],
+        "preferred_for": { "transcription_grid": 80, "felt_groove": 79.9, "unresolved": false },
+        "key_hypotheses": [{ "tonic": "E", "mode": "minor", "confidence": 0.75, "source": "fox_ears" }],
+        "tool": { "name": "fox-ears-p0-harness+click-fit", "version": "fox-ears-0.3" },
+        "receipt": { "duration_s": 251.5, "wer_vocal": 0.546, "vocal_notes": 7 }
+      },
+      "reported": { "tempo_bpm": 80, "key": { "tonic": "E", "mode": "minor" }, "by": "Taylor Van Zant", "date": "2026-11-16" },
+      "listener_reading": {
+        "by": "Veyra",
+        "date": "2026-11-16",
+        "epistemic": "INTERPRETED",
+        "text": "Fox Ears key path beat Essentia's relative-major error (E minor vs G major) on this recording. That does not prove general superiority. Vocal melody was badly under-detected at mix level."
+      },
+      "comparison": null
+    },
+    {
+      "work_id": "work:tired-of-feeding-the-lie",
+      "version_id": "tired-of-feeding-the-lie/suno-remix-2026-11-16",
+      "title": "Tired of Feeding the Lie (Suno remix)",
+      "audio_sha256": "64682d4776c057f6f8d9d4a6c8ccbbc36f1cc5ee5fbfe5a2e037ce17fbe28ed1",
+      "lyrics_source_id": "sha256:099985d13ad0936a9153a56df35cbe6022eebdddf0eb4db1a283808bf5ef817c",
+      "relation_to_work": "remix",
+      "measured": {
+        "tempo_hypotheses": [
+          { "value_bpm": 79.9, "role": "performed_groove", "source": "fox_ears_subgrid", "confidence": 0.53 },
+          { "value_bpm": 80.12, "role": "performed_groove", "source": "essentia_percival", "confidence": null },
+          { "value_bpm": 161.5, "role": "subdivision_or_double", "source": "librosa+essentia+madmom", "confidence": null, "relation": "2x performed_groove" }
+        ],
+        "preferred_for": { "transcription_grid": 80, "felt_groove": 79.9, "unresolved": false },
+        "key_hypotheses": [{ "tonic": "E", "mode": "minor", "confidence": 0.78, "source": "fox_ears" }],
+        "tool": { "name": "fox-ears-p0-harness+research", "version": "fox-ears-0.3" },
+        "receipt": { "duration_s": 258.77, "wer_mix": 0.326, "wer_vocal_stem": 0.526 }
+      },
+      "reported": null,
+      "listener_reading": {
+        "by": "Veyra",
+        "date": "2026-11-16",
+        "epistemic": "INTERPRETED",
+        "text": "Processed/screamed vocals can make the separated stem and F0 worse than the mix; do not hard-code stem always wins."
+      },
+      "comparison": {
+        "vs_version_id": "tired-of-feeding-the-lie/solo-2026-11-16",
+        "changed_in_audio": ["tempo held ~80", "key held E minor (Essentia now agrees)", "mix WER 91.8% → 32.6%", "probable sung 'gun' for 'guard'"],
+        "changed_in_listener": [],
+        "uncertain": ["vocal-stem ASR worse than mix on this remake"]
+      }
+    }
+  ]
+}

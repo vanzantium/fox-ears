@@ -385,8 +385,11 @@ export function hierarchicalForm(
     });
   });
 
+  // P1: vocal entry is an explicit cue attached in attachSectionCues, not a
+  // hidden rewrite of novelty cuts. assignRoles may still *label* an intro
+  // using the vocal time; it does not move boundaries.
   const vocalT = firstSustainedVocal(frames, vocalMask);
-  return assignRoles(splitAtVocal(sections, vocalT), vocalT);
+  return assignRoles(sections, vocalT);
 }
 
 function firstSustainedVocal(frames: HearingFrame[], vocalMask?: boolean[]): number | null {

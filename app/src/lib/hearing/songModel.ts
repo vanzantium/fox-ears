@@ -1,4 +1,5 @@
 import type { HearingFrame, HearingMap, SongChart } from "./types";
+import { modeChangeReceipt, type InputChangeReceipt } from "./modeReceipt";
 
 function tfmt(ms: number): string {
   const s = Math.max(0, ms) / 1000;
@@ -51,6 +52,7 @@ export type SongModel = {
   chord_family: string[];
   open_questions: OpenQuestion[];
   rejected: Array<{ claim: string; reason: string; pass: PassKind }>;
+  input_change_receipts?: InputChangeReceipt[];
   stability: {
     structural: number;
     harmonic: number;
@@ -133,6 +135,7 @@ export function emptyModel(identity: string, title: string, duration_ms: number)
     chord_family: [],
     open_questions: [],
     rejected: [],
+    input_change_receipts: [],
     stability: { structural: 0, harmonic: 0, vocal: 0, lyric: 0 },
   };
 }
@@ -206,13 +209,25 @@ export function refineFromChart(
   focus: Array<{ t0: number; t1: number }>,
 ): { model: SongModel; listen: ListenRecord; appraisal: ZaauAppraisal } {
   const identity = songIdentity(map.source.name, map.duration_ms);
-  const model = prev ? { ...prev, tonal: [...prev.tonal], tempo: [...prev.tempo], open_questions: [...prev.open_questions], rejected: [...prev.rejected] } : emptyModel(identity, map.title, map.duration_ms);
+  const model = prev ? { ...prev, tonal: [...prev.tonal], tempo: [...prev.tempo], open_questions: [...prev.open_questions], rejected: [...prev.rejected], input_change_receipts: [...(prev.input_change_receipts ?? [])] } : emptyModel(identity, map.title, map.duration_ms);
   const independent = !prev || prev.listens === 0 ? true : pass !== "familiar" && pass !== "orientation";
   const noticed: string[] = [];
   const revised: string[] = [];
 
-  // Tonal — competing hypotheses, not a lock
-  for (const h of chart.key_hypotheses ?? []) {
+  const nextMode = chart.key?.mode;
+  const modeReceipt = modeChangeReceipt(prev?.tonal[0]?.value.mode, nextMode);
+  if (modeReceipt) {
+    model.input_change_receipts = [...(model.input_change_receipts ?? []), modeReceipt];
+    revised.push(`REVIEW/changed-input: mode ${modeReceipt.from} → ${modeReceipt.to} (not a feeling promotion)`);
+  }
+
+  // Tonal — competing hypotheses, not a lock. chart.key is also a candidate
+  // when hypotheses were not filled in.
+  const keyHyps = [...(chart.key_hypotheses ?? [])];
+  if (chart.key && !keyHyps.some((h) => h.tonic === chart.key!.tonic && h.mode === chart.key!.mode)) {
+    keyHyps.unshift({ tonic: chart.key.tonic, mode: chart.key.mode, corr: chart.key.confidence });
+  }
+  for (const h of keyHyps) {
     const existing = model.tonal.find((t) => t.value.tonic === h.tonic && t.value.mode === h.mode);
     if (existing) {
       const next = bumpIndependent(existing.conf, h.corr, independent && pass !== "orientation");
@@ -362,7 +377,7 @@ export function refineFromChart(
       "Replay of the same digital file is not independent evidence. Confidence moved only where this pass used different attention or falsified a claim.",
   };
 
-  const appraisal = appraise(model, chart, pass, receipt_id);
+  const appraisal = appraise(model, chart, pass, receipt_id, modeReceipt);
   return { model, listen, appraisal };
 }
 
@@ -379,14 +394,19 @@ function upsertQ(list: OpenQuestion[], q: OpenQuestion): OpenQuestion[] {
   return [...list.filter((x) => x.id !== q.id), q];
 }
 
-function appraise(model: SongModel, chart: SongChart, pass: PassKind, listen_receipt_id: string): ZaauAppraisal {
+function appraise(
+  model: SongModel,
+  chart: SongChart,
+  pass: PassKind,
+  listen_receipt_id: string,
+  modeReceipt: InputChangeReceipt | null = null,
+): ZaauAppraisal {
   const refs: string[] = [];
   const energyPeak = chart.function?.macro_peak_ms;
   if (chart.key) refs.push(`key:${chart.key.tonic}-${chart.key.mode}`);
   if (energyPeak != null) refs.push(`macro:${energyPeak}`);
   if (chart.vocal_regions[0]) refs.push(`vocal:${chart.vocal_regions[0].t_start_ms}`);
   if (chart.sections[0]) refs.push(`form:${chart.sections[0].role}:${chart.sections[0].t_start_ms}`);
-  const minor = model.tonal[0]?.value.mode === "minor";
   const chromatic = model.open_questions.some((q) => q.id === "chromatic-chords");
   const n = model.listens;
   let valence: ZaauAppraisal["valence"] = "quiet";
@@ -395,10 +415,15 @@ function appraise(model: SongModel, chart: SongChart, pass: PassKind, listen_rec
     valence = "quiet";
     text = "No body evidence to interpret. I will not invent a feeling for a blank field.";
   } else if (n <= 1) {
-    valence = minor ? "inward" : "release";
-    text = minor
-      ? "First listen: the field pulls inward. I have a tonal family, not a finished song."
-      : "First listen: the field opens outward. Form is a sketch.";
+    // P1: mode is a cue, not a first-listen feeling. Keep the appraisal quiet
+    // until other body evidence can carry it.
+    valence = "quiet";
+    text = chart.key
+      ? `First listen: I have a tonal family (${chart.key.tonic} ${chart.key.mode}). Mode is a cue, not a feeling.`
+      : "First listen: I have a sketch, not a finished song. I will not invent a feeling from mode alone.";
+  } else if (modeReceipt) {
+    valence = "quiet";
+    text = `REVIEW/changed-input: mode ${modeReceipt.from} → ${modeReceipt.to}. This is a cue change, not a feeling.`;
   } else if (chromatic) {
     valence = "uneasy";
     text = "Something in the harmony still feels alien — I don't trust those spicy roots yet. The guitar may be lying.";

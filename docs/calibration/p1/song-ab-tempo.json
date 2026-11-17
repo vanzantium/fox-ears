@@ -1,0 +1,201 @@
+{
+  "dated": "2026-11-16T16:30:00-07:00",
+  "zone": "America/Dawson_Creek",
+  "note": "Fox Ears P1 multi-pulse tempo on Taylor's solo recordings and the two Suno remixes. Audio is not in the repo. Scalar tempo_bpm is unchanged (Song A still reports 168.1 with a 84 rival); the new hypotheses list click/groove/subdivision separately.",
+  "results": [
+    {
+      "name": "song-A.wav",
+      "duration_s": 306.3,
+      "tempo": {
+        "bpm": 168.1,
+        "confidence": 0.32,
+        "note": "sub-grid onsets (920); comb x prior picked 168.1 BPM; nearest rival level 84 BPM at 91%",
+        "path": "subgrid"
+      },
+      "tempo_hypotheses": [
+        {
+          "value_bpm": 80,
+          "role": "reference_click",
+          "source": "sparse_regular_pulse",
+          "confidence": 0.7925,
+          "median_error_ms": 1.66,
+          "n_inliers": 109
+        },
+        {
+          "value_bpm": 84,
+          "role": "performed_groove",
+          "source": "fox_ears_subgrid",
+          "confidence": 0.32
+        },
+        {
+          "value_bpm": 168,
+          "role": "subdivision_or_double",
+          "source": "fox_ears_subgrid",
+          "confidence": 0.32,
+          "relation": "2x performed_groove"
+        }
+      ],
+      "preferred_for": {
+        "transcription_grid": 80,
+        "felt_groove": 84,
+        "unresolved": true
+      },
+      "key": "E major (0.94)",
+      "chroma_reliable": true,
+      "section_disagreement": [
+        {
+          "t_ms": 24810,
+          "statement": "vocal entry at 24.81s; nearest novelty cut is 41.55s (chorus)",
+          "cues": [
+            {
+              "kind": "vocal_entry",
+              "t_ms": 24810,
+              "source": "vocal_mask",
+              "used": false,
+              "detail": "novelty has no cut within 2000 ms of vocal entry"
+            },
+            {
+              "kind": "novelty_cut",
+              "t_ms": 41549,
+              "source": "novelty",
+              "used": true,
+              "detail": "chorus"
+            }
+          ]
+        }
+      ],
+      "sections": 20
+    },
+    {
+      "name": "song-B.wav",
+      "duration_s": 251.47,
+      "tempo": {
+        "bpm": 80,
+        "confidence": 0.36,
+        "note": "sub-grid onsets (544); comb x prior picked 80 BPM; nearest rival level 160 BPM at 62%",
+        "path": "subgrid"
+      },
+      "tempo_hypotheses": [
+        {
+          "value_bpm": 80,
+          "role": "reference_click",
+          "source": "sparse_regular_pulse",
+          "confidence": 0.81125,
+          "median_error_ms": 1.51,
+          "n_inliers": 99
+        },
+        {
+          "value_bpm": 80,
+          "role": "performed_groove",
+          "source": "fox_ears_subgrid",
+          "confidence": 0.36
+        },
+        {
+          "value_bpm": 160,
+          "role": "subdivision_or_double",
+          "source": "fox_ears_subgrid",
+          "confidence": 0.36,
+          "relation": "2x performed_groove"
+        }
+      ],
+      "preferred_for": {
+        "transcription_grid": 80,
+        "felt_groove": 80,
+        "unresolved": false
+      },
+      "key": "E minor (0.73)",
+      "chroma_reliable": true,
+      "section_disagreement": [
+        {
+          "t_ms": 14270,
+          "statement": "vocal entry at 14.27s; nearest novelty cut is 0.00s (verse)",
+          "cues": [
+            {
+              "kind": "vocal_entry",
+              "t_ms": 14270,
+              "source": "vocal_mask",
+              "used": false,
+              "detail": "novelty has no cut within 2000 ms of vocal entry"
+            },
+            {
+              "kind": "novelty_cut",
+              "t_ms": 0,
+              "source": "novelty",
+              "used": true,
+              "detail": "verse"
+            }
+          ]
+        }
+      ],
+      "sections": 10
+    },
+    {
+      "name": "remix-1.wav",
+      "duration_s": 278.64,
+      "tempo": {
+        "bpm": 167.5,
+        "confidence": 0.31,
+        "note": "sub-grid onsets (756); comb x prior picked 167.5 BPM; nearest rival level 83.5 BPM at 97%",
+        "path": "subgrid"
+      },
+      "tempo_hypotheses": [
+        {
+          "value_bpm": 83.5,
+          "role": "performed_groove",
+          "source": "fox_ears_subgrid",
+          "confidence": 0.31
+        },
+        {
+          "value_bpm": 167,
+          "role": "subdivision_or_double",
+          "source": "fox_ears_subgrid",
+          "confidence": 0.31,
+          "relation": "2x performed_groove"
+        }
+      ],
+      "preferred_for": {
+        "transcription_grid": 83.5,
+        "felt_groove": 83.5,
+        "unresolved": false
+      },
+      "key": "E major (0.95)",
+      "chroma_reliable": true,
+      "section_disagreement": [],
+      "sections": 26
+    },
+    {
+      "name": "remix-2.wav",
+      "duration_s": 258.72,
+      "tempo": {
+        "bpm": 80,
+        "confidence": 0.38,
+        "note": "sub-grid onsets (933); comb x prior picked 80 BPM; nearest rival level 160 BPM at 87%",
+        "path": "subgrid"
+      },
+      "tempo_hypotheses": [
+        {
+          "value_bpm": 80,
+          "role": "performed_groove",
+          "source": "fox_ears_subgrid",
+          "confidence": 0.38
+        },
+        {
+          "value_bpm": 160,
+          "role": "subdivision_or_double",
+          "source": "fox_ears_subgrid",
+          "confidence": 0.38,
+          "relation": "2x performed_groove"
+        }
+      ],
+      "preferred_for": {
+        "transcription_grid": 80,
+        "felt_groove": 80,
+        "unresolved": false
+      },
+      "key": "E minor (0.77)",
+      "chroma_reliable": true,
+      "section_disagreement": [],
+      "sections": 10
+    }
+  ]
+}
