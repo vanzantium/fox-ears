@@ -1,0 +1,629 @@
+{
+  "dated": "2026-11-17T20:05:00-07:00",
+  "zone": "America/Dawson_Creek",
+  "note": "P2 key pass (test the third, relative/parallel ambiguity, 4 vs #4 margin, borrowing vs modulation, SOFT mode tag). Harness: calibration/run.mjs --sens 0.58 on the box (audio not in repo). 14-song reference is the librosa Krumhansl stand-in, not Taylor's answer key.",
+  "score_14_before": "10/14",
+  "score_14_after": "11/14",
+  "calibration_before": "4/4",
+  "calibration_after": "4/4",
+  "songs": [
+    {
+      "file": "10-turn_the_screw.mp3",
+      "set": "14-song",
+      "reference": "D# minor",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "D# minor (0.86)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "D# minor (0.86)",
+      "after_note": "duration-weighted chroma + bass, intro discounted; modal borrowing 3/6 over a held tonic (not a key change)",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "D#",
+        "s3": -0.479,
+        "s6": -0.333,
+        "s7": -0.899,
+        "score": -0.497,
+        "lean": "minor",
+        "frames": 22699
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: D# minor (0.86)",
+        "intro_key: D# major (0.85)",
+        "cadence_key: B major (0.47)",
+        "dominant_rival: A# minor (0.25)",
+        "relative: F# major (0.44)"
+      ]
+    },
+    {
+      "file": "4-spiral_system.mp3",
+      "set": "14-song",
+      "reference": "F# minor",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "F# minor (0.68)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "F# minor (0.68)",
+      "after_note": "duration-weighted chroma + bass, intro discounted",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "F#",
+        "s3": -1,
+        "s6": -1,
+        "s7": 0.077,
+        "score": -0.846,
+        "lean": "minor",
+        "frames": 23286
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: F# minor (0.68)",
+        "intro_key: F# minor (0.96)",
+        "cadence_key: F# major (0.75)",
+        "dominant_rival: C# minor (0.57)",
+        "relative: A major (0.4)"
+      ]
+    },
+    {
+      "file": "5-spiralling.mp3",
+      "set": "14-song",
+      "reference": "A minor",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "A minor (0.86)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "A minor (0.86)",
+      "after_note": "duration-weighted chroma + bass, intro discounted; modal borrowing 6 over a held tonic (not a key change)",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "A",
+        "s3": -0.829,
+        "s6": -0.088,
+        "s7": -0.756,
+        "score": -0.607,
+        "lean": "minor",
+        "frames": 21905
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: A minor (0.86)",
+        "intro_key: A minor (0.84)",
+        "cadence_key: E major (0.68)",
+        "dominant_rival: E minor (0.64)",
+        "relative: C major (0.5)"
+      ]
+    },
+    {
+      "file": "6-pressure_makes.mp3",
+      "set": "14-song",
+      "reference": "E major",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "E major (0.73)",
+      "before_note": "tonic-vs-dominant: E over A on cadence/degree votes 3–1",
+      "after_key": "E major (0.73)",
+      "after_note": "tonic-vs-dominant: E over A on cadence/degree votes 3–1; modal borrowing b7/#4/b3 over a held tonic (not a key change); mode colour Mixolydian (SOFT)",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "E",
+        "s3": 0.033,
+        "s6": 0.668,
+        "s7": -0.652,
+        "score": 0.116,
+        "lean": null,
+        "frames": 30611
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": {
+        "name": "Mixolydian",
+        "why": "3 with b7 (7.0%) over 7 (1.5%)",
+        "label": "SOFT"
+      },
+      "hypotheses": [
+        "global_key: E major (0.73)",
+        "intro_key: E major (0.76)",
+        "cadence_key: E major (0.75)",
+        "relative: C# minor (0.31)"
+      ]
+    },
+    {
+      "file": "7-involuntary_spiral.mp3",
+      "set": "14-song",
+      "reference": "C major",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "F major (0.76)",
+      "before_note": "tonic-vs-dominant: F vs C UNRESOLVED (degree F, cadence bass F, chroma C); preferred F",
+      "after_key": "F major (0.76)",
+      "after_note": "tonic-vs-dominant: F vs C UNRESOLVED (degree F, cadence bass F, chroma C); preferred F; modulation: C minor 17–32 s; modal borrowing b3/b7/b6 over a held tonic (not a key change); mode colour Mixolydian (SOFT)",
+      "after_status": "UNRESOLVED",
+      "before_hit": false,
+      "after_hit": false,
+      "third_test": {
+        "tonic": "F",
+        "s3": -0.069,
+        "s6": 0.55,
+        "s7": -0.816,
+        "score": 0.002,
+        "lean": null,
+        "frames": 15545
+      },
+      "relative": null,
+      "modulations": [
+        {
+          "t_start_ms": 17142.85714285714,
+          "t_end_ms": 31836.734693877548,
+          "tonic": "C",
+          "mode": "minor",
+          "corr": 0.775,
+          "bars": 6
+        }
+      ],
+      "mode_tag": {
+        "name": "Mixolydian",
+        "why": "3 with b7 (9.8%) over 7 (1.0%)",
+        "label": "SOFT"
+      },
+      "hypotheses": [
+        "global_key: F major (0.76)",
+        "intro_key: C major (0.77)",
+        "cadence_key: F major (0.78)",
+        "dominant_rival: C major (0.75)",
+        "relative: D minor (0.26)"
+      ]
+    },
+    {
+      "file": "8-racer.mp3",
+      "set": "14-song",
+      "reference": "C minor",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "C minor (0.79)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "C minor (0.79)",
+      "after_note": "relative major/minor: D# vs Cm UNRESOLVED (votes 1–1; bass home C, V→I bass D# 8–5); preferred C minor; modal borrowing #4 over a held tonic (not a key change)",
+      "after_status": "UNRESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "C",
+        "s3": -0.831,
+        "s6": -0.447,
+        "s7": -1,
+        "score": -0.746,
+        "lean": "minor",
+        "frames": 12518
+      },
+      "relative": {
+        "major": "D#",
+        "minor": "C",
+        "corr_gap": 0.051,
+        "votes": {
+          "major": 1,
+          "minor": 1
+        },
+        "evidence": [
+          "bass home C",
+          "V→I bass D# 8–5"
+        ],
+        "outcome": "UNRESOLVED"
+      },
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: C minor (0.79)",
+        "intro_key: C minor (0.69)",
+        "cadence_key: F minor (0.54)",
+        "dominant_rival: G minor (0.53)",
+        "relative: D# major (0.74)"
+      ]
+    },
+    {
+      "file": "9-step_up.mp3",
+      "set": "14-song",
+      "reference": "A minor",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "A major (0.79)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "A minor (0.79)",
+      "after_note": "duration-weighted chroma + bass, intro discounted; test the third: A minor over A major (3/b3 -0.288, 6/b6 0.046, 7/b7 -0.57); modal borrowing #4/3 over a held tonic (not a key change)",
+      "after_status": "RESOLVED",
+      "before_hit": false,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "A",
+        "s3": -0.287,
+        "s6": 0.046,
+        "s7": -0.57,
+        "score": -0.232,
+        "lean": "minor",
+        "frames": 20230
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: A minor (0.79)",
+        "intro_key: A minor (0.73)",
+        "cadence_key: A major (0.65)",
+        "dominant_rival: E minor (0.4)",
+        "relative: C major (0.35)"
+      ]
+    },
+    {
+      "file": "music_midnight_funky.ogg",
+      "set": "14-song",
+      "reference": "D major",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "D major (0.87)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "D major (0.87)",
+      "after_note": "duration-weighted chroma + bass, intro discounted; modal borrowing b7 over a held tonic (not a key change); mode colour Mixolydian (SOFT)",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "D",
+        "s3": 0.81,
+        "s6": 1,
+        "s7": -1,
+        "score": 0.606,
+        "lean": "major",
+        "frames": 20689
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": {
+        "name": "Mixolydian",
+        "why": "3 with b7 (6.1%) over 7 (0.0%)",
+        "label": "SOFT"
+      },
+      "hypotheses": [
+        "global_key: D major (0.87)",
+        "intro_key: A minor (0.66)",
+        "cadence_key: D major (0.84)",
+        "dominant_rival: A major (0.68)",
+        "relative: B minor (0.33)"
+      ]
+    },
+    {
+      "file": "music_midnight_slow.ogg",
+      "set": "14-song",
+      "reference": "D major",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "D major (0.83)",
+      "before_note": "tonic-vs-dominant: D over A on cadence/degree votes 3–1",
+      "after_key": "D major (0.83)",
+      "after_note": "tonic-vs-dominant: D over A on cadence/degree votes 3–1; modal borrowing b7/b3 over a held tonic (not a key change); mode colour Mixolydian (SOFT)",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "D",
+        "s3": 0.438,
+        "s6": 0.708,
+        "s7": -0.948,
+        "score": 0.317,
+        "lean": "major",
+        "frames": 19705
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": {
+        "name": "Mixolydian",
+        "why": "3 with b7 (6.2%) over 7 (0.2%)",
+        "label": "SOFT"
+      },
+      "hypotheses": [
+        "global_key: D major (0.83)",
+        "intro_key: G major (0.83)",
+        "cadence_key: A major (0.86)",
+        "dominant_rival: A major (0.74)",
+        "relative: B minor (0.27)"
+      ]
+    },
+    {
+      "file": "music_track_a.ogg",
+      "set": "14-song",
+      "reference": "F minor",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "F major (0.77)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "F major (0.77)",
+      "after_note": "duration-weighted chroma + bass, intro discounted; parallel major/minor: F major vs minor UNRESOLVED (third test can't split it: 3/b3 -0.039, 6/b6 0.259, 7/b7 -0.932); preferred major; modal borrowing #4/b3/b7 over a held tonic (not a key change); mode colour Mixolydian (SOFT)",
+      "after_status": "UNRESOLVED",
+      "before_hit": false,
+      "after_hit": false,
+      "third_test": {
+        "tonic": "F",
+        "s3": -0.039,
+        "s6": 0.259,
+        "s7": -0.931,
+        "score": -0.081,
+        "lean": null,
+        "frames": 20172
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": {
+        "name": "Mixolydian",
+        "why": "3 with b7 (8.6%) over 7 (0.3%)",
+        "label": "SOFT"
+      },
+      "hypotheses": [
+        "global_key: F major (0.77)",
+        "intro_key: F major (0.76)",
+        "cadence_key: F major (0.7)",
+        "dominant_rival: C major (0.37)",
+        "relative: D minor (0.32)",
+        "parallel: F minor (0.72)"
+      ]
+    },
+    {
+      "file": "music_track_b.ogg",
+      "set": "14-song",
+      "reference": "G minor",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "G minor (0.85)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "G minor (0.85)",
+      "after_note": "duration-weighted chroma + bass, intro discounted",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "G",
+        "s3": -1,
+        "s6": -0.878,
+        "s7": -0.927,
+        "score": -0.955,
+        "lean": "minor",
+        "frames": 17184
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: G minor (0.85)",
+        "intro_key: G minor (0.67)",
+        "cadence_key: G minor (0.76)",
+        "dominant_rival: D minor (0.62)",
+        "relative: A# major (0.75)"
+      ]
+    },
+    {
+      "file": "my-little-monkey.mp3",
+      "set": "14-song",
+      "reference": "D major",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "A major (0.84)",
+      "before_note": "tonic-vs-dominant: D vs A UNRESOLVED (degree A, cadence bass G, chroma D); preferred A",
+      "after_key": "A major (0.84)",
+      "after_note": "tonic-vs-dominant: D vs A UNRESOLVED (degree abstain, cadence bass G, chroma D); preferred A; modal borrowing b7 over a held tonic (not a key change)",
+      "after_status": "UNRESOLVED",
+      "before_hit": false,
+      "after_hit": false,
+      "third_test": {
+        "tonic": "A",
+        "s3": 0.785,
+        "s6": 0.751,
+        "s7": -0.212,
+        "score": 0.633,
+        "lean": "major",
+        "frames": 18488
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: A major (0.84)",
+        "intro_key: E major (0.77)",
+        "cadence_key: D major (0.88)",
+        "dominant_rival: D major (0.79)",
+        "relative: F# minor (0.6)"
+      ]
+    },
+    {
+      "file": "neon-whiskers.mp3",
+      "set": "14-song",
+      "reference": "D# major",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "D# major (0.9)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "D# major (0.9)",
+      "after_note": "duration-weighted chroma + bass, intro discounted",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "D#",
+        "s3": 0.804,
+        "s6": 1,
+        "s7": 0.741,
+        "score": 0.851,
+        "lean": "major",
+        "frames": 15518
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: D# major (0.9)",
+        "intro_key: D# major (0.82)",
+        "cadence_key: D# major (0.77)",
+        "dominant_rival: A# major (0.71)",
+        "relative: C minor (0.65)"
+      ]
+    },
+    {
+      "file": "stinky-skunk-shuffle.mp3",
+      "set": "14-song",
+      "reference": "C major",
+      "reference_source": "librosa Krumhansl stand-in (SOFT)",
+      "before_key": "C major (0.92)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "C major (0.92)",
+      "after_note": "duration-weighted chroma + bass, intro discounted",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "C",
+        "s3": 1,
+        "s6": 0.935,
+        "s7": 1,
+        "score": 0.981,
+        "lean": "major",
+        "frames": 11810
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: C major (0.92)",
+        "intro_key: C major (0.89)",
+        "cadence_key: C major (0.92)",
+        "dominant_rival: G major (0.71)",
+        "relative: A minor (0.7)"
+      ]
+    },
+    {
+      "file": "fox-at-the-gate-master.wav",
+      "set": "calibration",
+      "reference": "G major",
+      "reference_source": "Taylor / known master (SOLID)",
+      "before_key": "G major (0.87)",
+      "before_note": "tonic-vs-dominant: G over D (scale-degree and cadence/home tests agree)",
+      "after_key": "G major (0.87)",
+      "after_note": "tonic-vs-dominant: G over D (scale-degree and cadence/home tests agree); modal borrowing #4 over a held tonic (not a key change)",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "G",
+        "s3": 0.973,
+        "s6": 0.508,
+        "s7": 0.758,
+        "score": 0.809,
+        "lean": "major",
+        "frames": 10722
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: G major (0.87)",
+        "intro_key: D major (0.91)",
+        "cadence_key: G major (0.69)",
+        "dominant_rival: D major (0.85)",
+        "relative: E minor (0.4)"
+      ]
+    },
+    {
+      "file": "fox-at-the-gate-v1b-108bpm-stretched.wav",
+      "set": "calibration",
+      "reference": "G major",
+      "reference_source": "Taylor / known master (SOLID)",
+      "before_key": "G major (0.86)",
+      "before_note": "tonic-vs-dominant: G over D (scale-degree and cadence/home tests agree)",
+      "after_key": "G major (0.86)",
+      "after_note": "tonic-vs-dominant: G over D (scale-degree and cadence/home tests agree); modal borrowing #4 over a held tonic (not a key change)",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "G",
+        "s3": 1,
+        "s6": 0.443,
+        "s7": 0.802,
+        "score": 0.813,
+        "lean": "major",
+        "frames": 9514
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: G major (0.86)",
+        "intro_key: D major (0.88)",
+        "cadence_key: G major (0.7)",
+        "dominant_rival: D major (0.87)",
+        "relative: E minor (0.42)"
+      ]
+    },
+    {
+      "file": "song-A.wav",
+      "set": "calibration",
+      "reference": "E major",
+      "reference_source": "Taylor / known master (SOLID)",
+      "before_key": "E major (0.94)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "E major (0.94)",
+      "after_note": "duration-weighted chroma + bass, intro discounted; modal borrowing #4/b6/b3 over a held tonic (not a key change)",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "E",
+        "s3": 0.443,
+        "s6": 0.782,
+        "s7": -0.153,
+        "score": 0.455,
+        "lean": "major",
+        "frames": 30621
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: E major (0.94)",
+        "intro_key: E major (0.87)",
+        "cadence_key: B major (0.7)",
+        "dominant_rival: B major (0.58)",
+        "relative: C# minor (0.68)"
+      ]
+    },
+    {
+      "file": "song-B.wav",
+      "set": "calibration",
+      "reference": "E minor",
+      "reference_source": "Taylor / known master (SOLID)",
+      "before_key": "E minor (0.73)",
+      "before_note": "duration-weighted chroma + bass, intro discounted",
+      "after_key": "E minor (0.73)",
+      "after_note": "duration-weighted chroma + bass, intro discounted; modal borrowing #4 over a held tonic (not a key change)",
+      "after_status": "RESOLVED",
+      "before_hit": true,
+      "after_hit": true,
+      "third_test": {
+        "tonic": "E",
+        "s3": -0.488,
+        "s6": 0.138,
+        "s7": -0.554,
+        "score": -0.318,
+        "lean": "minor",
+        "frames": 24540
+      },
+      "relative": null,
+      "modulations": [],
+      "mode_tag": null,
+      "hypotheses": [
+        "global_key: E minor (0.73)",
+        "intro_key: E minor (0.8)",
+        "cadence_key: E major (0.8)",
+        "dominant_rival: B minor (0.23)",
+        "relative: G major (0.56)"
+      ]
+    }
+  ]
+}

@@ -68,7 +68,7 @@ export function buildChart(
   const vMask = chartVocalMask(frames);
   const sections = hierarchicalForm(gridFrames, tempo?.bpm ?? null, beats, vMaskGrid);
   const form = attachSectionCues(sections, gridFrames, { vocalMask: vMaskGrid, lyrics: lyrics.lines });
-  const keyEst = estimateKeyDetailed(gridFrames, form.sections);
+  const keyEst = estimateKeyDetailed(gridFrames, form.sections, { barMs: tempo?.bpm ? 240000 / tempo.bpm : undefined });
   const key = rel.ok ? (keyEst.key ?? null) : null;
   const hypotheses = [
     ...(pass?.keyPrior ?? []),
@@ -141,6 +141,7 @@ export function buildChart(
     chroma_note: rel.note,
     key_note: rel.ok ? keyEst.note : undefined,
     key_status: rel.ok ? keyEst.status : undefined,
+    key_detail: rel.ok ? keyEst.detail : undefined,
     range,
     vocal_range,
     notes,
