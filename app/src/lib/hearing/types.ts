@@ -190,8 +190,10 @@ export type SongChart = {
     t_start_ms?: number;
     t_end_ms?: number;
   }>;
-  /** RESOLVED, or UNRESOLVED when tonic-vs-dominant (or relative) evidence is close and split. */
+  /** RESOLVED, or UNRESOLVED when tonic-vs-dominant, relative, or parallel major/minor evidence is close and split. */
   key_status?: "RESOLVED" | "UNRESOLVED";
+  /** P2: third test, relative-key check, borrowing vs modulation, SOFT mode colour. */
+  key_detail?: import("./keyResolve").KeyDetail;
   local_centers?: Array<{
     t_start_ms: number;
     t_end_ms: number;
