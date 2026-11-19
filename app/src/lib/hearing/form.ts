@@ -1,4 +1,4 @@
-import type { HearingFrame, SongSection } from "./types";
+import type { HearingFrame, SongSection, SectionSchema } from "./types";
 
 function cosine(a: number[], b: number[]): number {
   let n = 0;
@@ -325,11 +325,44 @@ export function hierarchicalForm(
   bpm: number | null = null,
   beats: number[] = [],
   vocalMask?: boolean[],
-): SongSection[] {
-  if (frames.length < 12) return [];
+): { sections: SongSection[]; section_schema: SectionSchema } {
+  if (frames.length < 12) {
+    return {
+      sections: [],
+      section_schema: {
+        label: "SOFT",
+        bars: 8,
+        snap_unit_bars: 2,
+        bar_ms: null,
+        applied: false,
+        note: "too few frames for form (SOFT)",
+      },
+    };
+  }
   const lastT = frames[frames.length - 1]?.t_ms ?? 0;
   const sc = sectionCuts(frames, bpm, beats, vocalMask);
-  const cuts = [0, ...sc.cuts, lastT];
+  const vocal = vocalRuns(frames, vocalMask);
+  let cuts = [0, ...sc.cuts, lastT];
+  let schema: SectionSchema = {
+    label: "SOFT",
+    bars: 8,
+    snap_unit_bars: 2,
+    bar_ms: null,
+    applied: false,
+    note: "tempo not locked; 8-bar pop schema not applied (SOFT)",
+  };
+  if (bpm && bpm > 0) {
+    const snapped = snapCutsToSchema(cuts, bpm, lastT, vocal, beats);
+    cuts = snapped.cuts;
+    schema = {
+      label: "SOFT",
+      bars: 8,
+      snap_unit_bars: 2,
+      bar_ms: snapped.bar_ms,
+      applied: true,
+      note: snapped.note,
+    };
+  }
 
   type Phrase = { t0: number; t1: number; e: number; chroma: number[]; vocal: number };
   const merged: Phrase[] = [];
@@ -389,7 +422,9 @@ export function hierarchicalForm(
   // hidden rewrite of novelty cuts. assignRoles may still *label* an intro
   // using the vocal time; it does not move boundaries.
   const vocalT = firstSustainedVocal(frames, vocalMask);
-  return assignRoles(sections, vocalT);
+  const rolled = assignRoles(sections, vocalT);
+  const joined = mergeOverSplitSections(rolled, vocal, bpm);
+  return { sections: joined, section_schema: schema };
 }
 
 function firstSustainedVocal(frames: HearingFrame[], vocalMask?: boolean[]): number | null {
@@ -463,4 +498,191 @@ function assignRoles(sections: SongSection[], vocalT: number | null): SongSectio
       hypothesis: `${name} · named from sustained vocal + recurrence/energy (cuts unchanged)`,
     };
   });
+}
+
+/** Sustained vocal runs used to avoid cutting through a line. */
+export function vocalRuns(
+  frames: HearingFrame[],
+  vocalMask?: boolean[],
+): Array<{ t0: number; t1: number }> {
+  const runs: Array<{ t0: number; t1: number }> = [];
+  let t0: number | null = null;
+  let last = 0;
+  for (let i = 0; i < frames.length; i++) {
+    const f = frames[i]!;
+    last = f.t_ms;
+    const on = vocalMask ? Boolean(vocalMask[i]) : Boolean(f.vocal_gate);
+    if (on) {
+      if (t0 == null) t0 = f.t_ms;
+    } else if (t0 != null) {
+      runs.push({ t0, t1: f.t_ms });
+      t0 = null;
+    }
+  }
+  if (t0 != null) runs.push({ t0, t1: last });
+  return runs;
+}
+
+function throughVocal(t: number, runs: Array<{ t0: number; t1: number }>, marginMs = 300): { t0: number; t1: number } | null {
+  for (const r of runs) {
+    if (t > r.t0 + marginMs && t < r.t1 - marginMs) return r;
+  }
+  return null;
+}
+
+function nearestGapEdge(t: number, runs: Array<{ t0: number; t1: number }>, maxMs: number): number | null {
+  const edges: number[] = [];
+  for (const r of runs) {
+    edges.push(r.t0, r.t1);
+  }
+  let best: number | null = null;
+  let bestD = Infinity;
+  for (const e of edges) {
+    const d = Math.abs(e - t);
+    if (d < bestD && d <= maxMs) {
+      bestD = d;
+      best = e;
+    }
+  }
+  return best;
+}
+
+function vocalGapAt(
+  boundary: number,
+  runs: Array<{ t0: number; t1: number }>,
+  minGapMs = 400,
+): boolean {
+  for (let i = 0; i < runs.length - 1; i++) {
+    const g0 = runs[i]!.t1;
+    const g1 = runs[i + 1]!.t0;
+    if (g1 - g0 >= minGapMs && boundary >= g0 - 80 && boundary <= g1 + 80) return true;
+  }
+  return false;
+}
+
+/**
+ * Once tempo is locked, snap internal cuts to a 2-bar unit of an 8-bar pop
+ * schema (SOFT). Cuts that fall through an ongoing vocal are moved to the
+ * nearest vocal gap or dropped.
+ */
+export function snapCutsToSchema(
+  cuts: number[],
+  bpm: number,
+  durationMs: number,
+  vocal: Array<{ t0: number; t1: number }>,
+  beats: number[] = [],
+): { cuts: number[]; bar_ms: number; note: string } {
+  const barMs = (4 * 60000) / bpm;
+  const unitMs = 2 * barMs;
+  const phase = beats[0] != null && beats[0] >= 0 && beats[0] < barMs ? beats[0] : 0;
+  const minSpan = barMs; // don't leave slivers shorter than a bar
+  const snapped = [0];
+  const internal = [...new Set(cuts)].filter((c) => c > 250 && c < durationMs - 250).sort((a, b) => a - b);
+  for (const raw of internal) {
+    let t = raw;
+    if (throughVocal(t, vocal)) {
+      const edge = nearestGapEdge(t, vocal, 2000);
+      if (edge == null) continue;
+      t = edge;
+    }
+    const k = Math.round((t - phase) / unitMs);
+    const grid = phase + k * unitMs;
+    if (grid > 250 && grid < durationMs - 250 && Math.abs(grid - t) <= barMs) {
+      t = grid;
+    }
+    if (throughVocal(t, vocal)) {
+      const edge = nearestGapEdge(t, vocal, 2000);
+      if (edge == null || throughVocal(edge, vocal)) continue;
+      t = edge;
+    }
+    const prev = snapped[snapped.length - 1]!;
+    if (t - prev < minSpan) continue;
+    snapped.push(t);
+  }
+  if (durationMs - (snapped[snapped.length - 1] ?? 0) < minSpan && snapped.length > 1) snapped.pop();
+  if ((snapped[snapped.length - 1] ?? 0) < durationMs) snapped.push(durationMs);
+  return {
+    cuts: snapped,
+    bar_ms: Math.round(barMs * 10) / 10,
+    note: `internal cuts snapped to a 2-bar unit of an 8-bar pop schema (${Math.round(barMs)} ms/bar), avoiding mid-vocal cuts; schema labeled SOFT`,
+  };
+}
+
+function verseFamily(role: SongSection["role"]): boolean {
+  return role === "verse" || role === "phrase" || role === "bridge" || role === "section";
+}
+
+function mergeRole(a: SongSection, b: SongSection): SongSection["role"] {
+  const rank: Record<SongSection["role"], number> = {
+    outro: 5,
+    chorus: 4,
+    verse: 3,
+    bridge: 2,
+    intro: 1,
+    section: 1,
+    phrase: 0,
+  };
+  return (rank[b.role] ?? 0) > (rank[a.role] ?? 0) ? b.role : a.role;
+}
+
+/**
+ * Merge over-split neighbours that share a role family and have no vocal gap
+ * at the boundary (so a long verse is not three short ones).
+ */
+export function mergeOverSplitSections(
+  sections: SongSection[],
+  vocal: Array<{ t0: number; t1: number }>,
+  bpm: number | null = null,
+): SongSection[] {
+  if (sections.length < 2) return sections;
+  const barMs = bpm && bpm > 0 ? (4 * 60000) / bpm : 2000;
+  const maxMergeMs = (a: SongSection, b: SongSection): number => {
+    const bothChorus = a.role === "chorus" && b.role === "chorus";
+    // Choruses are typically 8 bars; do not let one chorus swallow the next
+    // verse and chorus into a 40-bar block. Verses may run longer.
+    if (bothChorus) return 12 * barMs;
+    return 32 * barMs;
+  };
+  const canMerge = (a: SongSection, b: SongSection): boolean => {
+    if (a.role === "intro" || b.role === "intro") return false;
+    const verseVerse = verseFamily(a.role) && verseFamily(b.role);
+    const same = a.role === b.role;
+    const outroTail =
+      (a.role === "outro" && (verseFamily(b.role) || b.role === "outro")) ||
+      (b.role === "outro" && (verseFamily(a.role) || a.role === "outro"));
+    if ((a.role === "verse" && b.role === "chorus") || (a.role === "chorus" && b.role === "verse")) return false;
+    if ((a.role === "chorus" && b.role === "outro") || (a.role === "outro" && b.role === "chorus")) return false;
+    if (!(same || verseVerse || outroTail)) return false;
+    if (vocalGapAt(a.t_end_ms, vocal, 400)) return false;
+    if (b.t_end_ms - a.t_start_ms > maxMergeMs(a, b)) return false;
+    return true;
+  };
+  const out: SongSection[] = [];
+  for (const s of sections) {
+    const prev = out[out.length - 1];
+    if (prev && canMerge(prev, s)) {
+      const role = mergeRole(prev, s);
+      const name =
+        role === "outro"
+          ? "Outro"
+          : role === "chorus"
+            ? `Chorus ${prev.label}`
+            : role === "bridge"
+              ? `Bridge ${prev.label}`
+              : role === "phrase"
+                ? `Phrase ${prev.label}`
+                : `Verse ${prev.label}`;
+      out[out.length - 1] = {
+        ...prev,
+        t_end_ms: s.t_end_ms,
+        label: prev.label,
+        energy_mean: Math.round(((prev.energy_mean + s.energy_mean) / 2) * 1000) / 1000,
+        role,
+        hypothesis: `${name} · merged over-split neighbours (no vocal gap; 8-bar schema SOFT)`,
+      };
+    } else {
+      out.push(s);
+    }
+  }
+  return out;
 }

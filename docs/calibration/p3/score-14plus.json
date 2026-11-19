@@ -1,0 +1,461 @@
+{
+  "label": "SOFT",
+  "engine_before": "86b78b6",
+  "branch": "p3/tempo-sections-tuning",
+  "harness": "calibration/run.mjs --sens 0.58 --tick-hz 60",
+  "fourteen": {
+    "key_before": "11/14",
+    "key_after": "11/14",
+    "tempo_strict": "10/14",
+    "tempo_forgiven_before": "10/14",
+    "tempo_forgiven_after": "10/14"
+  },
+  "keep_moving": {
+    "tempo_before": null,
+    "tempo_after": 98.9,
+    "strict": true,
+    "forgiven": true,
+    "key": "D major (0.76)",
+    "sections_before": 8,
+    "sections_after": 5,
+    "tuning_a4_hz": 433.9,
+    "cents_vs_440": -24.25,
+    "applied": true
+  },
+  "rows": [
+    {
+      "file": "10-turn_the_screw.mp3",
+      "before": {
+        "tempo": 98.0,
+        "key": "D# minor (0.86)",
+        "sections": 15
+      },
+      "after": {
+        "tempo": 98.0,
+        "key": "D# minor (0.86)",
+        "sections": 9,
+        "tuning": {
+          "cents_vs_440": 0.01,
+          "a4_hz": 440,
+          "applied": false,
+          "confidence": 0.816,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 99.4,
+        "ks_key": "D# minor"
+      },
+      "tempo_forgiven_before": true,
+      "tempo_forgiven_after": true,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "4-spiral_system.mp3",
+      "before": {
+        "tempo": 93.0,
+        "key": "F# minor (0.68)",
+        "sections": 15
+      },
+      "after": {
+        "tempo": 93.0,
+        "key": "F# minor (0.68)",
+        "sections": 12,
+        "tuning": {
+          "cents_vs_440": 3.9,
+          "a4_hz": 441,
+          "applied": false,
+          "confidence": 0.833,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 123.0,
+        "ks_key": "F# minor"
+      },
+      "tempo_forgiven_before": false,
+      "tempo_forgiven_after": false,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "5-spiralling.mp3",
+      "before": {
+        "tempo": 96.8,
+        "key": "A minor (0.86)",
+        "sections": 10
+      },
+      "after": {
+        "tempo": 96.8,
+        "key": "A minor (0.86)",
+        "sections": 9,
+        "tuning": {
+          "cents_vs_440": 0.91,
+          "a4_hz": 440.2,
+          "applied": false,
+          "confidence": 0.866,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 123.0,
+        "ks_key": "A minor"
+      },
+      "tempo_forgiven_before": false,
+      "tempo_forgiven_after": false,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "6-pressure_makes.mp3",
+      "before": {
+        "tempo": 126.0,
+        "key": "E major (0.73)",
+        "sections": 21
+      },
+      "after": {
+        "tempo": 126.0,
+        "key": "E major (0.73)",
+        "sections": 14,
+        "tuning": {
+          "cents_vs_440": 0.67,
+          "a4_hz": 440.2,
+          "applied": false,
+          "confidence": 0.821,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 129.2,
+        "ks_key": "E major"
+      },
+      "tempo_forgiven_before": true,
+      "tempo_forgiven_after": true,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "7-involuntary_spiral.mp3",
+      "before": {
+        "tempo": 98.0,
+        "key": "F major (0.76)",
+        "sections": 9
+      },
+      "after": {
+        "tempo": 98.0,
+        "key": "F major (0.76)",
+        "sections": 9,
+        "tuning": {
+          "cents_vs_440": 8.76,
+          "a4_hz": 442.2,
+          "applied": false,
+          "confidence": 0.804,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 99.4,
+        "ks_key": "C major"
+      },
+      "tempo_forgiven_before": true,
+      "tempo_forgiven_after": true,
+      "key_hit_before": false,
+      "key_hit_after": false
+    },
+    {
+      "file": "8-racer.mp3",
+      "before": {
+        "tempo": 110.0,
+        "key": "C minor (0.79)",
+        "sections": 11
+      },
+      "after": {
+        "tempo": 110.0,
+        "key": "C minor (0.8)",
+        "sections": 8,
+        "tuning": {
+          "cents_vs_440": 2.43,
+          "a4_hz": 440.6,
+          "applied": false,
+          "confidence": 0.843,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 143.6,
+        "ks_key": "C minor"
+      },
+      "tempo_forgiven_before": false,
+      "tempo_forgiven_after": false,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "9-step_up.mp3",
+      "before": {
+        "tempo": 95.0,
+        "key": "A minor (0.79)",
+        "sections": 10
+      },
+      "after": {
+        "tempo": 95.0,
+        "key": "A minor (0.79)",
+        "sections": 8,
+        "tuning": {
+          "cents_vs_440": 3.81,
+          "a4_hz": 441,
+          "applied": false,
+          "confidence": 0.848,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 95.7,
+        "ks_key": "A minor"
+      },
+      "tempo_forgiven_before": true,
+      "tempo_forgiven_after": true,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "music_midnight_funky.ogg",
+      "before": {
+        "tempo": 135.9,
+        "key": "D major (0.87)",
+        "sections": 16
+      },
+      "after": {
+        "tempo": 135.9,
+        "key": "D major (0.87)",
+        "sections": 13,
+        "tuning": {
+          "cents_vs_440": 3.66,
+          "a4_hz": 440.9,
+          "applied": false,
+          "confidence": 0.829,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 136.0,
+        "ks_key": "D major"
+      },
+      "tempo_forgiven_before": true,
+      "tempo_forgiven_after": true,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "music_midnight_slow.ogg",
+      "before": {
+        "tempo": 137.9,
+        "key": "D major (0.83)",
+        "sections": 17
+      },
+      "after": {
+        "tempo": 137.9,
+        "key": "D major (0.83)",
+        "sections": 11,
+        "tuning": {
+          "cents_vs_440": 2.52,
+          "a4_hz": 440.6,
+          "applied": false,
+          "confidence": 0.836,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 136.0,
+        "ks_key": "D major"
+      },
+      "tempo_forgiven_before": true,
+      "tempo_forgiven_after": true,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "music_track_a.ogg",
+      "before": {
+        "tempo": 130.6,
+        "key": "F major (0.77)",
+        "sections": 15
+      },
+      "after": {
+        "tempo": 130.6,
+        "key": "F major (0.77)",
+        "sections": 10,
+        "tuning": {
+          "cents_vs_440": 2.62,
+          "a4_hz": 440.7,
+          "applied": false,
+          "confidence": 0.851,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 129.2,
+        "ks_key": "F minor"
+      },
+      "tempo_forgiven_before": true,
+      "tempo_forgiven_after": true,
+      "key_hit_before": false,
+      "key_hit_after": false
+    },
+    {
+      "file": "music_track_b.ogg",
+      "before": {
+        "tempo": 108.0,
+        "key": "G minor (0.85)",
+        "sections": 11
+      },
+      "after": {
+        "tempo": 108.0,
+        "key": "G minor (0.85)",
+        "sections": 8,
+        "tuning": {
+          "cents_vs_440": 2.84,
+          "a4_hz": 440.7,
+          "applied": false,
+          "confidence": 0.83,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 107.7,
+        "ks_key": "G minor"
+      },
+      "tempo_forgiven_before": true,
+      "tempo_forgiven_after": true,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "my-little-monkey.mp3",
+      "before": {
+        "tempo": 79.3,
+        "key": "A major (0.84)",
+        "sections": 7
+      },
+      "after": {
+        "tempo": 79.3,
+        "key": "A major (0.84)",
+        "sections": 6,
+        "tuning": {
+          "cents_vs_440": 4.51,
+          "a4_hz": 441.1,
+          "applied": false,
+          "confidence": 0.842,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 152.0,
+        "ks_key": "D major"
+      },
+      "tempo_forgiven_before": false,
+      "tempo_forgiven_after": false,
+      "key_hit_before": false,
+      "key_hit_after": false
+    },
+    {
+      "file": "neon-whiskers.mp3",
+      "before": {
+        "tempo": 128.0,
+        "key": "D# major (0.9)",
+        "sections": 12
+      },
+      "after": {
+        "tempo": 128.0,
+        "key": "D# major (0.9)",
+        "sections": 9,
+        "tuning": {
+          "cents_vs_440": 2.98,
+          "a4_hz": 440.8,
+          "applied": false,
+          "confidence": 0.846,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 129.2,
+        "ks_key": "D# major"
+      },
+      "tempo_forgiven_before": true,
+      "tempo_forgiven_after": true,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "stinky-skunk-shuffle.mp3",
+      "before": {
+        "tempo": 100.0,
+        "key": "C major (0.92)",
+        "sections": 9
+      },
+      "after": {
+        "tempo": 100.0,
+        "key": "C major (0.92)",
+        "sections": 9,
+        "tuning": {
+          "cents_vs_440": 11.21,
+          "a4_hz": 442.9,
+          "applied": false,
+          "confidence": 0.869,
+          "label": "SOFT"
+        }
+      },
+      "reference": {
+        "librosa_bpm": 99.4,
+        "ks_key": "C major"
+      },
+      "tempo_forgiven_before": true,
+      "tempo_forgiven_after": true,
+      "key_hit_before": true,
+      "key_hit_after": true
+    },
+    {
+      "file": "source-44100.wav",
+      "before": {
+        "tempo": null,
+        "key": "D major (0.85)",
+        "sections": 8
+      },
+      "after": {
+        "tempo": 98.9,
+        "key": "D major (0.76)",
+        "sections": 5,
+        "tuning": {
+          "cents_vs_440": -24.25,
+          "a4_hz": 433.9,
+          "applied": true,
+          "confidence": 0.823,
+          "label": "SOFT"
+        }
+      },
+      "truth": {
+        "tempo_bpm": 96,
+        "key": "D major",
+        "sections": 5,
+        "a4_hz": 432
+      },
+      "tempo_strict_after": true,
+      "tempo_forgiven_after": true,
+      "key_hit_after": true,
+      "section_list_after": [
+        "0.0-24.5s verse A",
+        "24.5-43.9s chorus B",
+        "43.9-58.5s chorus A'",
+        "58.5-121.6s chorus C",
+        "121.6-154.0s outro D"
+      ],
+      "preferred_for": {
+        "transcription_grid": 98.9,
+        "felt_groove": 98.9,
+        "unresolved": false
+      },
+      "tempo_note": "sub-grid onsets (525); top peak was under minComb; fell back to passing peak 197.8; comb x prior picked 98.9 BPM; folded 197.8 / 2; nearest rival level 197.75 BPM at 126%"
+    }
+  ]
+}

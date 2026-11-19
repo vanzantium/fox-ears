@@ -3,6 +3,7 @@ import { chromaReliability } from "@/lib/audio/chroma";
 import { vocalMask } from "@/lib/audio/vocal";
 import { inferChords } from "./chords";
 import { hierarchicalForm } from "./form";
+import { applyTuningToFrames, estimateTuningFromFrames } from "./tuning";
 import { beatGridAligned, estimateTempo, tempoFromTicks } from "./tempo";
 import { attachHypothesesToEstimate } from "./tempoHypotheses";
 import { resampleOntoSpectralGrid } from "./spectralGrid";
@@ -43,6 +44,8 @@ export function emptyChart(): SongChart {
     sections: [],
     section_cues: [],
     section_disagreement: [],
+    section_schema: undefined,
+    tuning: undefined,
     input_change_receipts: [],
     melody: [],
     vocal_regions: [],
@@ -56,37 +59,39 @@ export function buildChart(
   lyrics: { source: SongChart["lyrics"]["source"]; text: string; lines: LyricLine[] },
   pass?: PassOptions,
 ): SongChart {
-  const notes = segmentNotes(frames);
-  const { tempo, onsetMs } = chartTempo(frames);
-  const lastT = frames[frames.length - 1]?.t_ms ?? 0;
+  const tuning = estimateTuningFromFrames(frames);
+  const tuned = applyTuningToFrames(frames, tuning);
+  const notes = segmentNotes(tuned);
+  const { tempo, onsetMs } = chartTempo(tuned);
+  const lastT = tuned[tuned.length - 1]?.t_ms ?? 0;
   const beats = tempo?.bpm ? beatGridAligned(lastT, tempo.bpm, onsetMs) : [];
   // Key and sections read a fixed 10 ms audio-clock grid so display rate
   // (and per-read analyser smoothing) cannot change the answer.
-  const gridFrames = resampleOntoSpectralGrid(frames);
+  const gridFrames = resampleOntoSpectralGrid(tuned);
   const rel = chromaReliability(gridFrames.map((f) => ({ chroma: f.chroma })));
   const vMaskGrid = chartVocalMask(gridFrames);
-  const vMask = chartVocalMask(frames);
-  const sections = hierarchicalForm(gridFrames, tempo?.bpm ?? null, beats, vMaskGrid);
-  const form = attachSectionCues(sections, gridFrames, { vocalMask: vMaskGrid, lyrics: lyrics.lines });
+  const vMask = chartVocalMask(tuned);
+  const formTree = hierarchicalForm(gridFrames, tempo?.bpm ?? null, beats, vMaskGrid);
+  const form = attachSectionCues(formTree.sections, gridFrames, { vocalMask: vMaskGrid, lyrics: lyrics.lines });
   const keyEst = estimateKeyDetailed(gridFrames, form.sections, { barMs: tempo?.bpm ? 240000 / tempo.bpm : undefined });
   const key = rel.ok ? (keyEst.key ?? null) : null;
   const hypotheses = [
     ...(pass?.keyPrior ?? []),
-    ...(rel.ok && keyEst.hypotheses.length ? keyEst.hypotheses : keyEst.key ? hypothesesFromKey(keyEst.key) : keyHypotheses(frames)),
+    ...(rel.ok && keyEst.hypotheses.length ? keyEst.hypotheses : keyEst.key ? hypothesesFromKey(keyEst.key) : keyHypotheses(tuned)),
   ].slice(0, 16);
-  let chords = rel.ok ? inferChords(frames, key, hypotheses, pass?.chordWinMs ?? 2200) : [];
-  if (pass?.kind === "contradiction") chords = falsifyChromatic({ ...emptyChart(), chords }, frames).chords;
-  const vocal_regions = vocalRegions(frames, vMask).filter((v) =>
+  let chords = rel.ok ? inferChords(tuned, key, hypotheses, pass?.chordWinMs ?? 2200) : [];
+  if (pass?.kind === "contradiction") chords = falsifyChromatic({ ...emptyChart(), chords }, tuned).chords;
+  const vocal_regions = vocalRegions(tuned, vMask).filter((v) =>
     pass?.vocalIgnoreIntroMs ? v.t_start_ms >= pass.vocalIgnoreIntroMs || v.t_end_ms - v.t_start_ms > 1800 : true,
   );
-  let vocal_melody = vocalMelody(notes, frames, vMask);
+  let vocal_melody = vocalMelody(notes, tuned, vMask);
   const minMs = pass?.vocalMinMs;
   if (minMs) vocal_melody = vocal_melody.filter((n) => n.dur_ms >= minMs);
   const ignoreIntro = pass?.vocalIgnoreIntroMs;
   if (ignoreIntro) vocal_melody = vocal_melody.filter((n) => n.t_ms >= ignoreIntro);
-  const local_centers = localCenters(frames);
-  const fn = buildFunction(frames, vocal_melody, chords, key);
-  const macro = macroTension(frames);
+  const local_centers = localCenters(tuned);
+  const fn = buildFunction(tuned, vocal_melody, chords, key);
+  const macro = macroTension(tuned);
   if (fn) {
     fn.macro_peak_ms = macro.peak_ms;
     fn.macro_peak = macro.peak;
@@ -110,10 +115,10 @@ export function buildChart(
     vocal_range = { low: midiToName(lo), high: midiToName(hi), median: midiToName(med) };
   }
 
-  const sparseOnsets = sparseRegularOnsets(frames);
+  const sparseOnsets = sparseRegularOnsets(tuned);
   const tickMs: number[] = [];
   const tickFlux: number[] = [];
-  for (const f of frames) {
+  for (const f of tuned) {
     if (!f.ticks) continue;
     for (let i = 0; i < f.ticks.t_ms.length; i++) {
       tickMs.push(f.ticks.t_ms[i] ?? 0);
@@ -151,6 +156,8 @@ export function buildChart(
     sections: form.sections,
     section_cues: form.cues,
     section_disagreement: form.disagreement,
+    section_schema: formTree.section_schema,
+    tuning,
     melody: vocal_melody.map((n) => ({ t_ms: n.t_ms, midi: n.midi, name: n.name })),
     vocal_regions,
     lyrics,

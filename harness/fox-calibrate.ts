@@ -79,6 +79,8 @@ function metrics(name: string, frames: HearingFrame[], sens: number, tickFlux: n
     chroma_reliable: c.chroma_reliable, chroma_note: c.chroma_note,
     chords: c.chords.length, sections: c.sections.length,
     section_list: c.sections.map((s) => `${(s.t_start_ms / 1000).toFixed(1)}-${(s.t_end_ms / 1000).toFixed(1)}s ${s.role} ${s.label}`),
+    section_schema: c.section_schema ?? null,
+    tuning: c.tuning ?? null,
     vocal_mask: pct(mask.filter(Boolean).length / n), vocal_mask_frames: mask.map((v, i) => (v ? frames[i]!.t_ms : -1)).filter((t) => t >= 0),
     vocal_regions: c.vocal_regions.length, notes: c.notes.length, vocal_notes: c.vocal_melody.length,
     range: c.range, vocal_range: c.vocal_range,
@@ -182,6 +184,8 @@ async function main() {
     console.log(`  app tempo path: ${m.tempo.path}`);
     console.log(`  key ${m.key} · chroma_reliable ${m.chroma_reliable} · chords ${m.chords} · sections ${m.sections}${m.key_note ? ` · ${m.key_note}` : ""}`);
     console.log(`  sections: ${m.section_list.join(" | ")}`);
+    if (m.section_schema) console.log(`  section_schema: ${m.section_schema.note}`);
+    if (m.tuning) console.log(`  tuning: A4=${m.tuning.a4_hz ?? "—"} Hz, ${m.tuning.cents_vs_440 ?? "—"} ¢ vs 440, applied=${m.tuning.applied} (${m.tuning.label})`);
     if (m.section_disagreement?.length) console.log(`  section disagreement: ${m.section_disagreement.map((d) => d.statement).join(" | ")}`);
     console.log(`  chart vocal mask ${m.vocal_mask} · vocal regions ${m.vocal_regions}`);
     if (demoName === name) console.log(`  demo grains: ${demoGrains(frames)}`);
