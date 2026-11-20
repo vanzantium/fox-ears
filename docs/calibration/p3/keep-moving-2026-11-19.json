@@ -1,0 +1,26 @@
+{
+  "id": "keep-moving-2026-11-19",
+  "title": "Keep Moving (working title)",
+  "date": "2026-11-19",
+  "label": "Key is SOLID after Taylor's answer. Tempo, tuning and sections stay SOFT as calibration targets until a second independent method agrees.",
+  "source": "Taylor's answer key, 2026-11-19, after a sealed blind read on main 86b78b6. The audio file is not stored in this repository.",
+  "key": { "tonic": "D", "mode": "major", "status": "SOLID" },
+  "tempo_bpm": 96,
+  "tempo_scoring": "FORGIVEN: displayed BPM within ±4% of 96, or a half/double/2:3/3:2 of 96 within ±4%.",
+  "tuning": {
+    "a4_hz": 432,
+    "cents_vs_440": -31.766,
+    "label": "SOFT",
+    "note": "A≈432 is about 31.8 cents flat of A440. Residual vs a 432 grid may be a few cents sharp."
+  },
+  "sections": [
+    { "role": "verse", "name": "Verse 1" },
+    { "role": "chorus", "name": "Chorus" },
+    { "role": "verse", "name": "Verse 2" },
+    { "role": "chorus", "name": "Chorus" },
+    { "role": "outro", "name": "Outro" }
+  ],
+  "section_count": 5,
+  "schema": { "bars": 8, "label": "SOFT" },
+  "local_audio_hint": "Not tracked. When present on the box, /workspace/fox-ears-blind-2026-11-19/input/source-44100.wav. Set FOX_EARS_P3_FILES=1 to run the gated calibration test."
+}

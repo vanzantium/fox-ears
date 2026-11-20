@@ -1,4 +1,4 @@
-import type { HearingFrame, SongSection } from "./types";
+import type { HearingFrame, SongSection, SectionSchema } from "./types";
 
 function cosine(a: number[], b: number[]): number {
   let n = 0;
@@ -325,11 +325,52 @@ export function hierarchicalForm(
   bpm: number | null = null,
   beats: number[] = [],
   vocalMask?: boolean[],
-): SongSection[] {
-  if (frames.length < 12) return [];
+): { sections: SongSection[]; section_schema: SectionSchema } {
+  if (frames.length < 12) {
+    return {
+      sections: [],
+      section_schema: {
+        label: "SOFT",
+        bars: 8,
+        snap_unit_bars: 2,
+        bar_ms: null,
+        applied: false,
+        note: "too few frames for form (SOFT)",
+      },
+    };
+  }
   const lastT = frames[frames.length - 1]?.t_ms ?? 0;
   const sc = sectionCuts(frames, bpm, beats, vocalMask);
-  const cuts = [0, ...sc.cuts, lastT];
+  const vocal = vocalRuns(frames, vocalMask);
+  let cuts = [0, ...sc.cuts, lastT];
+  let schema: SectionSchema = {
+    label: "SOFT",
+    bars: 8,
+    snap_unit_bars: 2,
+    bar_ms: null,
+    applied: false,
+    note: "tempo not locked; 8-bar pop schema not applied (SOFT)",
+  };
+  if (bpm && bpm > 0) {
+    const snapped = snapCutsToSchema(cuts, bpm, lastT, vocal, beats);
+    cuts = snapped.cuts;
+    schema = {
+      label: "SOFT",
+      bars: 8,
+      snap_unit_bars: 2,
+      bar_ms: snapped.bar_ms,
+      applied: true,
+      note: snapped.note,
+    };
+    const extra = proposeGridCuts(cuts, frames, bpm, vocal, vocalMask);
+    if (extra.added.length) {
+      cuts = extra.cuts;
+      schema = {
+        ...schema,
+        note: `${snapped.note}; ${extra.note}`,
+      };
+    }
+  }
 
   type Phrase = { t0: number; t1: number; e: number; chroma: number[]; vocal: number };
   const merged: Phrase[] = [];
@@ -389,7 +430,9 @@ export function hierarchicalForm(
   // hidden rewrite of novelty cuts. assignRoles may still *label* an intro
   // using the vocal time; it does not move boundaries.
   const vocalT = firstSustainedVocal(frames, vocalMask);
-  return assignRoles(sections, vocalT);
+  const rolled = assignSectionRoles(sections, vocalT);
+  const joined = mergeOverSplitSections(rolled, vocal, bpm);
+  return { sections: joined, section_schema: schema };
 }
 
 function firstSustainedVocal(frames: HearingFrame[], vocalMask?: boolean[]): number | null {
@@ -421,7 +464,7 @@ function splitAtVocal(sections: SongSection[], vocalT: number | null): SongSecti
   ];
 }
 
-function assignRoles(sections: SongSection[], vocalT: number | null): SongSection[] {
+export function assignSectionRoles(sections: SongSection[], vocalT: number | null): SongSection[] {
   if (!sections.length) return sections;
   const mean = sections.reduce((a, s) => a + s.energy_mean, 0) / sections.length;
   const max = Math.max(...sections.map((s) => s.energy_mean));
@@ -439,11 +482,22 @@ function assignRoles(sections: SongSection[], vocalT: number | null): SongSectio
     } else if (chorusI < 0 && verseI >= 0 && i > verseI && dur >= 5500 && s.energy_mean >= (sections[verseI]?.energy_mean ?? 0) * 0.98) {
       role = "chorus";
       chorusI = i;
-    } else if (dur < 7000) role = "phrase";
-    else if (s.label.includes("'") && s.energy_mean >= max * 0.86) role = "chorus";
-    else if (s.energy_mean >= max * 0.9 && i !== verseI) role = "chorus";
-    else if (s.energy_mean < mean * 0.8 && i > 0 && i < last) role = "bridge";
-    else role = "verse";
+    } else {
+      // Recurrence letter first: a return of the verse (A') is still a verse,
+      // even if it is louder than chorus 1. A prime is not a chorus cue by itself.
+      const letter = recurrenceLetter(s.label);
+      const verseLetter = verseI >= 0 ? recurrenceLetter(sections[verseI]!.label) : "";
+      const chorusLetter = chorusI >= 0 ? recurrenceLetter(sections[chorusI]!.label) : "";
+      // In a one-key song chroma can mark a later chorus as a verse return.
+      // A section that is the energy peak and chorus-length is still a chorus.
+      const energyChorus = dur >= 5500 && s.energy_mean >= max * 0.9 && i !== verseI;
+      if (energyChorus) role = "chorus";
+      else if (letter && letter === verseLetter) role = "verse";
+      else if (letter && letter === chorusLetter) role = "chorus";
+      else if (dur < 7000) role = "phrase";
+      else if (s.energy_mean < mean * 0.8 && i > 0 && i < last) role = "bridge";
+      else role = "verse";
+    }
 
     const name =
       role === "intro"
@@ -463,4 +517,309 @@ function assignRoles(sections: SongSection[], vocalT: number | null): SongSectio
       hypothesis: `${name} · named from sustained vocal + recurrence/energy (cuts unchanged)`,
     };
   });
+}
+
+/** Sustained vocal runs used to avoid cutting through a line. */
+export function vocalRuns(
+  frames: HearingFrame[],
+  vocalMask?: boolean[],
+): Array<{ t0: number; t1: number }> {
+  const runs: Array<{ t0: number; t1: number }> = [];
+  let t0: number | null = null;
+  let last = 0;
+  for (let i = 0; i < frames.length; i++) {
+    const f = frames[i]!;
+    last = f.t_ms;
+    const on = vocalMask ? Boolean(vocalMask[i]) : Boolean(f.vocal_gate);
+    if (on) {
+      if (t0 == null) t0 = f.t_ms;
+    } else if (t0 != null) {
+      runs.push({ t0, t1: f.t_ms });
+      t0 = null;
+    }
+  }
+  if (t0 != null) runs.push({ t0, t1: last });
+  return runs;
+}
+
+function throughVocal(t: number, runs: Array<{ t0: number; t1: number }>, marginMs = 300): { t0: number; t1: number } | null {
+  for (const r of runs) {
+    if (t > r.t0 + marginMs && t < r.t1 - marginMs) return r;
+  }
+  return null;
+}
+
+function nearestGapEdge(t: number, runs: Array<{ t0: number; t1: number }>, maxMs: number): number | null {
+  const edges: number[] = [];
+  for (const r of runs) {
+    edges.push(r.t0, r.t1);
+  }
+  let best: number | null = null;
+  let bestD = Infinity;
+  for (const e of edges) {
+    const d = Math.abs(e - t);
+    if (d < bestD && d <= maxMs) {
+      bestD = d;
+      best = e;
+    }
+  }
+  return best;
+}
+
+function vocalGapAt(
+  boundary: number,
+  runs: Array<{ t0: number; t1: number }>,
+  minGapMs = 400,
+): boolean {
+  for (let i = 0; i < runs.length - 1; i++) {
+    const g0 = runs[i]!.t1;
+    const g1 = runs[i + 1]!.t0;
+    if (g1 - g0 >= minGapMs && boundary >= g0 - 80 && boundary <= g1 + 80) return true;
+  }
+  return false;
+}
+
+/**
+ * Once tempo is locked, snap internal cuts to a 2-bar unit of an 8-bar pop
+ * schema (SOFT). Cuts that fall through an ongoing vocal are moved to the
+ * nearest vocal gap or dropped.
+ */
+export function snapCutsToSchema(
+  cuts: number[],
+  bpm: number,
+  durationMs: number,
+  vocal: Array<{ t0: number; t1: number }>,
+  beats: number[] = [],
+): { cuts: number[]; bar_ms: number; note: string } {
+  const barMs = (4 * 60000) / bpm;
+  const unitMs = 2 * barMs;
+  const phase = beats[0] != null && beats[0] >= 0 && beats[0] < barMs ? beats[0] : 0;
+  const minSpan = barMs; // don't leave slivers shorter than a bar
+  const snapped = [0];
+  const internal = [...new Set(cuts)].filter((c) => c > 250 && c < durationMs - 250).sort((a, b) => a - b);
+  for (const raw of internal) {
+    let t = raw;
+    if (throughVocal(t, vocal)) {
+      const edge = nearestGapEdge(t, vocal, 2000);
+      if (edge == null) continue;
+      t = edge;
+    }
+    const k = Math.round((t - phase) / unitMs);
+    const grid = phase + k * unitMs;
+    if (grid > 250 && grid < durationMs - 250 && Math.abs(grid - t) <= barMs) {
+      t = grid;
+    }
+    if (throughVocal(t, vocal)) {
+      const edge = nearestGapEdge(t, vocal, 2000);
+      if (edge == null || throughVocal(edge, vocal)) continue;
+      t = edge;
+    }
+    const prev = snapped[snapped.length - 1]!;
+    if (t - prev < minSpan) continue;
+    snapped.push(t);
+  }
+  if (durationMs - (snapped[snapped.length - 1] ?? 0) < minSpan && snapped.length > 1) snapped.pop();
+  if ((snapped[snapped.length - 1] ?? 0) < durationMs) snapped.push(durationMs);
+  return {
+    cuts: snapped,
+    bar_ms: Math.round(barMs * 10) / 10,
+    note: `internal cuts snapped to a 2-bar unit of an 8-bar pop schema (${Math.round(barMs)} ms/bar), avoiding mid-vocal cuts; schema labeled SOFT`,
+  };
+}
+
+function verseFamily(role: SongSection["role"]): boolean {
+  return role === "verse" || role === "phrase" || role === "bridge" || role === "section";
+}
+
+function mergeRole(a: SongSection, b: SongSection): SongSection["role"] {
+  const rank: Record<SongSection["role"], number> = {
+    outro: 5,
+    chorus: 4,
+    verse: 3,
+    bridge: 2,
+    intro: 1,
+    section: 1,
+    phrase: 0,
+  };
+  return (rank[b.role] ?? 0) > (rank[a.role] ?? 0) ? b.role : a.role;
+}
+
+/**
+ * Merge over-split neighbours that share a role family and have no vocal gap
+ * at the boundary (so a long verse is not three short ones).
+ */
+export function mergeOverSplitSections(
+  sections: SongSection[],
+  vocal: Array<{ t0: number; t1: number }>,
+  bpm: number | null = null,
+): SongSection[] {
+  if (sections.length < 2) return sections;
+  const barMs = bpm && bpm > 0 ? (4 * 60000) / bpm : 2000;
+  const maxMergeMs = (a: SongSection, b: SongSection): number => {
+    const bothChorus = a.role === "chorus" && b.role === "chorus";
+    // Choruses are typically 8 bars; do not let one chorus swallow the next
+    // verse and chorus into a 40-bar block. Verses may run longer.
+    if (bothChorus) return 12 * barMs;
+    return 32 * barMs;
+  };
+  const canMerge = (a: SongSection, b: SongSection): boolean => {
+    if (a.role === "intro" || b.role === "intro") return false;
+    const verseVerse = verseFamily(a.role) && verseFamily(b.role);
+    const same = a.role === b.role;
+    const outroTail =
+      (a.role === "outro" && (verseFamily(b.role) || b.role === "outro")) ||
+      (b.role === "outro" && (verseFamily(a.role) || a.role === "outro"));
+    if ((a.role === "verse" && b.role === "chorus") || (a.role === "chorus" && b.role === "verse")) return false;
+    if ((a.role === "chorus" && b.role === "outro") || (a.role === "outro" && b.role === "chorus")) return false;
+    if (!(same || verseVerse || outroTail)) return false;
+    if (vocalGapAt(a.t_end_ms, vocal, 400)) return false;
+    if (b.t_end_ms - a.t_start_ms > maxMergeMs(a, b)) return false;
+    return true;
+  };
+  const out: SongSection[] = [];
+  for (const s of sections) {
+    const prev = out[out.length - 1];
+    if (prev && canMerge(prev, s)) {
+      const role = mergeRole(prev, s);
+      const name =
+        role === "outro"
+          ? "Outro"
+          : role === "chorus"
+            ? `Chorus ${prev.label}`
+            : role === "bridge"
+              ? `Bridge ${prev.label}`
+              : role === "phrase"
+                ? `Phrase ${prev.label}`
+                : `Verse ${prev.label}`;
+      out[out.length - 1] = {
+        ...prev,
+        t_end_ms: s.t_end_ms,
+        label: prev.label,
+        energy_mean: Math.round(((prev.energy_mean + s.energy_mean) / 2) * 1000) / 1000,
+        role,
+        hypothesis: `${name} · merged over-split neighbours (no vocal gap; 8-bar schema SOFT)`,
+      };
+    } else {
+      out.push(s);
+    }
+  }
+  return out;
+}
+
+function recurrenceLetter(label: string): string {
+  const m = /^[A-Z]/i.exec(label);
+  return m ? m[0]!.toUpperCase() : "";
+}
+
+function meanInRange(
+  frames: HearingFrame[],
+  t0: number,
+  t1: number,
+  vocalMask: boolean[] | undefined,
+  kind: "energy" | "vocal",
+): number {
+  let s = 0;
+  let n = 0;
+  for (let i = 0; i < frames.length; i++) {
+    const f = frames[i]!;
+    if (f.t_ms < t0 || f.t_ms >= t1) continue;
+    s += kind === "energy" ? energyOf(f) : vocalMask ? (vocalMask[i] ? 1 : 0) : f.vocal_gate ? 1 : 0;
+    n++;
+  }
+  return n ? s / n : 0;
+}
+
+function minVocalNear(
+  frames: HearingFrame[],
+  t: number,
+  radiusMs: number,
+  vocalMask: boolean[] | undefined,
+  winMs = 1000,
+): number {
+  let best = 1;
+  for (let x = t - radiusMs; x <= t + radiusMs; x += Math.max(200, winMs / 4)) {
+    const v = meanInRange(frames, x - winMs / 2, x + winMs / 2, vocalMask, "vocal");
+    if (v < best) best = v;
+  }
+  return best;
+}
+
+function peakEnergy(frames: HearingFrame[], t0: number, t1: number, winMs: number): number {
+  let best = 0;
+  for (let x = t0; x <= t1 - winMs * 0.5; x += Math.max(200, winMs / 4)) {
+    const e = meanInRange(frames, x, x + winMs, undefined, "energy");
+    if (e > best) best = e;
+  }
+  return best;
+}
+
+/**
+ * Inside a long stretch (16 bars or more) after tempo is locked, propose a
+ * cut at an 8-bar grid point when general cues agree: a vocal dip near the
+ * grid, plus an energy change (often a chorus entry / exit) or a peak just
+ * after the grid. Schema check, labeled SOFT — not a song-specific time.
+ */
+export function proposeGridCuts(
+  cuts: number[],
+  frames: HearingFrame[],
+  bpm: number,
+  vocal: Array<{ t0: number; t1: number }>,
+  vocalMask?: boolean[],
+): { cuts: number[]; added: number[]; note: string } {
+  const barMs = (4 * 60000) / bpm;
+  const eight = 8 * barMs;
+  const minLong = 16 * barMs;
+  const out = [...new Set(cuts)].sort((a, b) => a - b);
+  const added: number[] = [];
+  for (let i = 0; i < out.length - 1; i++) {
+    const a = out[i]!;
+    const b = out[i + 1]!;
+    if (b - a < minLong) continue;
+    const lo = a + 8 * barMs;
+    const hi = b - 8 * barMs;
+    if (hi <= lo) continue;
+    let best: { t: number; score: number } | null = null;
+    const k0 = Math.ceil(lo / eight);
+    const k1 = Math.floor(hi / eight);
+    for (let k = k0; k <= k1; k++) {
+      const grid = k * eight;
+      const vLocal = minVocalNear(frames, grid, barMs, vocalMask, 1000);
+      const vContext = meanInRange(frames, grid - eight, grid + eight, vocalMask, "vocal");
+      const dip = vContext > 0.08 && vLocal <= Math.min(0.65, vContext * 0.85);
+      if (!dip) continue;
+      const eBefore = meanInRange(frames, grid - 4 * barMs, grid, vocalMask, "energy");
+      const eAfter = meanInRange(frames, grid, grid + 4 * barMs, vocalMask, "energy");
+      const ePeakAfter = peakEnergy(frames, grid, grid + 4 * barMs, 2000);
+      const contrast = eBefore > 1e-6 ? Math.max(eAfter, ePeakAfter) / eBefore : 1;
+      const fall = eAfter > 1e-6 ? eBefore / eAfter : 1;
+      const change = Math.max(contrast, fall);
+      if (change < 1.1 && ePeakAfter < eBefore * 1.15) continue;
+      const score = change + (ePeakAfter > eBefore * 1.2 ? 0.25 : 0);
+      if (!best || score > best.score) best = { t: grid, score };
+    }
+    if (!best) continue;
+    let t = best.t;
+    let refinedScore = -Infinity;
+    for (let x = t - barMs; x <= t + barMs; x += 250) {
+      const v = minVocalNear(frames, x, 400, vocalMask, 800);
+      const eB = meanInRange(frames, x - 2 * barMs, x, vocalMask, "energy");
+      const eA = peakEnergy(frames, x, x + 2 * barMs, 1500);
+      const sc = (eB > 1e-6 ? eA / eB : 1) + (1 - v);
+      if (sc > refinedScore) {
+        refinedScore = sc;
+        t = x;
+      }
+    }
+    const edge = nearestGapEdge(t, vocal, barMs);
+    if (edge != null && Math.abs(edge - t) <= barMs) t = edge;
+    if (t <= a + 6 * barMs || t >= b - 6 * barMs) continue;
+    if (out.some((c) => Math.abs(c - t) < 4 * barMs)) continue;
+    out.push(t);
+    out.sort((x, y) => x - y);
+    added.push(t);
+  }
+  const note = added.length
+    ? `added ${added.length} 8-bar schema cut(s) at ${added.map((x) => (x / 1000).toFixed(1) + "s").join(", ")} from vocal-dip + energy cues (SOFT)`
+    : "no extra 8-bar schema cuts";
+  return { cuts: out, added, note };
 }

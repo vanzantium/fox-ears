@@ -3,6 +3,15 @@
  * groove, and a subdivision or double, all as real features. Scoring is per
  * role so hearing the guitar is not a miss when the task asked for the click.
  */
+// Local copies of tempo.ts helpers so this file stays importable from
+// node:test (experimental-strip-types cannot resolve extensionless "./tempo").
+const FELT_MAX_BPM = 180;
+const PRIOR_BPM = 110;
+function groovePrior(bpm: number): number {
+  const z = Math.log2(bpm / PRIOR_BPM);
+  return Math.exp(-0.5 * z * z);
+}
+
 export const TEMPO_ROLES = ["reference_click", "performed_groove", "subdivision_or_double"] as const;
 export type TempoRole = (typeof TEMPO_ROLES)[number];
 
@@ -137,13 +146,34 @@ export function fitRegularGrid(
   };
 }
 
+/** IOI search window. 120 ms lets sixteenth-notes at ~96 BPM vote; the old 180 ms floor is not a groove. */
+export const IOI = { minMs: 120, maxMs: 2000, artifactMs: 180 } as const;
+
+export function isIoiFloorArtifact(periodMs: number): boolean {
+  return Math.abs(periodMs - IOI.artifactMs) < 2.5;
+}
+
+/** Fit quality that does not reward a finer grid just for collecting more inliers. */
+export function gridFitQuality(fit: { coverage: number; median_error_ms: number; bpm: number }): number {
+  return (fit.coverage / (1 + fit.median_error_ms / 20)) * groovePrior(fit.bpm);
+}
+
+export function metricallyRelated(a: number, b: number, tol = TEMPO_ROLE_TOLERANCE): boolean {
+  if (!(a > 0) || !(b > 0)) return false;
+  if (withinTol(a, b, tol)) return true;
+  for (const k of [0.5, 2, 2 / 3, 1.5, 1 / 3, 3, 0.25, 4]) {
+    if (withinTol(a, b * k, tol)) return true;
+  }
+  return false;
+}
+
 function ioiCandidates(onsetMs: number[]): number[] {
   if (onsetMs.length < 4) return [];
   const times = onsetMs.slice().sort((a, b) => a - b);
   const iois: number[] = [];
   for (let i = 1; i < times.length; i++) {
     const d = times[i]! - times[i - 1]!;
-    if (d >= 180 && d <= 2000) iois.push(d);
+    if (d >= IOI.minMs && d <= IOI.maxMs) iois.push(d);
   }
   if (!iois.length) return [];
   const bins = new Map<number, number>();
@@ -219,7 +249,12 @@ export function detectTempoHypotheses(
   const dense = (opts.denseOnsetMs ?? []).slice();
   const sparse = sparseOnsetMs.slice();
 
-  const clickPeriods = new Set<number>([...ioiCandidates(sparse), 750]);
+  const ioiPeriods = ioiCandidates(sparse);
+  const clickPeriods = new Set<number>(ioiPeriods);
+  // Only seed 750 ms (80 BPM) when the sparse IOIs already show a near-80
+  // pulse. Unconditionally seeding it can invent a tight 8-inlier "click"
+  // on an unrelated grid (e.g. 96 BPM).
+  if (ioiPeriods.some((p) => Math.abs(p - 750) <= 40)) clickPeriods.add(750);
   if (opts.tickMs?.length && opts.tickFlux?.length) {
     const ranked: Array<{ p: number; score: number }> = [];
     for (const p of new Set([750, 720, 625, 600, 500, ...clickPeriods])) {
@@ -284,13 +319,40 @@ export function detectTempoHypotheses(
     if (half) grooveBpm = half.bpm;
   }
   if (grooveBpm == null) {
-    const periods = ioiCandidates(dense.length ? dense : sparse);
-    let best: ReturnType<typeof fitRegularGrid> | null = null;
+    const pool = dense.length ? dense : sparse;
+    const periods = ioiCandidates(pool);
+    const expanded = new Set<number>(periods);
     for (const p of periods) {
-      const fit = fitRegularGrid(dense.length ? dense : sparse, p, 25);
+      for (const k of [2, 3, 4]) {
+        if (p * k <= IOI.maxMs) expanded.add(p * k);
+      }
+    }
+    let best: ReturnType<typeof fitRegularGrid> | null = null;
+    let bestQ = -Infinity;
+    for (const p of expanded) {
+      // The 180 ms IOI floor is a search artifact, not a performed groove.
+      if (isIoiFloorArtifact(p)) continue;
+      const fit = fitRegularGrid(pool, p, 25);
       if (!fit) continue;
       if (click && withinTol(fit.bpm, click.bpm, 0.02)) continue;
-      if (!best || fit.n_inliers > best.n_inliers) best = fit;
+      let used = fit;
+      if (fit.bpm > FELT_MAX_BPM) {
+        const period = 60_000 / fit.bpm;
+        for (const k of [2, 3, 4]) {
+          const slower = fitRegularGrid(pool, period * k, 25);
+          if (!slower) continue;
+          if (slower.bpm > FELT_MAX_BPM) continue;
+          if (gridFitQuality(slower) >= 0.85 * gridFitQuality(fit) && gridFitQuality(slower) > gridFitQuality(used)) {
+            used = slower;
+          }
+        }
+        if (used.bpm > FELT_MAX_BPM) continue;
+      }
+      const q = gridFitQuality(used);
+      if (q > bestQ) {
+        bestQ = q;
+        best = used;
+      }
     }
     grooveBpm = best?.bpm ?? null;
     if (best && grooveBpm) {
@@ -298,7 +360,7 @@ export function detectTempoHypotheses(
         value_bpm: grooveBpm,
         role: "performed_groove",
         source: "dense_onset_grid",
-        confidence: Math.max(0, Math.min(1, best.n_inliers / Math.max(8, (dense.length || sparse.length)))),
+        confidence: Math.max(0, Math.min(1, best.coverage / (1 + best.median_error_ms / 20))),
         median_error_ms: best.median_error_ms,
         n_inliers: best.n_inliers,
       });
@@ -333,14 +395,22 @@ export function detectTempoHypotheses(
 
   const clickH = hyps.find((h) => h.role === "reference_click");
   const grooveH = hyps.find((h) => h.role === "performed_groove");
-  const unresolved = Boolean(
-    clickH && grooveH && !withinTol(clickH.value_bpm, grooveH.value_bpm, 0.02),
+  const displayed = opts.grooveBpm ?? null;
+  const felt = grooveH?.value_bpm ?? clickH?.value_bpm ?? null;
+  const clickDisagree = Boolean(clickH && grooveH && !withinTol(clickH.value_bpm, grooveH.value_bpm, 0.02));
+  const feltTooFast = felt != null && felt > 220;
+  const displayDisagree = Boolean(
+    displayed != null && felt != null && !metricallyRelated(displayed, felt, 0.04),
   );
+  // Displayed tempo blank while preferred_for claims a confident groove (or a
+  // 180 ms floor pulse) is a disagreement: leave it UNRESOLVED.
+  const blankVsPreferred = displayed == null && grooveH?.source === "dense_onset_grid";
+  const unresolved = clickDisagree || feltTooFast || displayDisagree || Boolean(blankVsPreferred);
   return {
     tempo_hypotheses: hyps,
     preferred_for: {
       transcription_grid: clickH?.value_bpm ?? grooveH?.value_bpm ?? null,
-      felt_groove: grooveH?.value_bpm ?? clickH?.value_bpm ?? null,
+      felt_groove: felt,
       unresolved,
     },
   };

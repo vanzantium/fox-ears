@@ -1,7 +1,7 @@
 const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"] as const;
 
-export function hzToMidi(hz: number): number {
-  return 69 + 12 * Math.log2(hz / 440);
+export function hzToMidi(hz: number, a4Hz = 440): number {
+  return 69 + 12 * Math.log2(hz / a4Hz);
 }
 
 export function midiToName(midi: number): string {

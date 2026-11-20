@@ -115,6 +115,27 @@ export type SongSection = {
   role: "intro" | "verse" | "chorus" | "bridge" | "outro" | "section" | "phrase";
 };
 
+/** 8-bar pop schema used to snap and merge sections once tempo is locked. Always labeled SOFT. */
+export type SectionSchema = {
+  label: "SOFT";
+  bars: 8;
+  snap_unit_bars: number;
+  bar_ms: number | null;
+  applied: boolean;
+  note: string;
+};
+
+/** Concert-pitch reading (cents off A440 and implied A4). Always labeled SOFT until confirmed. */
+export type TuningReading = {
+  cents_vs_440: number | null;
+  a4_hz: number | null;
+  confidence: number;
+  n_voiced?: number;
+  applied: boolean;
+  label: "SOFT";
+  note: string;
+};
+
 export type LyricLine = {
   t_ms: number;
   text: string;
@@ -214,6 +235,9 @@ export type SongChart = {
   sections: SongSection[];
   section_cues?: import("./sectionCues").SectionCue[];
   section_disagreement?: import("./sectionCues").SectionDisagreement[];
+  section_schema?: SectionSchema;
+  /** Concert-pitch pre-pass (A4 Hz and cents vs 440). */
+  tuning?: TuningReading;
   input_change_receipts?: import("./modeReceipt").InputChangeReceipt[];
   melody: Array<{ t_ms: number; midi: number; name: string }>;
   vocal_regions: Array<{ t_start_ms: number; t_end_ms: number; likelihood: number }>;

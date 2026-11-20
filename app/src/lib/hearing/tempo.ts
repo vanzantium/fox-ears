@@ -297,13 +297,13 @@ function combScore(ac: Float64Array, lagBins: number): number {
   return s;
 }
 
-function tempoPrior(bpm: number): number {
+export function tempoPrior(bpm: number): number {
   const z = Math.log2(bpm / SUBGRID.priorBpm) / SUBGRID.priorOctaves;
   return Math.exp(-0.5 * z * z);
 }
 
 /** Phase-searched alignment of weighted onsets to a beat grid (sigma ms). */
-function gridFit(onsets: WeightedOnset[], bpm: number, sigma: number): { score: number; phase: number } {
+export function gridFit(onsets: WeightedOnset[], bpm: number, sigma: number): { score: number; phase: number } {
   const beat = 60000 / bpm;
   let best = { score: -Infinity, phase: 0 };
   const steps = 48;
@@ -321,13 +321,121 @@ function gridFit(onsets: WeightedOnset[], bpm: number, sigma: number): { score: 
 }
 
 /**
+ * Felt-beat band. Pulses faster than maxBpm are folded down by 2, 3 or 4
+ * when a slower grid still fits. 180 BPM is the fold threshold, not a
+ * performed-groove floor: a 180 ms IOI (333 BPM) is a subdivision, not a
+ * groove. Finer grids are not preferred just because they collect more inliers;
+ * a slower level is taken when its grid-fit stays within minFitRatio of the
+ * faster one.
+ */
+export const FELT_GROOVE = {
+  maxBpm: 180,
+  minFitRatio: 0.8,
+  preferredMin: 60,
+  preferredMax: 160,
+} as const;
+
+export type FoldedBeat = {
+  bpm: number;
+  folded_from?: number;
+  factor?: number;
+  fits: Array<{ bpm: number; k: number; score: number }>;
+};
+
+/** Fold a high pulse down by 2, 3 and 4 and keep the slower candidate that still grid-fits. */
+export function foldToFeltBeat(onsets: WeightedOnset[], bpm: number, opts?: { minBpm?: number; maxBpm?: number }): FoldedBeat {
+  const minB = opts?.minBpm ?? SUBGRID.minBpm;
+  const maxB = opts?.maxBpm ?? SUBGRID.maxBpm;
+  const base = gridFit(onsets, bpm, 30).score;
+  const fits: Array<{ bpm: number; k: number; score: number }> = [{ bpm, k: 1, score: base }];
+  for (const k of [2, 3, 4] as const) {
+    const b = bpm / k;
+    if (b < minB || b > maxB) continue;
+    fits.push({ bpm: b, k, score: gridFit(onsets, b, 30).score });
+  }
+  if (!(bpm > FELT_GROOVE.maxBpm)) return { bpm, fits };
+  const weighted = (f: { bpm: number; score: number }) => f.score * tempoPrior(f.bpm);
+  const half = fits.find((f) => f.k === 2);
+  // A pulse in the 180–220 band is almost always a subdivision. Prefer /2 when
+  // the half sits in the usual beat range, even if 8th-note onsets make the
+  // faster gridFit look stronger (they also lie on the double-time grid).
+  if (
+    half &&
+    bpm <= 220 &&
+    half.bpm >= FELT_GROOVE.preferredMin &&
+    half.bpm <= FELT_GROOVE.preferredMax
+  ) {
+    const better = fits.filter(
+      (f) =>
+        f.k > 2 &&
+        f.bpm >= FELT_GROOVE.preferredMin &&
+        f.bpm <= FELT_GROOVE.maxBpm &&
+        weighted(f) > weighted(half) * 1.05,
+    );
+    const pick = better.sort((a, b) => weighted(b) - weighted(a))[0] ?? half;
+    return { bpm: pick.bpm, folded_from: bpm, factor: pick.k, fits };
+  }
+  const slower = fits.filter((f) => {
+    if (f.k <= 1 || f.bpm > FELT_GROOVE.maxBpm) return false;
+    if (f.score >= FELT_GROOVE.minFitRatio * Math.max(0, base)) return true;
+    return weighted(f) >= 0.9 * weighted({ bpm, score: base });
+  });
+  if (!slower.length) return { bpm, fits };
+  const inPref = slower.filter((f) => f.bpm >= FELT_GROOVE.preferredMin && f.bpm <= FELT_GROOVE.preferredMax);
+  const pool = inPref.length ? inPref : slower;
+  pool.sort((a, b) => weighted(b) - weighted(a));
+  const pick = pool[0]!;
+  return { bpm: pick.bpm, folded_from: bpm, factor: pick.k, fits };
+}
+
+/**
+ * If the top-scoring peak is under minComb, fall back to the best-scoring
+ * peak that still clears the gate, instead of returning no tempo at all.
+ */
+export function selectSubgridWinner(
+  cands: Array<{ bpm: number; comb: number; score: number }>,
+  minComb = SUBGRID.minComb,
+): { top: { bpm: number; comb: number; score: number }; bi: number; fallback: boolean } | null {
+  if (!cands.length) return null;
+  let bi = 0;
+  for (let i = 1; i < cands.length; i++) if ((cands[i]?.score ?? 0) > (cands[bi]?.score ?? 0)) bi = i;
+  const top = cands[bi]!;
+  if (top.comb >= minComb) return { top, bi, fallback: false };
+  let fi = -1;
+  for (let i = 0; i < cands.length; i++) {
+    const c = cands[i]!;
+    if (c.comb < minComb) continue;
+    if (fi < 0 || c.score > (cands[fi]?.score ?? -Infinity)) fi = i;
+  }
+  if (fi < 0) return null;
+  return { top: cands[fi]!, bi: fi, fallback: true };
+}
+
+function fineGridAround(onsets: WeightedOnset[], coarse: number): { bpm: number; fit: { score: number; phase: number } } {
+  let bpm = coarse;
+  let bestFit = gridFit(onsets, coarse, 30);
+  for (let b = coarse * 0.975; b <= coarse * 1.025; b += 0.02) {
+    const fit = gridFit(onsets, b, 30);
+    if (fit.score > bestFit.score) {
+      bestFit = fit;
+      bpm = b;
+    }
+  }
+  return { bpm, fit: bestFit };
+}
+
+/**
  * Tempo from sub-grid weighted onsets.
  * 1. Weighted onset envelope at 10 ms, autocorrelated.
  * 2. Comb score (1-4 periods) x log-normal prior picks the beat level; this is
  *    the octave / half-time disambiguation (96 beats 48 and 192 because the
  *    comb rewards a period whose multiples also line up, and the prior breaks
  *    near-ties toward the usual 70-160 BPM beat range).
- * 3. Parabolic refinement, then a fine grid-fit (+/-2.5%, 0.02 BPM steps).
+ * 3. If the top-scoring peak is under minComb, fall back to the best peak that
+ *    still clears the gate (instead of returning null).
+ * 4. Parabolic refinement, then a fine grid-fit (+/-2.5%, 0.02 BPM steps).
+ * 5. If the winner is above the felt-beat band, fold by 2, 3 and 4 and
+ *    grid-fit the slower candidates.
  * Confidence = comb salience of the winner over the runner-up metrical level.
  */
 export function estimateTempoSubgrid(onsets: WeightedOnset[]): TempoEstimate {
@@ -368,10 +476,9 @@ export function estimateTempoSubgrid(onsets: WeightedOnset[]): TempoEstimate {
     const comb = combScore(ac, 60000 / bpm / q);
     cands.push({ bpm, comb, score: comb * tempoPrior(bpm) });
   }
-  let bi = 0;
-  for (let i = 1; i < cands.length; i++) if ((cands[i]?.score ?? 0) > (cands[bi]?.score ?? 0)) bi = i;
-  const top = cands[bi];
-  if (!top || top.comb < SUBGRID.minComb) return null;
+  const picked = selectSubgridWinner(cands);
+  if (!picked) return null;
+  const { top, bi, fallback } = picked;
 
   // Parabolic refinement on the score curve.
   const y0 = cands[bi - 1]?.score ?? top.score;
@@ -380,15 +487,10 @@ export function estimateTempoSubgrid(onsets: WeightedOnset[]): TempoEstimate {
   const shift = den === 0 ? 0 : Math.max(-1, Math.min(1, (0.5 * (y0 - y2)) / den));
   const coarse = top.bpm + shift * 0.25;
 
-  // Fine grid fit around the winner.
-  let bpm = coarse;
-  let bestFit = gridFit(onsets, coarse, 30);
-  for (let b = coarse * 0.975; b <= coarse * 1.025; b += 0.02) {
-    const fit = gridFit(onsets, b, 30);
-    if (fit.score > bestFit.score) {
-      bestFit = fit;
-      bpm = b;
-    }
+  let { bpm } = fineGridAround(onsets, coarse);
+  const folded = foldToFeltBeat(onsets, bpm);
+  if (folded.folded_from != null) {
+    bpm = fineGridAround(onsets, folded.bpm).bpm;
   }
 
   // Related metrical levels, for honesty in the note and the confidence.
@@ -397,29 +499,37 @@ export function estimateTempoSubgrid(onsets: WeightedOnset[]): TempoEstimate {
     return cands[Math.round((b - SUBGRID.minBpm) / 0.25)];
   };
   const related = [0.5, 2, 2 / 3, 1.5]
-    .map((k) => ({ k, c: levelOf(top.bpm * k) }))
+    .map((k) => ({ k, c: levelOf(bpm * k) ?? levelOf(top.bpm * k) }))
     .filter((x): x is { k: number; c: Cand } => Boolean(x.c));
+  const chosen = levelOf(bpm) ?? top;
   const rival = related.reduce((m, x) => Math.max(m, x.c.score), 0);
-  const salience = top.score > 0 ? 1 - rival / top.score : 0;
-  const confidence = round2(Math.max(0.05, Math.min(0.9, 0.3 + 0.9 * salience * Math.min(1, top.comb))));
+  const salience = chosen.score > 0 ? 1 - rival / chosen.score : 0;
+  const confidence = round2(Math.max(0.05, Math.min(0.9, 0.3 + 0.9 * salience * Math.min(1, chosen.comb))));
   const bpmOut = Math.round(bpm * 10) / 10;
   const candidates: TempoCandidate[] = [
-    { bpm: bpmOut, votes: Math.round(top.comb * 100), role: "beat" },
+    { bpm: bpmOut, votes: Math.round(chosen.comb * 100), role: "beat" },
     ...related.map((x) => ({
       bpm: Math.round(x.c.bpm * 10) / 10,
       votes: Math.round(x.c.comb * 100),
       role: (x.k > 1 ? "subdivision" : "pulse") as TempoRole,
     })),
   ];
+  const bits = [`sub-grid onsets (${onsets.length})`];
+  if (fallback) {
+    bits.push(`top peak was under minComb; fell back to passing peak ${Math.round(top.bpm * 10) / 10}`);
+  }
+  bits.push(`comb x prior picked ${bpmOut} BPM`);
+  if (folded.folded_from != null) {
+    bits.push(`folded ${Math.round(folded.folded_from * 10) / 10} / ${folded.factor}`);
+  }
+  if (rival > 0) {
+    bits.push(`nearest rival level ${related.find((x) => x.c.score === rival)?.c.bpm ?? "?"} BPM at ${Math.round((rival / chosen.score) * 100)}%`);
+  }
   return {
     bpm: bpmOut,
     confidence,
     candidates,
-    note:
-      `sub-grid onsets (${onsets.length}); comb x prior picked ${bpmOut} BPM` +
-      (rival > 0
-        ? `; nearest rival level ${related.find((x) => x.c.score === rival)?.c.bpm ?? "?"} BPM at ${Math.round((rival / top.score) * 100)}%`
-        : ""),
+    note: bits.join("; "),
   };
 }
 
