@@ -124,19 +124,30 @@ export function estimateTuningFromFrames(frames: HearingFrame[]): TuningEstimate
       note: `tuning pre-pass: only ${n} voiced frames; A4 left at 440 Hz (SOFT)`,
     };
   }
-  const mode = kdeModeCents(cents, weights);
+  // When enough high-confidence frames exist, use that subset: mid-confidence
+  // residuals pull the mode sharp of a clearly flat (or sharp) cluster.
+  let usedCents = cents;
+  let usedWeights = weights;
+  const highIdx = cents
+    .map((_, i) => i)
+    .filter((i) => (weights[i] ?? 0) >= 0.8);
+  if (highIdx.length >= 80) {
+    usedCents = highIdx.map((i) => cents[i]!);
+    usedWeights = highIdx.map((i) => weights[i]!);
+  }
+  const mode = kdeModeCents(usedCents, usedWeights);
   // Trim octave/semitone errors around the mode so a tight cluster is not
   // drowned by wild residuals; those outliers are what kept R ≈ 0.16 on A432 material.
   const trimmed: number[] = [];
   const tWeights: number[] = [];
-  for (let i = 0; i < cents.length; i++) {
-    if (circDistCents(cents[i]!, mode) <= 18) {
-      trimmed.push(cents[i]!);
-      tWeights.push(weights[i]!);
+  for (let i = 0; i < usedCents.length; i++) {
+    if (circDistCents(usedCents[i]!, mode) <= 18) {
+      trimmed.push(usedCents[i]!);
+      tWeights.push(usedWeights[i]!);
     }
   }
-  const pool = trimmed.length >= 8 ? trimmed : cents;
-  const poolW = trimmed.length >= 8 ? tWeights : weights;
+  const pool = trimmed.length >= 8 ? trimmed : usedCents;
+  const poolW = trimmed.length >= 8 ? tWeights : usedWeights;
   const mean = circularMeanCents(pool);
   const conf = circularConfidence(pool, mean);
   const disagree = circDistCents(mean, mode);

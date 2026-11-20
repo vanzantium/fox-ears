@@ -249,7 +249,12 @@ export function detectTempoHypotheses(
   const dense = (opts.denseOnsetMs ?? []).slice();
   const sparse = sparseOnsetMs.slice();
 
-  const clickPeriods = new Set<number>([...ioiCandidates(sparse), 750]);
+  const ioiPeriods = ioiCandidates(sparse);
+  const clickPeriods = new Set<number>(ioiPeriods);
+  // Only seed 750 ms (80 BPM) when the sparse IOIs already show a near-80
+  // pulse. Unconditionally seeding it can invent a tight 8-inlier "click"
+  // on an unrelated grid (e.g. 96 BPM).
+  if (ioiPeriods.some((p) => Math.abs(p - 750) <= 40)) clickPeriods.add(750);
   if (opts.tickMs?.length && opts.tickFlux?.length) {
     const ranked: Array<{ p: number; score: number }> = [];
     for (const p of new Set([750, 720, 625, 600, 500, ...clickPeriods])) {

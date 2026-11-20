@@ -22,7 +22,7 @@ const {
   metricallyRelated,
   IOI,
 } = await jiti.import(resolve(appRoot, "src/lib/hearing/tempoHypotheses.ts"));
-const { snapCutsToSchema, mergeOverSplitSections, vocalRuns } = await jiti.import(
+const { snapCutsToSchema, mergeOverSplitSections, vocalRuns, proposeGridCuts, assignSectionRoles } = await jiti.import(
   resolve(appRoot, "src/lib/hearing/form.ts"),
 );
 const {
@@ -355,4 +355,96 @@ test("p3 adjacent choruses do not merge into a 40-bar block", () => {
   assert.ok(merged.length >= 4, `under-merged to ${merged.length}: ${merged.map((s) => `${s.role}@${s.t_start_ms}-${s.t_end_ms}`).join(",")}`);
   // The 97 s 24.5–121.6 span must not collapse to a single chorus.
   assert.ok(!merged.some((s) => s.t_start_ms <= 24500 && s.t_end_ms >= 121000));
+});
+
+function synthFrames({ durationMs, hop = 80, energyAt, vocalAt, chromaAt }) {
+  const frames = [];
+  const mask = [];
+  for (let t = 0; t <= durationMs; t += hop) {
+    const e = energyAt(t);
+    const on = vocalAt(t);
+    const chroma = chromaAt ? chromaAt(t) : [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    frames.push({
+      t_ms: t,
+      left_ear: { level: e, bands: { 500: e, 1000: e, 2000: e, 4000: e }, onset: 0 },
+      right_ear: { level: e, bands: { 500: e, 1000: e, 2000: e, 4000: e }, onset: 0 },
+      binaural_measurement: { level_delta_L_minus_R: 0, itd_ms_R_minus_L: null },
+      centroid_hz: 0, flux: 0, pitch_hz: null, midi: null, note: null,
+      pitch_confidence: 0, harmonicity: 0, chroma, bass_chroma: chroma.slice(),
+      vocal_likelihood: on ? 0.9 : 0.1, vocal_gate: on,
+    });
+    mask.push(on);
+  }
+  return { frames, mask };
+}
+
+test("p3 assignSectionRoles keeps a louder verse return as verse and labels a later energy peak as chorus", () => {
+  const sections = [
+    { t_start_ms: 0, t_end_ms: 24500, label: "A", energy_mean: 0.144, hypothesis: "x", role: "phrase" },
+    { t_start_ms: 24500, t_end_ms: 43900, label: "B", energy_mean: 0.166, hypothesis: "x", role: "phrase" },
+    { t_start_ms: 43900, t_end_ms: 58500, label: "A'", energy_mean: 0.231, hypothesis: "x", role: "phrase" },
+    { t_start_ms: 58500, t_end_ms: 99000, label: "C", energy_mean: 0.243, hypothesis: "x", role: "phrase" },
+    { t_start_ms: 99000, t_end_ms: 121600, label: "D", energy_mean: 0.309, hypothesis: "x", role: "phrase" },
+    { t_start_ms: 121600, t_end_ms: 154000, label: "E", energy_mean: 0.187, hypothesis: "x", role: "phrase" },
+  ];
+  const roles = assignSectionRoles(sections, 2000).map((s) => s.role);
+  assert.deepEqual(roles, ["verse", "chorus", "verse", "verse", "chorus", "outro"]);
+  const merged = mergeOverSplitSections(assignSectionRoles(sections, 2000), [], 98.9);
+  assert.deepEqual(merged.map((s) => s.role), ["verse", "chorus", "verse", "chorus", "outro"]);
+  assert.ok(Math.abs(merged[2].t_end_ms - 99000) < 50);
+  assert.ok(Math.abs(merged[3].t_start_ms - 99000) < 50);
+
+  // One-key songs may give the later chorus the verse letter; energy peak still wins.
+  const sameLetter = assignSectionRoles(
+    sections.map((s, i) => (i === 4 ? { ...s, label: "A'" } : s)),
+    2000,
+  ).map((s) => s.role);
+  assert.deepEqual(sameLetter, ["verse", "chorus", "verse", "verse", "chorus", "outro"]);
+});
+
+test("p3 proposeGridCuts adds an 8-bar cut in a long span when a vocal dip and energy jump agree", () => {
+  const bpm = 96; // 1 bar = 2500 ms, 8 bars = 20000, 16 bars = 40000
+  const duration = 160000;
+  // Existing cuts leave a 77.5 s (31-bar) span from 45s to 122.5s. An 8-bar
+  // grid point sits at 100 s (5 * 20 s), with a vocal dip and energy jump.
+  const { frames, mask } = synthFrames({
+    durationMs: duration,
+    energyAt: (t) => (t >= 100000 ? 0.40 : 0.20),
+    vocalAt: (t) => !(t >= 98500 && t < 100000),
+  });
+  const vocal = vocalRuns(frames, mask);
+  const { added, cuts } = proposeGridCuts([0, 25000, 45000, 122500, duration], frames, bpm, vocal, mask);
+  assert.ok(added.length >= 1, `expected a schema cut, got ${cuts}`);
+  const cut = added[0];
+  assert.ok(Math.abs(cut - 100000) <= 2500, `cut at ${cut}, expected near 100 s`);
+});
+
+test("p3 proposeGridCuts does not cut a long span for a gradual energy rise with no vocal dip", () => {
+  const bpm = 96;
+  const duration = 160000;
+  const { frames, mask } = synthFrames({
+    durationMs: duration,
+    energyAt: (t) => 0.15 + 0.001 * (t / 1000),
+    vocalAt: () => true,
+  });
+  const vocal = vocalRuns(frames, mask);
+  const { added } = proposeGridCuts([0, 25000, 45000, 122500, duration], frames, bpm, vocal, mask);
+  assert.equal(added.length, 0);
+});
+
+test("p3 the 750 ms click seed does not invent an 80 BPM click on a clean 96 grid", () => {
+  const beats = grid(625, 30_000, 3, 4);
+  const set = attachHypothesesToEstimate(
+    { bpm: 96, confidence: 0.5, candidates: [{ bpm: 96, votes: 20, role: "beat" }] },
+    beats,
+    beats,
+  );
+  const click = set.tempo_hypotheses.find((h) => h.role === "reference_click");
+  if (click) {
+    assert.ok(
+      Math.abs(click.value_bpm - 80) / 80 > 0.04,
+      `invented an 80 BPM click (${click.value_bpm}) on a 96 grid`,
+    );
+  }
+  assert.ok(Math.abs(set.preferred_for.felt_groove - 96) / 96 <= 0.04);
 });

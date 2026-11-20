@@ -2,24 +2,42 @@
   "label": "SOFT",
   "engine_before": "86b78b6",
   "branch": "p3/tempo-sections-tuning",
+  "tightening": "2026-11-19 evening, after Taylor's merge go-ahead: 8-bar cue cut, role fix, high-conf tuning, 750 ms click seed guard",
   "harness": "calibration/run.mjs --sens 0.58 --tick-hz 60",
   "fourteen": {
     "key_before": "11/14",
     "key_after": "11/14",
     "tempo_strict": "10/14",
     "tempo_forgiven_before": "10/14",
-    "tempo_forgiven_after": "10/14"
+    "tempo_forgiven_after": "10/14",
+    "section_total_before": 178,
+    "section_total_after": 137
   },
   "keep_moving": {
     "tempo_before": null,
     "tempo_after": 98.9,
     "strict": true,
     "forgiven": true,
-    "key": "D major (0.76)",
+    "key": "D major (0.73)",
     "sections_before": 8,
     "sections_after": 5,
-    "tuning_a4_hz": 433.9,
-    "cents_vs_440": -24.25,
+    "roles": [
+      "verse",
+      "chorus",
+      "verse",
+      "chorus",
+      "outro"
+    ],
+    "times_s": [
+      0.0,
+      24.5,
+      43.9,
+      99.8,
+      121.6,
+      154.0
+    ],
+    "tuning_a4_hz": 432.7,
+    "cents_vs_440": -28.99,
     "applied": true
   },
   "rows": [
@@ -35,10 +53,10 @@
         "key": "D# minor (0.86)",
         "sections": 9,
         "tuning": {
-          "cents_vs_440": 0.01,
-          "a4_hz": 440,
+          "cents_vs_440": -8.48,
+          "a4_hz": 437.9,
           "applied": false,
-          "confidence": 0.816,
+          "confidence": 0.807,
           "label": "SOFT"
         }
       },
@@ -61,12 +79,12 @@
       "after": {
         "tempo": 93.0,
         "key": "F# minor (0.68)",
-        "sections": 12,
+        "sections": 10,
         "tuning": {
-          "cents_vs_440": 3.9,
+          "cents_vs_440": 4.01,
           "a4_hz": 441,
           "applied": false,
-          "confidence": 0.833,
+          "confidence": 0.841,
           "label": "SOFT"
         }
       },
@@ -91,10 +109,10 @@
         "key": "A minor (0.86)",
         "sections": 9,
         "tuning": {
-          "cents_vs_440": 0.91,
-          "a4_hz": 440.2,
+          "cents_vs_440": 1.16,
+          "a4_hz": 440.3,
           "applied": false,
-          "confidence": 0.866,
+          "confidence": 0.884,
           "label": "SOFT"
         }
       },
@@ -117,12 +135,12 @@
       "after": {
         "tempo": 126.0,
         "key": "E major (0.73)",
-        "sections": 14,
+        "sections": 15,
         "tuning": {
-          "cents_vs_440": 0.67,
-          "a4_hz": 440.2,
+          "cents_vs_440": 2.02,
+          "a4_hz": 440.5,
           "applied": false,
-          "confidence": 0.821,
+          "confidence": 0.829,
           "label": "SOFT"
         }
       },
@@ -144,11 +162,11 @@
       },
       "after": {
         "tempo": 98.0,
-        "key": "F major (0.76)",
-        "sections": 9,
+        "key": "C minor (0.72)",
+        "sections": 10,
         "tuning": {
-          "cents_vs_440": 8.76,
-          "a4_hz": 442.2,
+          "cents_vs_440": 1.73,
+          "a4_hz": 440.4,
           "applied": false,
           "confidence": 0.804,
           "label": "SOFT"
@@ -175,10 +193,10 @@
         "key": "C minor (0.8)",
         "sections": 8,
         "tuning": {
-          "cents_vs_440": 2.43,
-          "a4_hz": 440.6,
+          "cents_vs_440": -4.63,
+          "a4_hz": 438.8,
           "applied": false,
-          "confidence": 0.843,
+          "confidence": 0.853,
           "label": "SOFT"
         }
       },
@@ -203,10 +221,10 @@
         "key": "A minor (0.79)",
         "sections": 8,
         "tuning": {
-          "cents_vs_440": 3.81,
-          "a4_hz": 441,
+          "cents_vs_440": 1.92,
+          "a4_hz": 440.5,
           "applied": false,
-          "confidence": 0.848,
+          "confidence": 0.873,
           "label": "SOFT"
         }
       },
@@ -231,10 +249,10 @@
         "key": "D major (0.87)",
         "sections": 13,
         "tuning": {
-          "cents_vs_440": 3.66,
-          "a4_hz": 440.9,
+          "cents_vs_440": 1.41,
+          "a4_hz": 440.4,
           "applied": false,
-          "confidence": 0.829,
+          "confidence": 0.845,
           "label": "SOFT"
         }
       },
@@ -259,10 +277,10 @@
         "key": "D major (0.83)",
         "sections": 11,
         "tuning": {
-          "cents_vs_440": 2.52,
-          "a4_hz": 440.6,
+          "cents_vs_440": 1.41,
+          "a4_hz": 440.4,
           "applied": false,
-          "confidence": 0.836,
+          "confidence": 0.854,
           "label": "SOFT"
         }
       },
@@ -287,10 +305,10 @@
         "key": "F major (0.77)",
         "sections": 10,
         "tuning": {
-          "cents_vs_440": 2.62,
-          "a4_hz": 440.7,
+          "cents_vs_440": 2.47,
+          "a4_hz": 440.6,
           "applied": false,
-          "confidence": 0.851,
+          "confidence": 0.865,
           "label": "SOFT"
         }
       },
@@ -315,10 +333,10 @@
         "key": "G minor (0.85)",
         "sections": 8,
         "tuning": {
-          "cents_vs_440": 2.84,
-          "a4_hz": 440.7,
+          "cents_vs_440": 3.83,
+          "a4_hz": 441,
           "applied": false,
-          "confidence": 0.83,
+          "confidence": 0.819,
           "label": "SOFT"
         }
       },
@@ -343,10 +361,10 @@
         "key": "A major (0.84)",
         "sections": 6,
         "tuning": {
-          "cents_vs_440": 4.51,
-          "a4_hz": 441.1,
+          "cents_vs_440": 4.02,
+          "a4_hz": 441,
           "applied": false,
-          "confidence": 0.842,
+          "confidence": 0.857,
           "label": "SOFT"
         }
       },
@@ -369,12 +387,12 @@
       "after": {
         "tempo": 128.0,
         "key": "D# major (0.9)",
-        "sections": 9,
+        "sections": 11,
         "tuning": {
-          "cents_vs_440": 2.98,
-          "a4_hz": 440.8,
+          "cents_vs_440": 0.78,
+          "a4_hz": 440.2,
           "applied": false,
-          "confidence": 0.846,
+          "confidence": 0.83,
           "label": "SOFT"
         }
       },
@@ -399,10 +417,10 @@
         "key": "C major (0.92)",
         "sections": 9,
         "tuning": {
-          "cents_vs_440": 11.21,
+          "cents_vs_440": 11.33,
           "a4_hz": 442.9,
           "applied": false,
-          "confidence": 0.869,
+          "confidence": 0.897,
           "label": "SOFT"
         }
       },
@@ -424,13 +442,13 @@
       },
       "after": {
         "tempo": 98.9,
-        "key": "D major (0.76)",
+        "key": "D major (0.73)",
         "sections": 5,
         "tuning": {
-          "cents_vs_440": -24.25,
-          "a4_hz": 433.9,
+          "cents_vs_440": -28.99,
+          "a4_hz": 432.7,
           "applied": true,
-          "confidence": 0.823,
+          "confidence": 0.831,
           "label": "SOFT"
         }
       },
@@ -445,17 +463,18 @@
       "key_hit_after": true,
       "section_list_after": [
         "0.0-24.5s verse A",
-        "24.5-43.9s chorus B",
-        "43.9-58.5s chorus A'",
-        "58.5-121.6s chorus C",
-        "121.6-154.0s outro D"
+        "24.5-43.9s chorus A'",
+        "43.9-99.8s verse A'",
+        "99.8-121.6s chorus A'",
+        "121.6-154.0s outro A'"
       ],
       "preferred_for": {
         "transcription_grid": 98.9,
         "felt_groove": 98.9,
         "unresolved": false
       },
-      "tempo_note": "sub-grid onsets (525); top peak was under minComb; fell back to passing peak 197.8; comb x prior picked 98.9 BPM; folded 197.8 / 2; nearest rival level 197.75 BPM at 126%"
+      "tempo_note": "sub-grid onsets (525); top peak was under minComb; fell back to passing peak 197.8; comb x prior picked 98.9 BPM; folded 197.8 / 2; nearest rival level 197.75 BPM at 126%",
+      "section_schema_note": "internal cuts snapped to a 2-bar unit of an 8-bar pop schema (2427 ms/bar), avoiding mid-vocal cuts; schema labeled SOFT; added 1 8-bar schema cut(s) at 99.8s from vocal-dip + energy cues (SOFT)"
     }
   ]
 }
