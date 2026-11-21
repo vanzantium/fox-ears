@@ -161,12 +161,14 @@ test("p3 preferred_for agrees with a locked displayed tempo (felt is not a 333 f
   assert.ok(set.preferred_for.felt_groove != null);
   assert.ok(Math.abs(set.preferred_for.felt_groove - 96) / 96 <= 0.04);
   assert.ok(Math.abs(set.preferred_for.felt_groove - 333.331) / 333.331 > 0.04);
-  // A pre-existing 750 ms click seed may still invent an 80 BPM click on a
-  // clean 96 grid and mark unresolved; that is a click-picker issue, not this fix.
   const click = set.tempo_hypotheses.find((h) => h.role === "reference_click");
-  if (!click || Math.abs(click.value_bpm - 96) / 96 <= 0.04) {
-    assert.equal(set.preferred_for.unresolved, false);
+  if (click) {
+    assert.ok(
+      Math.abs(click.value_bpm - 80) / 80 > 0.04,
+      `invented an 80 BPM click (${click.value_bpm}) on a locked 96 groove`,
+    );
   }
+  assert.equal(set.preferred_for.unresolved, false);
 });
 
 test("p3 metricallyRelated covers the forgiven ratios", () => {
@@ -447,4 +449,110 @@ test("p3 the 750 ms click seed does not invent an 80 BPM click on a clean 96 gri
     );
   }
   assert.ok(Math.abs(set.preferred_for.felt_groove - 96) / 96 <= 0.04);
+  assert.equal(set.preferred_for.unresolved, false);
+});
+
+test("p3 click picker does not invent an 80 BPM click or leave a clear 128 groove unresolved", () => {
+  // 128 BPM grid (468.75 ms). Every eighth beat also lands on a 750 ms
+  // (80 BPM) phase, which is how a thin tight subset can look like a click.
+  const beats = grid(468.75, 120_000, 2, 4);
+  const tickMs = [];
+  const tickFlux = [];
+  for (let t = 0; t <= 120_000; t += 10) {
+    tickMs.push(t);
+    const on128 = Math.min(Math.abs((t % 468.75) - 0), Math.abs((t % 468.75) - 468.75)) < 8;
+    const on80 = Math.min(Math.abs((t % 750) - 0), Math.abs((t % 750) - 750)) < 8;
+    tickFlux.push((on128 ? 0.14 : 0.08) + (on80 ? 0.03 : 0));
+  }
+  const set = detectTempoHypotheses(beats, {
+    denseOnsetMs: beats,
+    grooveBpm: 128,
+    grooveConfidence: 0.53,
+    grooveSource: "fox_ears_subgrid",
+    tickMs,
+    tickFlux,
+  });
+  const click = set.tempo_hypotheses.find((h) => h.role === "reference_click");
+  if (click) {
+    assert.ok(
+      Math.abs(click.value_bpm - 80) / 80 > 0.04,
+      `invented an 80 BPM click (${click.value_bpm}) on a 128 groove`,
+    );
+  }
+  assert.ok(Math.abs(set.preferred_for.felt_groove - 128) / 128 <= 0.04);
+  assert.equal(set.preferred_for.unresolved, false);
+});
+
+test("p3 a 2x pulse of a locked groove is not a reference click and is not unresolved", () => {
+  const eights = grid(300, 60_000, 2, 3);
+  const beats = grid(600, 60_000, 3, 5);
+  const set = detectTempoHypotheses(eights, {
+    denseOnsetMs: [...eights, ...beats],
+    grooveBpm: 100,
+    grooveConfidence: 0.64,
+    grooveSource: "fox_ears_subgrid",
+  });
+  const click = set.tempo_hypotheses.find((h) => h.role === "reference_click");
+  if (click) {
+    assert.ok(
+      Math.abs(click.value_bpm - 200) / 200 > 0.04,
+      `reported the 2x groove (${click.value_bpm}) as a reference click`,
+    );
+  }
+  assert.ok(Math.abs(set.preferred_for.felt_groove - 100) / 100 <= 0.04);
+  assert.equal(set.preferred_for.unresolved, false);
+});
+
+test("p3 a real 80 BPM click next to a clear 84 groove stays a click and is not unresolved", () => {
+  const clickTimes = grid(750, 30_000, 1.2, 3);
+  const groove = grid(720, 30_000, 6, 9);
+  const set = detectTempoHypotheses(clickTimes, {
+    denseOnsetMs: groove,
+    grooveBpm: 84,
+    grooveConfidence: 0.32,
+    grooveSource: "fox_ears_subgrid",
+  });
+  const click = set.tempo_hypotheses.find((h) => h.role === "reference_click");
+  assert.ok(click, "real metronome click should still be reported");
+  assert.ok(Math.abs(click.value_bpm - 80) / 80 <= 0.04, `click ${click.value_bpm}`);
+  assert.ok(Math.abs(set.preferred_for.felt_groove - 84) / 84 <= 0.04);
+  assert.equal(set.preferred_for.unresolved, false);
+});
+
+function hzAtCents(cents, midi = 69) {
+  return 440 * 2 ** ((midi - 69 + cents / 100) / 12);
+}
+
+test("p3 tuning uses a tighter high-confidence mode so a secondary bump does not pull a flat cluster sharp", () => {
+  const frames = [];
+  const push = (cents, conf, n, t0) => {
+    for (let i = 0; i < n; i++) {
+      const c = cents + ((i % 5) - 2) * 0.6;
+      const hz = hzAtCents(c, 69 + (i % 5));
+      frames.push({
+        t_ms: t0 + i * 80,
+        left_ear: { level: 0.2, bands: { 500: 0, 1000: 0, 2000: 0, 4000: 0 }, onset: 0 },
+        right_ear: { level: 0.2, bands: { 500: 0, 1000: 0, 2000: 0, 4000: 0 }, onset: 0 },
+        binaural_measurement: { level_delta_L_minus_R: 0, itd_ms_R_minus_L: null },
+        centroid_hz: hz, flux: 0.1, pitch_hz: hz, midi: 69, note: "A4",
+        pitch_confidence: conf, harmonicity: 0.9,
+        chroma: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+        bass_chroma: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+        vocal_likelihood: 0.8, vocal_gate: true,
+      });
+    }
+  };
+  // Main cluster near A432 (−31.8 ¢) plus a secondary bump around −18 ¢.
+  push(-32, 0.86, 120, 0);
+  push(-18, 0.86, 40, 20_000);
+  const est = estimateTuningFromFrames(frames);
+  assert.equal(est.label, "SOFT");
+  assert.ok(est.cents_vs_440 != null);
+  assert.ok(
+    Math.abs(est.cents_vs_440 - -31.8) < 3,
+    `expected near −32 ¢, got ${est.cents_vs_440} (pulled toward the −18 bump?)`,
+  );
+  assert.ok(est.a4_hz != null);
+  assert.ok(Math.abs(est.a4_hz - 432) < 1.5, `A4 ${est.a4_hz}`);
+  assert.equal(est.applied, true, est.note);
 });

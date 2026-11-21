@@ -256,14 +256,26 @@ export function detectTempoHypotheses(
   // on an unrelated grid (e.g. 96 BPM).
   if (ioiPeriods.some((p) => Math.abs(p - 750) <= 40)) clickPeriods.add(750);
   if (opts.tickMs?.length && opts.tickFlux?.length) {
+    const trial = new Set<number>([750, 720, 625, 600, 500, ...clickPeriods]);
+    if (opts.grooveBpm && opts.grooveBpm > 0) {
+      trial.add(Math.round(60_000 / opts.grooveBpm));
+    }
     const ranked: Array<{ p: number; score: number }> = [];
-    for (const p of new Set([750, 720, 625, 600, 500, ...clickPeriods])) {
+    for (const p of trial) {
       const c = fluxCombScore(opts.tickMs, opts.tickFlux, p);
       if (c) ranked.push({ p, score: c.mean });
     }
     ranked.sort((a, b) => b.score - a.score);
-    if (ranked[0] && (!ranked[1] || ranked[0].score >= ranked[1].score * 1.08)) {
-      clickPeriods.add(ranked[0].p);
+    // A canned period may rank first by a few percent of flux even when every
+    // trial is in the noise (neon-whiskers 750 vs 128). Require the winner to
+    // stand out from the background, not just from its nearest rival.
+    if (ranked[0]) {
+      const scores = ranked.map((r) => r.score).sort((a, b) => a - b);
+      const median = scores[Math.floor(scores.length / 2)] ?? 0;
+      const second = ranked[1]?.score ?? 0;
+      if (ranked[0].score >= median * 1.8 && (second === 0 || ranked[0].score >= second * 1.08)) {
+        clickPeriods.add(ranked[0].p);
+      }
     }
   }
   type Fit = NonNullable<ReturnType<typeof fitRegularGrid>>;
@@ -277,12 +289,18 @@ export function detectTempoHypotheses(
       const expected = span / Math.max(1, 60000 / tight.bpm);
       if (tight.median_error_ms > maxErr) continue;
       if (tight.coverage < 0.4) continue;
-      if (tight.n_inliers < Math.max(6, 0.15 * expected)) continue;
+      // 15% of expected beats is easy for a thin coincidental subset (an 80
+      // BPM "click" with ~35 tight inliers on a 128 grid). A reference click
+      // has to land on a real fraction of its own grid.
+      if (tight.n_inliers < Math.max(6, 0.3 * expected)) continue;
       const density = tight.n_inliers / Math.max(1, span);
       if (density > 1 / 200) continue;
       out.push(tight);
     }
-    out.sort((a, b) => a.median_error_ms - b.median_error_ms || b.n_inliers - a.n_inliers);
+    // Tight median error on a small inlier set is not better evidence than a
+    // slightly looser fit with many more hits.
+    const clickQuality = (f: Fit) => f.n_inliers / (1 + f.median_error_ms / 4);
+    out.sort((a, b) => clickQuality(b) - clickQuality(a) || a.median_error_ms - b.median_error_ms);
     return out;
   };
   const pickClick = (fits: Fit[]): Fit | null => {
@@ -393,11 +411,24 @@ export function detectTempoHypotheses(
     });
   }
 
+  // A pulse at a metric relative of a locked groove (double, half, 3:2) is
+  // the same grid, not a separate metronome. Drop it so preferred_for is not
+  // left unresolved while the felt groove is already clear.
+  if (opts.grooveBpm && opts.grooveBpm > 0) {
+    const ci = hyps.findIndex((h) => h.role === "reference_click");
+    if (ci >= 0) {
+      const cBpm = hyps[ci]!.value_bpm;
+      if (metricallyRelated(cBpm, opts.grooveBpm) && !withinTol(cBpm, opts.grooveBpm, 0.04)) {
+        hyps.splice(ci, 1);
+        click = null;
+      }
+    }
+  }
+
   const clickH = hyps.find((h) => h.role === "reference_click");
   const grooveH = hyps.find((h) => h.role === "performed_groove");
   const displayed = opts.grooveBpm ?? null;
   const felt = grooveH?.value_bpm ?? clickH?.value_bpm ?? null;
-  const clickDisagree = Boolean(clickH && grooveH && !withinTol(clickH.value_bpm, grooveH.value_bpm, 0.02));
   const feltTooFast = felt != null && felt > 220;
   const displayDisagree = Boolean(
     displayed != null && felt != null && !metricallyRelated(displayed, felt, 0.04),
@@ -405,7 +436,10 @@ export function detectTempoHypotheses(
   // Displayed tempo blank while preferred_for claims a confident groove (or a
   // 180 ms floor pulse) is a disagreement: leave it UNRESOLVED.
   const blankVsPreferred = displayed == null && grooveH?.source === "dense_onset_grid";
-  const unresolved = clickDisagree || feltTooFast || displayDisagree || Boolean(blankVsPreferred);
+  // A reference click at a different tempo is a separate role, not an
+  // unresolved felt groove, when displayed and felt already agree (or are
+  // metrically related) and the felt tempo is in range.
+  const unresolved = feltTooFast || displayDisagree || Boolean(blankVsPreferred);
   return {
     tempo_hypotheses: hyps,
     preferred_for: {

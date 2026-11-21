@@ -1,7 +1,7 @@
 {
   "label": "SOFT",
   "engine_before": "86b78b6",
-  "branch": "p3/tempo-sections-tuning",
+  "branch": "p3b/click-picker-tuning",
   "tightening": "2026-11-19 evening, after Taylor's merge go-ahead: 8-bar cue cut, role fix, high-conf tuning, 750 ms click seed guard",
   "harness": "calibration/run.mjs --sens 0.58 --tick-hz 60",
   "fourteen": {
@@ -11,14 +11,19 @@
     "tempo_forgiven_before": "10/14",
     "tempo_forgiven_after": "10/14",
     "section_total_before": 178,
-    "section_total_after": 137
+    "section_total_after": 137,
+    "section_total_p3_main": 137,
+    "key_p3_main": "11/14",
+    "tempo_strict_p3b": "10/14",
+    "tempo_forgiven_p3b": "10/14",
+    "key_p3b": "11/14"
   },
   "keep_moving": {
     "tempo_before": null,
     "tempo_after": 98.9,
     "strict": true,
     "forgiven": true,
-    "key": "D major (0.73)",
+    "key": "D major (0.7)",
     "sections_before": 8,
     "sections_after": 5,
     "roles": [
@@ -36,9 +41,15 @@
       121.6,
       154.0
     ],
-    "tuning_a4_hz": 432.7,
-    "cents_vs_440": -28.99,
-    "applied": true
+    "tuning_a4_hz": 432.1,
+    "cents_vs_440": -31.49,
+    "applied": true,
+    "tuning_confidence": 0.923,
+    "preferred_for": {
+      "transcription_grid": 98.9,
+      "felt_groove": 98.9,
+      "unresolved": false
+    }
   },
   "rows": [
     {
@@ -53,12 +64,18 @@
         "key": "D# minor (0.86)",
         "sections": 9,
         "tuning": {
-          "cents_vs_440": -8.48,
-          "a4_hz": 437.9,
+          "cents_vs_440": -10.39,
+          "a4_hz": 437.4,
           "applied": false,
-          "confidence": 0.807,
+          "confidence": 0.906,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 98,
+          "felt_groove": 98,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 99.4,
@@ -81,12 +98,18 @@
         "key": "F# minor (0.68)",
         "sections": 10,
         "tuning": {
-          "cents_vs_440": 4.01,
-          "a4_hz": 441,
+          "cents_vs_440": 3.31,
+          "a4_hz": 440.8,
           "applied": false,
-          "confidence": 0.841,
+          "confidence": 0.923,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 93,
+          "felt_groove": 93,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 123.0,
@@ -109,12 +132,18 @@
         "key": "A minor (0.86)",
         "sections": 9,
         "tuning": {
-          "cents_vs_440": 1.16,
-          "a4_hz": 440.3,
+          "cents_vs_440": 0.8,
+          "a4_hz": 440.2,
           "applied": false,
-          "confidence": 0.884,
+          "confidence": 0.93,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 96.8,
+          "felt_groove": 96.8,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 123.0,
@@ -137,12 +166,18 @@
         "key": "E major (0.73)",
         "sections": 15,
         "tuning": {
-          "cents_vs_440": 2.02,
-          "a4_hz": 440.5,
+          "cents_vs_440": 1.06,
+          "a4_hz": 440.3,
           "applied": false,
-          "confidence": 0.829,
+          "confidence": 0.919,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 126,
+          "felt_groove": 126,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 129.2,
@@ -165,12 +200,18 @@
         "key": "C minor (0.72)",
         "sections": 10,
         "tuning": {
-          "cents_vs_440": 1.73,
-          "a4_hz": 440.4,
+          "cents_vs_440": 2.38,
+          "a4_hz": 440.6,
           "applied": false,
-          "confidence": 0.804,
+          "confidence": 0.91,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 98,
+          "felt_groove": 98,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 99.4,
@@ -193,12 +234,18 @@
         "key": "C minor (0.8)",
         "sections": 8,
         "tuning": {
-          "cents_vs_440": -4.63,
-          "a4_hz": 438.8,
+          "cents_vs_440": -2.73,
+          "a4_hz": 439.3,
           "applied": false,
-          "confidence": 0.853,
+          "confidence": 0.936,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 110,
+          "felt_groove": 110,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 143.6,
@@ -221,12 +268,18 @@
         "key": "A minor (0.79)",
         "sections": 8,
         "tuning": {
-          "cents_vs_440": 1.92,
-          "a4_hz": 440.5,
+          "cents_vs_440": 1.11,
+          "a4_hz": 440.3,
           "applied": false,
-          "confidence": 0.873,
+          "confidence": 0.932,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 95,
+          "felt_groove": 95,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 95.7,
@@ -249,12 +302,18 @@
         "key": "D major (0.87)",
         "sections": 13,
         "tuning": {
-          "cents_vs_440": 1.41,
-          "a4_hz": 440.4,
+          "cents_vs_440": -0.66,
+          "a4_hz": 439.8,
           "applied": false,
-          "confidence": 0.845,
+          "confidence": 0.937,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 135.9,
+          "felt_groove": 135.9,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 136.0,
@@ -277,12 +336,18 @@
         "key": "D major (0.83)",
         "sections": 11,
         "tuning": {
-          "cents_vs_440": 1.41,
-          "a4_hz": 440.4,
+          "cents_vs_440": 1.94,
+          "a4_hz": 440.5,
           "applied": false,
-          "confidence": 0.854,
+          "confidence": 0.928,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 137.9,
+          "felt_groove": 137.9,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 136.0,
@@ -305,12 +370,18 @@
         "key": "F major (0.77)",
         "sections": 10,
         "tuning": {
-          "cents_vs_440": 2.47,
-          "a4_hz": 440.6,
+          "cents_vs_440": 3.3,
+          "a4_hz": 440.8,
           "applied": false,
-          "confidence": 0.865,
+          "confidence": 0.931,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 130.6,
+          "felt_groove": 130.6,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 129.2,
@@ -333,12 +404,18 @@
         "key": "G minor (0.85)",
         "sections": 8,
         "tuning": {
-          "cents_vs_440": 3.83,
-          "a4_hz": 441,
+          "cents_vs_440": -2.19,
+          "a4_hz": 439.4,
           "applied": false,
-          "confidence": 0.819,
+          "confidence": 0.917,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 108,
+          "felt_groove": 108,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 107.7,
@@ -361,12 +438,18 @@
         "key": "A major (0.84)",
         "sections": 6,
         "tuning": {
-          "cents_vs_440": 4.02,
-          "a4_hz": 441,
+          "cents_vs_440": 3.25,
+          "a4_hz": 440.8,
           "applied": false,
-          "confidence": 0.857,
+          "confidence": 0.923,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 79.3,
+          "felt_groove": 79.3,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 152.0,
@@ -389,12 +472,18 @@
         "key": "D# major (0.9)",
         "sections": 11,
         "tuning": {
-          "cents_vs_440": 0.78,
-          "a4_hz": 440.2,
+          "cents_vs_440": 1.47,
+          "a4_hz": 440.4,
           "applied": false,
-          "confidence": 0.83,
+          "confidence": 0.917,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 128,
+          "felt_groove": 128,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 129.2,
@@ -417,12 +506,18 @@
         "key": "C major (0.92)",
         "sections": 9,
         "tuning": {
-          "cents_vs_440": 11.33,
+          "cents_vs_440": 11.24,
           "a4_hz": 442.9,
           "applied": false,
-          "confidence": 0.897,
+          "confidence": 0.937,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 100,
+          "felt_groove": 100,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "reference": {
         "librosa_bpm": 99.4,
@@ -445,12 +540,18 @@
         "key": "D major (0.73)",
         "sections": 5,
         "tuning": {
-          "cents_vs_440": -28.99,
-          "a4_hz": 432.7,
+          "cents_vs_440": -31.49,
+          "a4_hz": 432.1,
           "applied": true,
-          "confidence": 0.831,
+          "confidence": 0.923,
           "label": "SOFT"
-        }
+        },
+        "preferred_for": {
+          "transcription_grid": 98.9,
+          "felt_groove": 98.9,
+          "unresolved": false
+        },
+        "reference_click": null
       },
       "truth": {
         "tempo_bpm": 96,
@@ -476,5 +577,7 @@
       "tempo_note": "sub-grid onsets (525); top peak was under minComb; fell back to passing peak 197.8; comb x prior picked 98.9 BPM; folded 197.8 / 2; nearest rival level 197.75 BPM at 126%",
       "section_schema_note": "internal cuts snapped to a 2-bar unit of an 8-bar pop schema (2427 ms/bar), avoiding mid-vocal cuts; schema labeled SOFT; added 1 8-bar schema cut(s) at 99.8s from vocal-dip + energy cues (SOFT)"
     }
-  ]
+  ],
+  "engine_p3_main": "468a849",
+  "p3b": "2026-11-21: click-picker evidence bar, preferred_for not unresolved when felt groove is clear, tighter high-conf tuning mode"
 }

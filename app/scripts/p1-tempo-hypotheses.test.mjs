@@ -79,5 +79,8 @@ test("p1 a 168 lock with a strong 84 rival reports 84 as the performed groove", 
   assert.equal(groove.hit, true, groove.note);
   assert.equal(subdiv.hit, true, subdiv.note);
   assert.equal(clickScore.hit, true, clickScore.note);
-  assert.equal(set.preferred_for.unresolved, true);
+  // Displayed 168 and felt 84 are metrically related, so the felt groove is
+  // clear. The 80 BPM click is a separate role, not an unresolved tempo.
+  assert.equal(set.preferred_for.unresolved, false);
+  assert.ok(Math.abs(set.preferred_for.felt_groove - 84) / 84 <= 0.04);
 });

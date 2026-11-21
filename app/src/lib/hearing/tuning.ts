@@ -84,10 +84,10 @@ function histogramPeakCents(cents: number[], weights?: number[], bin = 2): numbe
 }
 
 /** Smoothed circular mode, so a 20-cent-wide cluster still has a clear centre. */
-function kdeModeCents(cents: number[], weights?: number[], bandwidth = 8): number {
+function kdeModeCents(cents: number[], weights?: number[], bandwidth = 8, step = 1): number {
   let best = 0;
   let bestS = -Infinity;
-  for (let x = -50; x <= 50; x++) {
+  for (let x = -50; x <= 50; x += step) {
     let s = 0;
     for (let i = 0; i < cents.length; i++) {
       const d = circDistCents(cents[i]!, x);
@@ -135,13 +135,18 @@ export function estimateTuningFromFrames(frames: HearingFrame[]): TuningEstimate
     usedCents = highIdx.map((i) => cents[i]!);
     usedWeights = highIdx.map((i) => weights[i]!);
   }
-  const mode = kdeModeCents(usedCents, usedWeights);
+  // A large high-confidence subset can use a narrower KDE and a tighter trim
+  // so a secondary bump 10–20 ¢ away does not pull the mode (SOFT).
+  const bandwidth = highIdx.length >= 80 ? 5 : 8;
+  const kdeStep = highIdx.length >= 80 ? 0.5 : 1;
+  const trimWidth = highIdx.length >= 80 ? 12 : 18;
+  const mode = kdeModeCents(usedCents, usedWeights, bandwidth, kdeStep);
   // Trim octave/semitone errors around the mode so a tight cluster is not
   // drowned by wild residuals; those outliers are what kept R ≈ 0.16 on A432 material.
   const trimmed: number[] = [];
   const tWeights: number[] = [];
   for (let i = 0; i < usedCents.length; i++) {
-    if (circDistCents(usedCents[i]!, mode) <= 18) {
+    if (circDistCents(usedCents[i]!, mode) <= trimWidth) {
       trimmed.push(usedCents[i]!);
       tWeights.push(usedWeights[i]!);
     }

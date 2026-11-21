@@ -57,34 +57,55 @@ cd app
 npm ci
 npm run dev          # http://0.0.0.0:8080
 npm run typecheck
-npm test             # 96/96, fully green, runs in CI
+npm test             # 151 pass, 3 gated skips (need local audio; skipped in CI)
 npm run build
 ```
 
-`npm test` covers the tempo, vocal and timing labs plus the app's script tests. The 9 leftover Grok "Wild Race" share-card template tests, which were red on every run, were removed on 2026-11-15. CI (`.github/workflows/tests.yml`) runs the research tests, typecheck, `npm test` and the build.
+`npm test` covers the tempo, vocal and timing labs plus the P0–P3 script tests. The 9 leftover Grok "Wild Race" share-card template tests, which were red on every run, were removed on 2026-11-15. CI (`.github/workflows/tests.yml`) runs the research tests, typecheck, `npm test` and the build. See [RELEASE-NOTES.md](RELEASE-NOTES.md) for what landed in each pass.
 
 **Timing (P0, 2026-11-15).** The app reads its analysers on every display frame (60, 90 or 120 Hz, irregular, paused in background tabs). Readings are now stamped with AudioContext time, interpolated between audio callbacks with `getOutputTimestamp()` and mapped onto the file timeline. The tempo path then resamples them onto a fixed 10 ms grid (`resampleTicks` in `app/src/lib/hearing/tempo.ts`). The offline harness goes through the same path. `scripts/timing-lab.test.mjs` checks 96/108/120 BPM at 60/90/120 Hz, with jitter and a 3 s background gap, to within ±1%. **P0 made tempo display-rate robust; it did not make key or sections display-independent.** Analyser smoothing was still applied per read, so the same file could change key or section cuts with the refresh rate. P1 (2026-11-16) computes spectra on the same 10 ms audio-clock grid with a time-constant (not per-read) pole; see `docs/p1-log-2026-11-16.md`.
 
 **Browser and phone.** See [`docs/browser-phone-check.md`](docs/browser-phone-check.md). `node scripts/browser-pass.mjs <audio> --url <dev url>` runs the desktop pass headless.
 
-### Harness
+### Calibration harness (run it on your own audio)
 
-See [`harness/README.md`](harness/README.md). Needs ffmpeg and the app's `npm ci`. Point it at local audio; do not add those files to git. New in P0:
+See [`harness/README.md`](harness/README.md) for flags and scoring. You need ffmpeg on your PATH and a finished `npm ci` in `app/`. Point the harness at audio on your machine; do not add those files to git.
+
+The tracked sources live in `harness/`. `app/calibration/` is gitignored, so copy them in once after a fresh checkout (and again if you pull harness changes):
+
+```bash
+cp harness/offline-engine.ts harness/fox-calibrate.ts harness/run.mjs app/calibration/
+cd app
+# Official calibration command used on the 14-song set and Keep Moving:
+#   --sens 0.58 --tick-hz 60
+FOX_REF=../harness/reference-librosa-2026-11-14.json \
+  node calibration/run.mjs --sens 0.58 --tick-hz 60 --json /tmp/fox-ears-out.json path/to/your-song.wav
+
+# Several files at once is fine:
+#   node calibration/run.mjs --sens 0.58 --tick-hz 60 --json /tmp/out.json *.wav *.mp3
+```
+
+`FOX_REF` is optional. When it is set, the harness prints STRICT (±4% of the reference BPM) and FORGIVEN (also half, double, 2:3, 3:2) tempo scores, plus a key exact count, against the librosa stand-in. Without it you still get the app's own reading: key, tempo (and tempo hypotheses), tuning (A4 Hz and cents vs 440), and sections. All of those numbers are SOFT until an answer key or a second method backs them.
+
+New in P0:
 - `--tick-hz 60|90|120 --jitter-ms N --gap from:to` simulates display rates;
 - `--compare previous.json` reports **appraisal-input flips**, i.e. songs whose key mode changed, because the first-listen feeling is picked from mode alone.
 
-## Current numbers (2026-11-15, all SOFT)
+## Current numbers (2026-11-21, 14-song scores SOFT)
 
 Measured against the librosa stand-in, pending Taylor's answer key. Tempo is reported two ways:
 
 - **STRICT**: the BPM the app displays is within ±4% of the reference.
 - **FORGIVEN**: half, double, 2:3 or 3:2 of the reference also counts (metrically equivalent, not "correct").
 
-| 14 guard songs | STRICT tempo | FORGIVEN tempo | Key exact |
-|---|---|---|---|
-| Pre-pass-1 baseline (2026-11-14) | 0/14 | 1/14 | 5/14 |
-| Tuning pass 1 (2026-11-14) | 9/14 | 12/14 | 10/14 |
-| P0 timing (2026-11-15) | 10/14 | 12/14 | 10/14 |
+| 14 guard songs | STRICT tempo | FORGIVEN tempo | Key exact | Sections (total) |
+|---|---|---|---|---|
+| Pre-pass-1 baseline (2026-11-14) | 0/14 | 1/14 | 5/14 | — |
+| Tuning pass 1 (2026-11-14) | 9/14 | 12/14 | 10/14 | — |
+| P0 timing (2026-11-15) | 10/14 | 12/14 | 10/14 | — |
+| P3 / P3b (2026-11-19–21, vs same stand-in) | 10/14 | 10/14 | 11/14 | 137 (was 178 on `86b78b6`) |
+
+Keep Moving (Taylor's answer, SOLID key): D major, 96 BPM, A≈432, 5 sections V/C/V/C/Outro. After P3b the app reads D major (0.70), 98.9 BPM (STRICT and FORGIVEN hit), A4 ≈ 432.1 Hz (−31.49 ¢, applied, SOFT), and 5 sections at 0.0–24.5 verse, 24.5–43.9 chorus, 43.9–99.8 verse, 99.8–121.6 chorus, 121.6–154.0 outro.
 
 The P0 strict gain is one song, `music_midnight_funky`. It was a near-tie between 68 and 136 BPM: the 136 rival scored 98% of the winner before, and the order has now flipped, with 68 at 96%. Read it as a coin landing the other way, not as an improvement.
 
@@ -103,10 +124,10 @@ Full details: [`docs/p0-log-2026-11-15.md`](docs/p0-log-2026-11-15.md). Older wr
 
 ## Next steps
 
-1. **Taylor's BPM/key answer key** for the master and the 14 songs. Re-score, and relabel SOFT to SOLID where supported.
+1. **Taylor's BPM/key answer key** for the master and the remaining 14 songs. Re-score, and relabel SOFT to SOLID where supported. Keep Moving's key is already SOLID.
 2. **Phone pass** by Taylor ([`docs/browser-phone-check.md`](docs/browser-phone-check.md)), compared with the desktop pass.
-3. **P1 (2026-11-16): work/version identity, multi-pulse tempo, mix-vs-stem receipts, and a read-rate-independent key/section path.** See `docs/p1-log-2026-11-16.md`.
-4. **On hold until measurement is stable:** further section promotion, and the Ear Organ refactor (factory profile, candidates, appraisal out of the shared engine). Do not tune Cal 003 thresholds to force a pass.
+3. P1–P3b have landed; see [RELEASE-NOTES.md](RELEASE-NOTES.md) and `docs/p1-log-2026-11-16.md`, `docs/p2-key-log-2026-11-17.md`, `docs/p3-log-2026-11-19.md`.
+4. **Still deferred:** L1b microtiming, cadence typing, Vela's L2–L4 layers, further section promotion, and the Ear Organ refactor. Do not tune Cal 003 thresholds to force a pass.
 
 ## Vela's START-HERE
 
