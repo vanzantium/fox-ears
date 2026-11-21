@@ -212,6 +212,12 @@ export const THIRD_TUNING = {
   borrowShare: 0.09,
   /** Mode-tag margin (share) for Mixolydian b7 > 7 or Dorian 6 > b6. */
   modeTagMargin: 0.02,
+  /**
+   * P4: stricter margin for the rarer colours, Lydian #4 > 4 and Phrygian
+   * b2 > 2 — a #4 also turns up as a passing V/V, so it must clearly
+   * outweigh the natural 4 across the home-weighted song before it is named.
+   */
+  rareModeTagMargin: 0.035,
 } as const;
 
 export type ThirdTest = {
@@ -236,7 +242,7 @@ export type RelativeCheck = {
 
 export type KeyChange = { t_start_ms: number; t_end_ms: number; tonic: string; mode: "major" | "minor"; corr: number; bars: number };
 export type Borrowing = { degree: string; t_start_ms: number; t_end_ms: number; bars: number; tonic_held: boolean };
-export type ModeTag = { name: "Mixolydian" | "Dorian"; why: string; label: "SOFT" };
+export type ModeTag = { name: "Mixolydian" | "Dorian" | "Lydian" | "Phrygian"; why: string; label: "SOFT" };
 
 export type KeyDetail = {
   third_test: ThirdTest | null;
@@ -463,6 +469,16 @@ export function modeTag(a: number[], tonicPc: number, mode: "major" | "minor"): 
   }
   if (mode === "minor" && at(9) > at(8) + m) {
     return { name: "Dorian", why: `b3 with 6 (${(at(9) * 100).toFixed(1)}%) over b6 (${(at(8) * 100).toFixed(1)}%)`, label: "SOFT" };
+  }
+  // P4 (2026-11-21): the two remaining common colours, checked only when the
+  // first two did not fire, with a stricter margin. Still SOFT and still never
+  // changes the major/minor call.
+  const r = THIRD_TUNING.rareModeTagMargin;
+  if (mode === "major" && at(6) > at(5) + r) {
+    return { name: "Lydian", why: `3 with #4 (${(at(6) * 100).toFixed(1)}%) over 4 (${(at(5) * 100).toFixed(1)}%)`, label: "SOFT" };
+  }
+  if (mode === "minor" && at(1) > at(2) + r) {
+    return { name: "Phrygian", why: `b3 with b2 (${(at(1) * 100).toFixed(1)}%) over 2 (${(at(2) * 100).toFixed(1)}%)`, label: "SOFT" };
   }
   return null;
 }

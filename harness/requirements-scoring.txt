@@ -1,0 +1,3 @@
+# Answer-key scorer (harness/score_answer_key.py). MIT / BSD.
+mir_eval==0.8.2
+numpy>=1.24

@@ -32,8 +32,9 @@ import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { downloadText } from "@/lib/utils";
 import { downloadPainting } from "@/lib/viz/paint";
 import { THEMES } from "@/lib/viz/themes";
+import { SonarView } from "./SonarView";
 
-type Tab = "paint" | "chart" | "graph" | "receipt" | "hear";
+type Tab = "paint" | "chart" | "graph" | "sonar" | "receipt" | "hear";
 
 export function MapPanel({
   map,
@@ -217,6 +218,7 @@ export function MapPanel({
             ["chart", "Chart"],
             ["paint", "Paint"],
             ["graph", "Graph"],
+            ["sonar", "Sonar"],
             ["hear", "Hearing"],
             ["receipt", "Receipt"],
           ] as const
@@ -333,6 +335,7 @@ export function MapPanel({
             </p>
           </div>
         )}
+        {tab === "sonar" && <SonarView chart={chart} durationMs={map.duration_ms} />}
         {tab === "hear" && (
           <div className="space-y-3">
             <p className="text-xs text-muted">

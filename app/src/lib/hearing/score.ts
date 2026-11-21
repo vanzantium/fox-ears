@@ -21,6 +21,7 @@ import type {
   NoteEvent,
   SongChart,
 } from "./types";
+import { analyseSonar } from "./sonar";
 
 export function emptyChart(): SongChart {
   return {
@@ -75,6 +76,15 @@ export function buildChart(
   const form = attachSectionCues(formTree.sections, gridFrames, { vocalMask: vMaskGrid, lyrics: lyrics.lines });
   const keyEst = estimateKeyDetailed(gridFrames, form.sections, { barMs: tempo?.bpm ? 240000 / tempo.bpm : undefined });
   const key = rel.ok ? (keyEst.key ?? null) : null;
+  // P4: additive SOFT layer. It reads what the chart already decided and
+  // never feeds back into key, tempo, chords or sections.
+  let sonar: SongChart["sonar"];
+  try {
+    sonar = analyseSonar(gridFrames, beats, tempo?.bpm ?? null, form.sections, key) ?? undefined;
+  } catch (err) {
+    console.warn("[fox-ears] sonar layer skipped:", err);
+    sonar = undefined;
+  }
   const hypotheses = [
     ...(pass?.keyPrior ?? []),
     ...(rel.ok && keyEst.hypotheses.length ? keyEst.hypotheses : keyEst.key ? hypothesesFromKey(keyEst.key) : keyHypotheses(tuned)),
@@ -162,6 +172,7 @@ export function buildChart(
     vocal_regions,
     lyrics,
     function: fn,
+    ...(sonar ? { sonar } : {}),
   };
 }
 
