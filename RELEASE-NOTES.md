@@ -1,6 +1,6 @@
 # Fox Ears release notes
 
-Short history of the boxed runtime from the first calibration through P3b (2026-11-21). 14-song key and tempo scores in this file are **SOFT** (librosa stand-in, not Taylor's full answer key). Keep Moving's key is **SOLID** after Taylor's answer.
+Short history of the boxed runtime from the first calibration through P4 (2026-11-21). 14-song key and tempo scores in this file are **SOFT** (librosa stand-in, not Taylor's full answer key). Keep Moving's key is **SOLID** after Taylor's answer.
 
 ## Tuning pass 1 (2026-11-14)
 
@@ -31,6 +31,31 @@ A reference click now needs real evidence: flux-comb canned periods only join th
 14-song gates vs `468a849` all held: key 11/14, STRICT 10/14, FORGIVEN 10/14, section totals 137, no tempo regressions. Neon-whiskers no longer invents an 80 BPM click (preferred 128/128, resolved). Stinky-skunk no longer invents a 200 BPM click (preferred 100/100, resolved). Keep Moving stays D major, 98.9 BPM, V/C/V/C/Outro; tuning moved from A4 ≈ 432.7 Hz (−28.99 ¢) to **432.1 Hz (−31.49 ¢)**, still SOFT.
 
 This pass is on branch `p3b/click-picker-tuning` and is **not merged** until Taylor says so.
+
+## P4 — Sonar Form, riff finder, tension ribbon, bar brief, answer-key scorer (2026-11-21)
+
+From the 2026-11-21 research brief. Additive and SOFT: one new chart field, `chart.sonar`. Every pre-existing chart field was byte-identical on the form etude, its 108% stretch, the built-in demo, and (checked 2026-11-21 in the harness) all 14 test songs plus Keep Moving: key 11/14, tempo 10/14 STRICT and FORGIVEN, 137 sections, Keep Moving D major / 98.9 BPM / A4 ≈ 432.1 Hz / 5 sections, all unchanged. **Sonar is experimental and uncalibrated on real songs; on Keep Moving it missed all four section cuts (about 2 bars early). It never feeds section boundaries.**
+
+- **What it adds:**
+  - a bar × bar echo map (passive echolocation: the song compared with itself);
+  - repetition letters, loop and form period;
+  - a downbeat-phase estimate;
+  - a FORM agreement check;
+  - a matched-filter riff finder in 12 transpositions;
+  - a spiral-array tension ribbon;
+  - a per-bar text brief and SONAR blocks in the digest;
+  - Lydian and Phrygian SOFT mode colours;
+  - a Sonar tab.
+- **Research side:**
+  - mir_eval answer-key scorer and template;
+  - optional adapters for Beat This!, All-In-One and a RoFormer vocal stem (inert unless called; no new required deps; normalisers self-tested; models not run here);
+  - a synthetic form etude;
+  - licence classes in the capability registry.
+- **Bug fix:** saved maps now open from `/maps`.
+- **Tests:** `npm test` 163 pass / 3 skipped (was 151).
+- **Etude (SOFT, planted truth):** SONAR section F 0.88 vs FORM 0.50 (master) and 0.38 (stretch). Read that as two methods failing differently, not as one winning. The existing beat grid sat about half a beat early on the etude master, so beat F was 0 there and 0.995 on the stretch. That is left for Beat This! to be scored against.
+
+SongFormer is **not** wrapped (MuQ weights are CC BY-NC 4.0). Details: `docs/p4-sonar-log-2026-11-21.md` and `docs/p4-cherry-pick-2026-11-21.md`. Branch `p4/sonar-cherry-pick`, stacked on `p3b/click-picker-tuning` (PR #11); **not merged** until Taylor says so.
 
 ## Still open
 

@@ -1,5 +1,6 @@
 import type { HearingMap, SongChart } from "./types";
 import { emptyChart, fmtTime, formatChordChart } from "./score";
+import { sonarDigestLines } from "./barBrief";
 
 function leanWord(v: number): string {
   if (v > 0.18) return "left";
@@ -165,6 +166,8 @@ export function digestMap(map: HearingMap): string {
     }
   }
 
+  lines.push(...sonarDigestLines(chart));
+
   lines.push("", "======== LAYERS ========", "", "DOMINANT_F0_TRACK (any pitched occupancy — guitar, bass, voice)");
   if (chart.notes.length === 0) {
     lines.push("- no stable pitched events crossed confidence.");
@@ -224,6 +227,7 @@ export function digestMap(map: HearingMap): string {
     "Roman numerals and feeling-states are hypotheses from bass+chroma+Krumhansl tonic, labeled as such.",
     "When you describe affect, use the feeling-states (home, warmth, tragic, polar void) rather than inventing a narrative.",
     "When conflicts exist, keep both histories.",
+    "SONAR and BAR BRIEF are SOFT re-readings of the same measurements. Where SONAR and FORM disagree, report both; neither overrules.",
   );
 
   if (map.transduction) {

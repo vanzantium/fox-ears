@@ -9,6 +9,12 @@ export type ToolCapability = {
   available: boolean;
   optional: boolean;
   license?: string;
+  /**
+   * P4: licence class for the code AND the weights, whichever is stricter.
+   * "noncommercial" and "copyleft" stay research-only; "unverified" means the
+   * weight licence was read from a redistributor, not the authors.
+   */
+  license_class?: "permissive" | "copyleft" | "noncommercial" | "unverified";
   note?: string;
   path?: string;
 };
@@ -20,6 +26,13 @@ export type ResearchCapabilities = {
   librosa: ToolCapability;
   essentia: ToolCapability;
   madmom: ToolCapability;
+  /** P4 (2026-11-21) candidates — see harness/candidates.py. */
+  beatThis: ToolCapability;
+  allin1: ToolCapability;
+  vocalSeparator: ToolCapability;
+  basicPitch: ToolCapability;
+  songformer: ToolCapability;
+  mirEval: ToolCapability;
 };
 
 const ENV = {
@@ -29,6 +42,12 @@ const ENV = {
   librosa: "FOX_EARS_LIBROSA",
   essentia: "FOX_EARS_ESSENTIA",
   madmom: "FOX_EARS_MADMOM",
+  beatThis: "FOX_EARS_BEAT_THIS",
+  allin1: "FOX_EARS_ALLIN1",
+  vocalSeparator: "FOX_EARS_SEPARATOR",
+  basicPitch: "FOX_EARS_BASIC_PITCH",
+  songformer: "FOX_EARS_SONGFORMER",
+  mirEval: "FOX_EARS_MIR_EVAL",
 } as const;
 
 function fromEnvOrPath(envKey: string, fallbacks: string[]): { available: boolean; path?: string } {
@@ -57,6 +76,12 @@ export function researchCapabilities(): ResearchCapabilities {
   const madmom = fromEnvOrPath(ENV.madmom, [
     "/workspace/fox-ears-bakeoff/.venv-madmom/bin/python",
   ]);
+  const beatThis = fromEnvOrPath(ENV.beatThis, ["/workspace/fox-ears/.venv-beatthis/bin/python"]);
+  const allin1 = fromEnvOrPath(ENV.allin1, ["/workspace/fox-ears/.venv-allin1/bin/python"]);
+  const vocalSeparator = fromEnvOrPath(ENV.vocalSeparator, ["/workspace/fox-ears/.venv-separator/bin/python"]);
+  const basicPitch = fromEnvOrPath(ENV.basicPitch, ["/workspace/fox-ears-bakeoff/.venv-bp/bin/python"]);
+  const songformer = fromEnvOrPath(ENV.songformer, ["/workspace/fox-ears/.venv-songformer/bin/python"]);
+  const mirEval = fromEnvOrPath(ENV.mirEval, ["/workspace/fox-ears/.venv-score/bin/python"]);
   return {
     demucs: {
       available: demucs.available,
@@ -99,6 +124,54 @@ export function researchCapabilities(): ResearchCapabilities {
       license: "CC-BY-NC-SA",
       note: "research-only diagnostic; models are noncommercial share-alike",
       path: madmom.path,
+    },
+    beatThis: {
+      available: beatThis.available,
+      optional: true,
+      license: "MIT (code and published weights, per the CPJKU README)",
+      license_class: "permissive",
+      note: "beats + downbeats candidate (harness/candidates.py beat-this); replaces madmom's NC models for downbeats",
+      path: beatThis.path,
+    },
+    allin1: {
+      available: allin1.available,
+      optional: true,
+      license: "MIT code; weights on Hugging Face — confirm at the source",
+      license_class: "unverified",
+      note: "labelled sections + beats candidate (harness/candidates.py allin1); needs demucs + NATTEN",
+      path: allin1.path,
+    },
+    vocalSeparator: {
+      available: vocalSeparator.available,
+      optional: true,
+      license: "MIT tool (python-audio-separator); Kim Mel-Band RoFormer vocals card reports MIT — confirm",
+      license_class: "unverified",
+      note: "vocal stem for the vocal gate and lyric alignment (harness/candidates.py vocals); per-checkpoint licences vary",
+      path: vocalSeparator.path,
+    },
+    basicPitch: {
+      available: basicPitch.available,
+      optional: true,
+      license: "Apache-2.0",
+      license_class: "permissive",
+      note: "notes/MIDI per stem (bake-off 2026-11-16); a TS build exists but is not wired into the app",
+      path: basicPitch.path,
+    },
+    songformer: {
+      available: songformer.available,
+      optional: true,
+      license: "CC BY 4.0 code; loads MuQ weights under CC BY-NC 4.0",
+      license_class: "noncommercial",
+      note: "strongest structure model in the 2025 benchmarks; private use only, add knowingly; not wrapped",
+      path: songformer.path,
+    },
+    mirEval: {
+      available: mirEval.available,
+      optional: true,
+      license: "MIT",
+      license_class: "permissive",
+      note: "answer-key scoring (harness/score_answer_key.py)",
+      path: mirEval.path,
     },
   };
 }

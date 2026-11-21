@@ -1,0 +1,23 @@
+{
+  "schema": "fox-ears-answer-key-1",
+  "title": "Song title — which recording (master v1, demo, live…)",
+  "answer_source": "taylor",
+  "label": "Taylor's own answers for THIS recording",
+  "tempo_bpm": 96,
+  "key": "D major",
+  "tuning_a4_hz": 432,
+  "sections": [
+    { "t_start": 0.0, "t_end": 24.5, "label": "verse", "letter": "A" },
+    { "t_start": 24.5, "t_end": 43.9, "label": "chorus", "letter": "B" }
+  ],
+  "downbeats": [],
+  "beats": [],
+  "chords": [
+    { "t_start": 0.0, "t_end": 2.5, "label": "D:maj" },
+    { "t_start": 2.5, "t_end": 5.0, "label": "A:maj/3" }
+  ],
+  "riffs": [
+    { "name": "main bass riff", "t_start": 0.0, "t_end": 10.0, "also_at": [48.0, 96.0], "transposed_at": [] }
+  ],
+  "notes": "Times in seconds from the start of the file. Leave any list empty ([]) if you do not want it scored."
+}

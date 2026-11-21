@@ -33,3 +33,8 @@ The locked key, inspector output, and self-check script are held back on the box
 
 `app/src/lib/hearing/sonofield.ts` contains a degree “feeling” table that is believed to derive from Max Konyi’s SonoField material. It is credited in [NOTICE.md](NOTICE.md). The table was not removed from the code. Krumhansl–Kessler key profiles in the same file are a separate, published reference.
 
+Keep that table out of anything sold.
+
+## P4 Sonar Form (2026-11-21)
+
+The P4 pass arrived as `fox-ears-p4-sonar-2026-11-21.zip`, `fox-ears-p4-vs-6ad231c.diff` and `p4-sonar-log-2026-11-21.md`. Taylor uploaded them to the Fox Ears Drive folder on 2026-11-21. The notes are unsigned, and Drive lists Taylor as the uploader. The diff was applied to `6ad231c` (P3b) and cherry-picked into branch `p4/sonar-cherry-pick`. See [`docs/p4-cherry-pick-2026-11-21.md`](docs/p4-cherry-pick-2026-11-21.md). The spiral array, tension ribbons, path enhancement and arc diagrams are native reimplementations of published methods, credited in [NOTICE.md](NOTICE.md). No third-party code or model weights were copied in. `sonofield.ts` is unchanged by P4.

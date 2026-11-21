@@ -239,6 +239,12 @@ export type SongChart = {
   /** Concert-pitch pre-pass (A4 Hz and cents vs 440). */
   tuning?: TuningReading;
   input_change_receipts?: import("./modeReceipt").InputChangeReceipt[];
+  /**
+   * P4 (2026-11-21): SONAR FORM — bar-level self-similarity, repetition
+   * letters, loop length, riff matched filter and spiral-array tension.
+   * Additive and SOFT; never edits key, tempo, chords or sections.
+   */
+  sonar?: import("./sonar").SonarReading;
   melody: Array<{ t_ms: number; midi: number; name: string }>;
   vocal_regions: Array<{ t_start_ms: number; t_end_ms: number; likelihood: number }>;
   lyrics: {

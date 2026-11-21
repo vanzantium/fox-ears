@@ -19,7 +19,7 @@ The canonical research runtime is [`research/fox_ears_v0_2_binding_grammar.py`](
 |---|---|
 | `research/` | Canonical v0.2 binding grammar, v0.1 history, related `music_mode.py` scaffold, and the Calibration 003 challenge-fixture prompt |
 | `app/` | v4 web app, from `fox-ears-review-v4.zip` (`node_modules` and build output omitted) |
-| `harness/` | Offline calibration harness (tracked copy; `app/calibration/` is its gitignored working copy) and metric JSONs. No audio. |
+| `harness/` | Offline calibration harness (tracked copy; `app/calibration/` is its gitignored working copy) and metric JSONs. P4 adds the answer-key scorer, candidate adapters and the form-etude generator. No audio. |
 | `test-song/` | "Fox at the Gate" test-song baseline and variant scores |
 | `docs/` | Dated logs, the browser/phone check, and a summary of Vela's START-HERE note |
 
@@ -57,15 +57,43 @@ cd app
 npm ci
 npm run dev          # http://0.0.0.0:8080
 npm run typecheck
-npm test             # 151 pass, 3 gated skips (need local audio; skipped in CI)
+npm test             # 163 pass, 3 gated skips (need local audio; skipped in CI)
 npm run build
 ```
 
-`npm test` covers the tempo, vocal and timing labs plus the P0–P3 script tests. The 9 leftover Grok "Wild Race" share-card template tests, which were red on every run, were removed on 2026-11-15. CI (`.github/workflows/tests.yml`) runs the research tests, typecheck, `npm test` and the build. See [RELEASE-NOTES.md](RELEASE-NOTES.md) for what landed in each pass.
+`npm test` covers the tempo, vocal and timing labs plus the P0–P4 script tests. The 9 leftover Grok "Wild Race" share-card template tests, which were red on every run, were removed on 2026-11-15. CI (`.github/workflows/tests.yml`) runs the research tests, typecheck, `npm test` and the build. See [RELEASE-NOTES.md](RELEASE-NOTES.md) for what landed in each pass.
 
 **Timing (P0, 2026-11-15).** The app reads its analysers on every display frame (60, 90 or 120 Hz, irregular, paused in background tabs). Readings are now stamped with AudioContext time, interpolated between audio callbacks with `getOutputTimestamp()` and mapped onto the file timeline. The tempo path then resamples them onto a fixed 10 ms grid (`resampleTicks` in `app/src/lib/hearing/tempo.ts`). The offline harness goes through the same path. `scripts/timing-lab.test.mjs` checks 96/108/120 BPM at 60/90/120 Hz, with jitter and a 3 s background gap, to within ±1%. **P0 made tempo display-rate robust; it did not make key or sections display-independent.** Analyser smoothing was still applied per read, so the same file could change key or section cuts with the refresh rate. P1 (2026-11-16) computes spectra on the same 10 ms audio-clock grid with a time-constant (not per-read) pole; see `docs/p1-log-2026-11-16.md`.
 
 **Browser and phone.** See [`docs/browser-phone-check.md`](docs/browser-phone-check.md). `node scripts/browser-pass.mjs <audio> --url <dev url>` runs the desktop pass headless.
+
+### Sonar Form (P4, 2026-11-21)
+
+Each chart now carries a SOFT, additive `sonar` reading. **It is experimental and uncalibrated on real songs** (`chart.sonar.status = "experimental-uncalibrated"`). It never sets or edits section boundaries; on Keep Moving it missed all four known section cuts, landing about 2 bars early. Treat its letters as a harmony-only second opinion, not as section roles. It is passive echolocation: every bar of the song is compared with every other bar (chroma + bass chroma). From that, the reading gives:
+
+- repetition letters per 4-bar phrase (`A A B A'`), the loop (shortest cycle that repeats straight away) and the form period;
+- a 4/4 downbeat-phase estimate;
+- an **agreement check with FORM** (cuts both hear, cuts only sonar hears, cuts only FORM made);
+- a matched-filter **riff finder** that also catches a riff moved to another key (`+5`);
+- a spiral-array **tension ribbon** (spread, motion, distance from home).
+
+The digest gains SONAR, TENSION RIBBON and a one-line-per-bar BAR BRIEF for AI listeners. The app gains a **Sonar** tab: an echo map, shape arcs and strips. Nothing in it edits key, tempo, chords or sections; outputs for those were byte-identical before and after on the 14 test songs plus Keep Moving. Details and caveats: [`docs/p4-sonar-log-2026-11-21.md`](docs/p4-sonar-log-2026-11-21.md) and [`docs/p4-cherry-pick-2026-11-21.md`](docs/p4-cherry-pick-2026-11-21.md).
+
+### Answer key and scorer (P4)
+
+Fill in [`docs/answer-key-template.json`](docs/answer-key-template.json) for a recording (see [`docs/answer-key-guide.md`](docs/answer-key-guide.md)). Then:
+
+```bash
+pip install -r harness/requirements-scoring.txt          # mir_eval (MIT) + numpy
+python harness/score_answer_key.py --key song.answer.json --fox song.map.json [--candidate song.beat-this.json]
+python harness/score_answer_key.py --self-test
+```
+
+The scorer reports tempo STRICT/FORGIVEN, key, beats and downbeats, FORM and SONAR section hits and labels, and chords. A score is SOLID only for Taylor's own key (`"answer_source": "taylor"`).
+
+`harness/candidates.py` runs outside models as SOFT candidates to score beside Fox Ears: Beat This! (beats/downbeats), All-In-One (labelled sections) and a RoFormer vocal stem. Each runs in its own venv on your machine. They are research-side only and optional: never run by default, imported only when you call that subcommand, and not dependencies of the app. None has been run live yet.
+
+`harness/make_form_etude.py` writes a synthetic song with a planted form, and its answer key, for checking the pipeline end to end.
 
 ### Calibration harness (run it on your own audio)
 
@@ -127,7 +155,8 @@ Full details: [`docs/p0-log-2026-11-15.md`](docs/p0-log-2026-11-15.md). Older wr
 1. **Taylor's BPM/key answer key** for the master and the remaining 14 songs. Re-score, and relabel SOFT to SOLID where supported. Keep Moving's key is already SOLID.
 2. **Phone pass** by Taylor ([`docs/browser-phone-check.md`](docs/browser-phone-check.md)), compared with the desktop pass.
 3. P1–P3b have landed; see [RELEASE-NOTES.md](RELEASE-NOTES.md) and `docs/p1-log-2026-11-16.md`, `docs/p2-key-log-2026-11-17.md`, `docs/p3-log-2026-11-19.md`.
-4. **Still deferred:** L1b microtiming, cadence typing, Vela's L2–L4 layers, further section promotion, and the Ear Organ refactor. Do not tune Cal 003 thresholds to force a pass.
+4. **P4 (Sonar Form, answer-key scorer)** is on `p4/sonar-cherry-pick` (stacked on P3b), not merged until Taylor says so. The 14 songs + Keep Moving were run through the harness; existing fields are byte-identical. Next, run the first Beat This! candidate on Taylor's machine and score it against the answer key.
+5. **Still deferred:** L1b microtiming, cadence typing, Vela's L2–L4 layers, further section promotion, and the Ear Organ refactor. Do not tune Cal 003 thresholds to force a pass.
 
 ## Vela's START-HERE
 

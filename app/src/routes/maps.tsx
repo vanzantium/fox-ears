@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useMatchRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { formatTime } from "@/lib/utils";
@@ -9,6 +9,15 @@ import { listHearingMaps } from "@/lib/server/maps";
 export const Route = createFileRoute("/maps")({ component: MapsPage });
 
 function MapsPage() {
+  // /maps/$id is a child of /maps in the route tree. Without an Outlet the list
+  // kept rendering at /maps/<id>, so a saved map never opened (found 2026-11-21
+  // while checking the P4 Sonar tab).
+  const matchRoute = useMatchRoute();
+  if (matchRoute({ to: "/maps/$id" })) return <Outlet />;
+  return <MapsList />;
+}
+
+function MapsList() {
   const { user, isPending } = useCurrentUserState();
   const [local, setLocal] = useState<LibraryEntry[]>([]);
   const [remote, setRemote] = useState<
