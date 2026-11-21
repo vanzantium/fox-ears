@@ -28,3 +28,8 @@ The calibration harness and the 2026-11-14 build and calibration log were writte
 ## Calibration 003 key
 
 The locked key, inspector output, and self-check script are held back on the box at `/workspace/fox-ears/cal003-key/` and are not part of this repository. See the README.
+
+## Third-party interpretive material
+
+`app/src/lib/hearing/sonofield.ts` contains a degree “feeling” table that is believed to derive from Max Konyi’s SonoField material. It is credited in [NOTICE.md](NOTICE.md). The table was not removed from the code. Krumhansl–Kessler key profiles in the same file are a separate, published reference.
+
